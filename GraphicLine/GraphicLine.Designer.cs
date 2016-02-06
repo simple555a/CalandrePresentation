@@ -43,10 +43,10 @@ namespace GraphicLine
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.White;
+            this.BackColor = System.Drawing.Color.Maroon;
             this.MinimumSize = new System.Drawing.Size(250, 0);
             this.Name = "GraphicLine";
-            this.Size = new System.Drawing.Size(347, 58);
+            this.Size = new System.Drawing.Size(327, 42);
             this.Load += new System.EventHandler(this.GraphicLine_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.GraphicLine_Paint);
             this.Resize += new System.EventHandler(this.GraphicLine_Resize);
@@ -99,19 +99,16 @@ namespace GraphicLine
         }
 
         public List<Section> Data = new List<Section> { };
-
-        private DateTime StartTime;
-        private DateTime EndTime;
-
-        private byte BaseColor_R;
-        private byte BaseColor_G;
-        private byte BaseColor_B;
-
         /// <summary>
         /// 0 - sec, 1 - minute, 2 - hour, 3 - day
         /// </summary>
         public int TimeDimension;
+        public int MaxYAxisValue;
 
+
+
+        private DateTime StartTime;
+        private DateTime EndTime;
         private System.Windows.Forms.ToolTip toolTip1;
         private int LeftMargin;
         private int RightMargin;

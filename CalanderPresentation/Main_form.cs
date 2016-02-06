@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TimeLine;
+using GraphicLine;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -245,7 +246,7 @@ namespace CalanderPresentation
 
         private void TimeLinePresenter(TimeLine.TimeLine in_control,DateTime in_StartTime)
         {
-            Section[] a1;
+            TimeLine.Section[] a1;
 
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
@@ -293,9 +294,7 @@ namespace CalanderPresentation
 
             in_control.Refresh();
         }
-
         
-
         private void DataGridPresenter(DataGridView in_control, DateTime in_StartTime)
         {
             DateTime T1 = get_T1(in_StartTime);
@@ -335,6 +334,11 @@ namespace CalanderPresentation
             }
 
             
+        }
+
+        private void GraphicLinePresenter(GraphicLine.GraphicLine in_control, DateTime in_StartTime)
+        {
+            in_control.MaxYAxisValue = 10;
         }
 
         public int GetAverageCycleTime(int in_DoneRingsCount)
@@ -380,6 +384,7 @@ namespace CalanderPresentation
             label1.Text =  sql_obj.GetOperatorName() ;
 
             TimeLinePresenter(timeLine1, dateTimePicker1.Value);
+            GraphicLinePresenter(graphicLine1, dateTimePicker1.Value);
             DataGridPresenter(dataGridView1, dateTimePicker1.Value);
 
             //Eficiency
@@ -460,6 +465,10 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
         }
-        
+
+        private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
