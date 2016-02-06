@@ -1,5 +1,5 @@
 ﻿#define real_time
-//#define bypass_opc_init
+#define bypass_opc_init
 
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace CalanderPresentation
         static Timer refresh_form_timer = new Timer();
         private static Settings Settings1 = new Settings();
         /// <summary>
-        /// for zeroing rings counter
+        /// for zeroing meters
         /// </summary>
         static DateTime previous_time = new DateTime();
 
@@ -44,10 +44,10 @@ namespace CalanderPresentation
 #if real_time
             toolStripStatusLabel1.Text = "";
 #endif
-            DateTime BStartTime = new DateTime(2015, 04, 24, 00, 00, 00);
             
             label9.Text = sql_obj.GetWCName();
 #if !real_time
+            DateTime BStartTime = new DateTime(2015, 04, 24, 00, 00, 00);
             dateTimePicker1.Value = BStartTime;
 #endif
 #if real_time
@@ -103,13 +103,9 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox1);
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
-
-            //dataGridView1.Font
-
-
             
             
-            this.Text += " v1.2.3";
+            this.Text += " v0.0.1";
 
             //OPC
 #if !bypass_opc_init
@@ -332,7 +328,10 @@ namespace CalanderPresentation
                 in_control.Rows[i].Cells[5].Value = TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Hours.ToString() + 
                     "h " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Minutes.ToString() + 
                     "min " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Seconds.ToString() + "sec ";
-                if (a1[i].ExceededTime != "0") in_control.Rows[i].Cells[5].Style.BackColor = Color.Red; else in_control.Rows[i].Cells[5].Style.BackColor = Color.GreenYellow;
+                if (a1[i].ExceededTime != "0")
+                    in_control.Rows[i].Cells[5].Style.BackColor = Color.Red;
+                else
+                    in_control.Rows[i].Cells[5].Style.BackColor = Color.GreenYellow;
             }
 
             
@@ -383,7 +382,6 @@ namespace CalanderPresentation
             TimeLinePresenter(timeLine1, dateTimePicker1.Value);
             DataGridPresenter(dataGridView1, dateTimePicker1.Value);
 
-            //MessageBox.Show(sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()).TotalMinutes.ToString()+"/"+ (get_CURR() - get_T1(dateTimePicker1.Value)).TotalMinutes.ToString());
             //Eficiency
             //1.real time
             if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
@@ -458,7 +456,6 @@ namespace CalanderPresentation
 
         private void Main_form_Paint(object sender, PaintEventArgs e)
         {
-
             LabelsCenterPositioning(groupBox1);
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);

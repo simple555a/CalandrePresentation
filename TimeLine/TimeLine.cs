@@ -33,7 +33,7 @@ namespace TimeLine
 
             this.LeftMargin = 0;
             this.RightMargin = 1;
-            this.TimeLineHeight = 50;
+            this.TimeLineHeight = 20;
             this.TimeLineX1 = this.LeftMargin;
             this.TimeLineY1 = 0;
             this.TimeLineX2 = this.Width - this.RightMargin;
@@ -89,7 +89,7 @@ namespace TimeLine
                 tempString = (((this.StartTime.Hour + i) % 24) < 10) ? "0" + ((this.StartTime.Hour + i) % 24).ToString() : ((this.StartTime.Hour + i) % 24).ToString();
                 tempString += ":00";
 
-                e.Graphics.DrawString(tempString, font_004, brush_004, System.Convert.ToInt16(((i) * this.TimeLineWidth) / total_hours) - 17, 55);
+                e.Graphics.DrawString(tempString, font_004, brush_004, System.Convert.ToInt16(((i) * this.TimeLineWidth) / total_hours) - 17, this.TimeLineHeight +5);
             }
             #endregion
 
