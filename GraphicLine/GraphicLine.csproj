@@ -7,8 +7,8 @@
     <ProjectGuid>{95A7CA70-B0D6-4498-B77A-46962843FC5A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GraphicLine</RootNamespace>
-    <AssemblyName>GraphicLine</AssemblyName>
+    <RootNamespace>TimeLine</RootNamespace>
+    <AssemblyName>TimeLine</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

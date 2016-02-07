@@ -63,10 +63,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GraphicLine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GraphicLine\bin\DebugToHost\GraphicLine.dll</HintPath>
-    </Reference>
     <Reference Include="OpcNetApi, Version=2.0.2.0, Culture=neutral, PublicKeyToken=78aea80f6827b5ab, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\OpcNetApi.dll</HintPath>
