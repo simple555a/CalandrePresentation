@@ -95,22 +95,16 @@ namespace TimeLine
         }
 
         public List<Section> Data = new List<Section> { };
-
-        private DateTime StartTime;
-        private DateTime EndTime;
-
-        private byte BaseColor_R;
-        private byte BaseColor_G;
-        private byte BaseColor_B;
-
         /// <summary>
         /// 0 - sec, 1 - minute, 2 - hour, 3 - day
         /// </summary>
         public int TimeDimension;
+        public int LeftMargin;
+        public int RightMargin;
 
+        private DateTime StartTime;
+        private DateTime EndTime;
         private System.Windows.Forms.ToolTip toolTip1;
-        private int LeftMargin;
-        private int RightMargin;
         private int TimeLineHeight;
         private int TimeLineX1;
         private int TimeLineY1;

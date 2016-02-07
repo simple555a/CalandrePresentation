@@ -31,7 +31,7 @@ namespace TimeLine
             TextureBrush brush_001 = new TextureBrush(Properties.Resources.chess_texture);
             String tempString = "";
 
-            this.LeftMargin = 0;
+            this.LeftMargin = 20;
             this.RightMargin = 1;
             this.TimeLineHeight = 20;
             this.TimeLineX1 = this.LeftMargin;
@@ -89,7 +89,7 @@ namespace TimeLine
                 tempString = (((this.StartTime.Hour + i) % 24) < 10) ? "0" + ((this.StartTime.Hour + i) % 24).ToString() : ((this.StartTime.Hour + i) % 24).ToString();
                 tempString += ":00";
 
-                e.Graphics.DrawString(tempString, font_004, brush_004, System.Convert.ToInt16(((i) * this.TimeLineWidth) / total_hours) - 17, this.TimeLineHeight +5);
+                e.Graphics.DrawString(tempString, font_004, brush_004, System.Convert.ToInt16(((i) * this.TimeLineWidth) / total_hours) - 17 + this.TimeLineX1, this.TimeLineHeight +5);
             }
             #endregion
 

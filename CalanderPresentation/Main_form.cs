@@ -69,6 +69,15 @@ namespace CalanderPresentation
             refresh_form_timer.Interval = 60000;
             refresh_form_timer.Tick += refresh_form_timer_Tick;
             refresh_form_timer.Start();
+
+            //set up components
+            //TimeLine
+            timeLine1.LeftMargin = 20;
+            timeLine1.RightMargin = 1;
+            //GraphicLine
+            graphicLine1.LeftMargin = 0;
+            graphicLine1.RightMargin = 1;
+
             GlobalPresenter();
             label5.Text = sql_obj.GetCurrentStatus();
 
@@ -460,6 +469,10 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
         }
-        
+
+        private void graphicLine1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

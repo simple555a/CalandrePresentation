@@ -75,6 +75,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeLine1 = new TimeLine.TimeLine();
+            this.graphicLine1 = new GraphicLine.GraphicLine();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -114,7 +115,7 @@
             this.groupBox1.ForeColor = System.Drawing.Color.Black;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(305, 160);
+            this.groupBox1.Size = new System.Drawing.Size(305, 141);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Done meters:";
@@ -146,7 +147,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(935, 166);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(935, 147);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // groupBox2
@@ -159,7 +160,7 @@
             this.groupBox2.ForeColor = System.Drawing.Color.Black;
             this.groupBox2.Location = new System.Drawing.Point(314, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(305, 160);
+            this.groupBox2.Size = new System.Drawing.Size(305, 141);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Meters per minute, sec.:";
@@ -184,7 +185,7 @@
             this.groupBox3.ForeColor = System.Drawing.Color.Black;
             this.groupBox3.Location = new System.Drawing.Point(625, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(307, 160);
+            this.groupBox3.Size = new System.Drawing.Size(307, 141);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Machine eficiency:";
@@ -207,17 +208,19 @@
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel1, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.timeLine1, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.timeLine1, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel4, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 0, 5);
             this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel7, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.graphicLine1, 0, 3);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 27);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 5;
+            this.tableLayoutPanel2.RowCount = 6;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 45F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 172F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 91F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 153F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 68F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 61F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(941, 558);
             this.tableLayoutPanel2.TabIndex = 4;
@@ -238,11 +241,11 @@
             this.tableLayoutPanel4.Controls.Add(this.radioButton1, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.radioButton2, 3, 0);
             this.tableLayoutPanel4.Controls.Add(this.button1, 4, 0);
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 220);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 201);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(935, 29);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(935, 27);
             this.tableLayoutPanel4.TabIndex = 6;
             // 
             // label7
@@ -253,7 +256,7 @@
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.label7.Location = new System.Drawing.Point(3, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(33, 29);
+            this.label7.Size = new System.Drawing.Size(33, 27);
             this.label7.TabIndex = 5;
             this.label7.Text = "From:";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -275,7 +278,7 @@
             this.radioButton1.AutoSize = true;
             this.radioButton1.Location = new System.Drawing.Point(373, 3);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(64, 23);
+            this.radioButton1.Size = new System.Drawing.Size(64, 21);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.Text = "day shift";
             this.radioButton1.UseVisualStyleBackColor = true;
@@ -289,7 +292,7 @@
             this.radioButton2.Checked = true;
             this.radioButton2.Location = new System.Drawing.Point(454, 3);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(70, 23);
+            this.radioButton2.Size = new System.Drawing.Size(70, 21);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "night shift";
@@ -304,7 +307,7 @@
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.button1.Location = new System.Drawing.Point(532, 3);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 23);
+            this.button1.Size = new System.Drawing.Size(94, 21);
             this.button1.TabIndex = 8;
             this.button1.Text = "Get";
             this.button1.UseVisualStyleBackColor = true;
@@ -319,7 +322,7 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel6, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.dataGridView1, 0, 1);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 346);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 366);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
@@ -328,7 +331,7 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(935, 209);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(935, 189);
             this.tableLayoutPanel3.TabIndex = 5;
             // 
             // tableLayoutPanel6
@@ -403,7 +406,7 @@
             this.dataGridView1.RowHeadersVisible = false;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridView1.Size = new System.Drawing.Size(929, 157);
+            this.dataGridView1.Size = new System.Drawing.Size(929, 137);
             this.dataGridView1.TabIndex = 4;
             // 
             // Column1
@@ -643,11 +646,23 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.timeLine1.BackColor = System.Drawing.Color.Transparent;
-            this.timeLine1.Location = new System.Drawing.Point(3, 255);
+            this.timeLine1.Location = new System.Drawing.Point(3, 305);
             this.timeLine1.MinimumSize = new System.Drawing.Size(250, 0);
             this.timeLine1.Name = "timeLine1";
-            this.timeLine1.Size = new System.Drawing.Size(935, 85);
+            this.timeLine1.Size = new System.Drawing.Size(935, 55);
             this.timeLine1.TabIndex = 0;
+            // 
+            // graphicLine1
+            // 
+            this.graphicLine1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.graphicLine1.BackColor = System.Drawing.Color.Transparent;
+            this.graphicLine1.Location = new System.Drawing.Point(3, 237);
+            this.graphicLine1.MinimumSize = new System.Drawing.Size(250, 0);
+            this.graphicLine1.Name = "graphicLine1";
+            this.graphicLine1.Size = new System.Drawing.Size(935, 62);
+            this.graphicLine1.TabIndex = 8;
             // 
             // Main_form
             // 
@@ -740,6 +755,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private GraphicLine.GraphicLine graphicLine1;
     }
 }
 
