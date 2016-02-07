@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using TimeLine;
+using GraphicLine;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -254,7 +255,7 @@ namespace CalanderPresentation
 
         private void TimeLinePresenter(TimeLine.TimeLine in_control,DateTime in_StartTime)
         {
-            Section[] a1;
+            TimeLine.Section[] a1;
 
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
@@ -303,7 +304,11 @@ namespace CalanderPresentation
             in_control.Refresh();
         }
 
-        
+
+        private void GraphicLinePresenter(GraphicLine.GraphicLine in_control)
+        {
+            
+        }
 
         private void DataGridPresenter(DataGridView in_control, DateTime in_StartTime)
         {
@@ -389,6 +394,7 @@ namespace CalanderPresentation
             label1.Text =  sql_obj.GetOperatorName() ;
 
             TimeLinePresenter(timeLine1, dateTimePicker1.Value);
+            GraphicLinePresenter(graphicLine1);
             DataGridPresenter(dataGridView1, dateTimePicker1.Value);
 
             //Eficiency

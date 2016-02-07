@@ -40,6 +40,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label8 = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.timeLine1 = new TimeLine.TimeLine();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.label7 = new System.Windows.Forms.Label();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
@@ -74,7 +75,6 @@
             this.showHistoryBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.timeLine1 = new TimeLine.TimeLine();
             this.graphicLine1 = new GraphicLine.GraphicLine();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -218,12 +218,24 @@
             this.tableLayoutPanel2.RowCount = 6;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 45F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 153F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 68F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 61F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 69F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 63F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(941, 558);
             this.tableLayoutPanel2.TabIndex = 4;
+            // 
+            // timeLine1
+            // 
+            this.timeLine1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.timeLine1.BackColor = System.Drawing.Color.Transparent;
+            this.timeLine1.Location = new System.Drawing.Point(3, 303);
+            this.timeLine1.MinimumSize = new System.Drawing.Size(250, 0);
+            this.timeLine1.Name = "timeLine1";
+            this.timeLine1.Size = new System.Drawing.Size(935, 57);
+            this.timeLine1.TabIndex = 0;
             // 
             // tableLayoutPanel4
             // 
@@ -640,28 +652,16 @@
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // timeLine1
-            // 
-            this.timeLine1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.timeLine1.BackColor = System.Drawing.Color.Transparent;
-            this.timeLine1.Location = new System.Drawing.Point(3, 305);
-            this.timeLine1.MinimumSize = new System.Drawing.Size(250, 0);
-            this.timeLine1.Name = "timeLine1";
-            this.timeLine1.Size = new System.Drawing.Size(935, 55);
-            this.timeLine1.TabIndex = 0;
-            // 
             // graphicLine1
             // 
             this.graphicLine1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.graphicLine1.BackColor = System.Drawing.Color.Transparent;
-            this.graphicLine1.Location = new System.Drawing.Point(3, 237);
+            this.graphicLine1.Location = new System.Drawing.Point(3, 234);
             this.graphicLine1.MinimumSize = new System.Drawing.Size(250, 0);
             this.graphicLine1.Name = "graphicLine1";
-            this.graphicLine1.Size = new System.Drawing.Size(935, 62);
+            this.graphicLine1.Size = new System.Drawing.Size(935, 63);
             this.graphicLine1.TabIndex = 8;
             // 
             // Main_form
