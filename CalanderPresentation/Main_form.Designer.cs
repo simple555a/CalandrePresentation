@@ -65,6 +65,7 @@
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.label9 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
+            this.graphicLine1 = new GraphicLine.GraphicLine();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -75,7 +76,6 @@
             this.showHistoryBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.graphicLine1 = new GraphicLine.GraphicLine();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -468,7 +468,7 @@
             this.Column6.HeaderText = "Summary Exceeded Time";
             this.Column6.Name = "Column6";
             this.Column6.ReadOnly = true;
-            this.Column6.Width = 261;
+            this.Column6.Width = 205;
             // 
             // tableLayoutPanel7
             // 
@@ -569,6 +569,18 @@
             this.label11.TabIndex = 4;
             this.label11.Text = "WCName:";
             // 
+            // graphicLine1
+            // 
+            this.graphicLine1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.graphicLine1.BackColor = System.Drawing.Color.Transparent;
+            this.graphicLine1.Location = new System.Drawing.Point(3, 234);
+            this.graphicLine1.MinimumSize = new System.Drawing.Size(250, 0);
+            this.graphicLine1.Name = "graphicLine1";
+            this.graphicLine1.Size = new System.Drawing.Size(935, 63);
+            this.graphicLine1.TabIndex = 8;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -651,18 +663,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // graphicLine1
-            // 
-            this.graphicLine1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.graphicLine1.BackColor = System.Drawing.Color.Transparent;
-            this.graphicLine1.Location = new System.Drawing.Point(3, 234);
-            this.graphicLine1.MinimumSize = new System.Drawing.Size(250, 0);
-            this.graphicLine1.Name = "graphicLine1";
-            this.graphicLine1.Size = new System.Drawing.Size(935, 63);
-            this.graphicLine1.TabIndex = 8;
             // 
             // Main_form
             // 

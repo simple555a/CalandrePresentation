@@ -65,10 +65,36 @@ namespace GraphicLine
             
         }
 
+        /// <summary>
+        /// Add point to Data
+        /// </summary>
+        /// <param name="in_value">value - any values of int. Component will fit it</param>
+        public void AddPoint(int in_value, DateTime datetime)
+        {
+            GLPoint a1 = new GLPoint(in_value, datetime);
+            Data.Add(a1);
+        }
+
+
+        public void AddBasePeriod(DateTime start_time, DateTime end_time)
+        {
+            this.StartTime = start_time;
+            this.EndTime = end_time;
+        }
         
+
         public int LeftMargin;
         public int RightMargin;
-        
+        public List<GLPoint> Data = new List<GLPoint> { };
+
+
+        /// <summary>
+        /// 0 - sec, 1 - minute, 2 - hour, 3 - day
+        /// </summary>
+        public int TimeDimension;
+
+        private DateTime StartTime;
+        private DateTime EndTime;
         private int GraphicLineHeight;
         private int GraphicLineX1;
         private int GraphicLineY1;

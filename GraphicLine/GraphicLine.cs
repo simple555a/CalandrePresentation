@@ -42,7 +42,11 @@ namespace GraphicLine
 
 
             //TODO: Too many magic numbers
-            #region Draw polygon
+            #region Draw polygon data
+
+
+
+            /*
             Random rnd_v = new Random();
             Point[] points_arr = new Point[100];
             points_arr[0] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
@@ -54,6 +58,7 @@ namespace GraphicLine
             points_arr[98] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + 10 * 98 - 10, this.GraphicLineY2);
             points_arr[99] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
             e.Graphics.FillPolygon(brush_005, points_arr);
+            */
             #endregion
 
             //TODO: Too many magic numbers

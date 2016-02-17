@@ -47,8 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GLPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Section.cs" />
     <Compile Include="GraphicLine.cs">
       <SubType>UserControl</SubType>
     </Compile>
