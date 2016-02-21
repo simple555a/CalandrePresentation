@@ -47,15 +47,15 @@ namespace GraphicLine
             {
                 Point[] points_arr = new Point[this.Data.Count+2]; //720 min + 1 + 2points for bottom part of polygon
                 points_arr[0] = new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
-                for (int i = 1; i < points_arr.Length - 1; i++)
+                for (int i = 0; i < this.Data.Count; i++)
                 {
-                    int temp = (int)((i - 1) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720;
+                    int temp = (int)(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
                     if (this.Data[i] != null)
-                        points_arr[i] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
+                        points_arr[i+1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
                     if (this.Data[i] == null)
-                        points_arr[i] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2);
+                        points_arr[i+1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2);
                 }
-                points_arr[points_arr.Length - 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth -1 + ((points_arr.Length - 2) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720, this.GraphicLineY2);
+                points_arr[points_arr.Length - 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth  + (((this.Data.Count-1) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2);
                 e.Graphics.FillPolygon(brush_005, points_arr);
             }
             #endregion
@@ -77,7 +77,7 @@ namespace GraphicLine
             {
                 e.Graphics.DrawLine(pen1,
                     this.GraphicLineX1 + this.GraphicLineYTitlesWidth+ System.Convert.ToInt16(((i) * (this.GraphicLineWidth- this.GraphicLineYTitlesWidth)) / total_hours),
-                    this.GraphicLineY1,
+                    this.GraphicLineY1+55,
                     this.GraphicLineX1 + this.GraphicLineYTitlesWidth+ System.Convert.ToInt16(((i) * (this.GraphicLineWidth- this.GraphicLineYTitlesWidth)) / total_hours),
                     this.GraphicLineY2);
             }

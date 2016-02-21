@@ -29,9 +29,53 @@ namespace EditGraphicLineXML
             
             Random rnd_v = new Random();
             //for (int i = 0; i < a1.Length; i++)
-            for (int i = 0; i < 100; i++)
-                {
-                a1[99 - i] = new GLPoint(i, T1.AddMinutes(i));
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 0] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 1] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 2] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 3] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 4] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 5] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 6] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 7] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 8] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 9] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 10] = new GLPoint(i, T1.AddMinutes(i));
+            }
+            for (int i = 0; i < 60; i++)
+            {
+                a1[59 - i + 60 * 11] = new GLPoint(i, T1.AddMinutes(i));
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));
