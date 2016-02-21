@@ -63,6 +63,11 @@ namespace GraphicLine
             this.GraphicLineY2 = 0;
             this.GraphicLineWidth = 0;
             
+            this.StartTime = DateTime.MinValue;
+            this.EndTime = DateTime.MaxValue;
+
+            this.Data.Clear();
+            
         }
 
         /// <summary>

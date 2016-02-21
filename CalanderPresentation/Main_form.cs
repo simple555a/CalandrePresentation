@@ -36,6 +36,8 @@ namespace CalanderPresentation
         /// </summary>
         static DateTime previous_time = new DateTime();
 
+        static GraphicLine.GLPoint[] GraphicLineDataArr = new GLPoint[1440*2];
+
         private void Form1_Load(object sender, EventArgs e)
         {
 #if !real_time           
@@ -72,12 +74,30 @@ namespace CalanderPresentation
             refresh_form_timer.Start();
 
             //set up components
-            //TimeLine
+            #region TimeLine
             timeLine1.LeftMargin = 20;
             timeLine1.RightMargin = 1;
-            //GraphicLine
+            #endregion
+            #region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
+
+            if (File.Exists("GraphicLineData.xml"))
+            {
+                XmlSerializer XmlSerializer1 = new XmlSerializer(typeof(GraphicLine.GLPoint[]));
+                TextReader reader1 = new StreamReader("GraphicLineData.xml");
+                GraphicLineDataArr = (GraphicLine.GLPoint[])XmlSerializer1.Deserialize(reader1);
+                reader1.Dispose();
+                
+                //while (GraphicLineDataArr[i]!=null)                
+                for (int i=720-1;i>=0;i--)
+                {
+                     if (GraphicLineDataArr[i]!=null)
+                        graphicLine1.Data.Add(GraphicLineDataArr[i]);
+                }
+            }
+            
+            #endregion
 
             GlobalPresenter();
             label5.Text = sql_obj.GetCurrentStatus();
@@ -255,13 +275,12 @@ namespace CalanderPresentation
 
         private void TimeLinePresenter(TimeLine.TimeLine in_control,DateTime in_StartTime)
         {
-            TimeLine.Section[] a1;
 
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
-            DateTime CURR = get_CURR();           
-
+            DateTime CURR = get_CURR();
             
+            TimeLine.Section[] a1;
             a1 = sql_obj.GetTimeLineData(T1, T2, CURR);
 
             in_control.SetEmpty();
@@ -305,9 +324,24 @@ namespace CalanderPresentation
         }
 
 
-        private void GraphicLinePresenter(GraphicLine.GraphicLine in_control)
+        private void GraphicLinePresenter(GraphicLine.GraphicLine in_control, DateTime in_StartTime)
         {
+            DateTime T1 = get_T1(in_StartTime);
+            DateTime T2 = get_T2(in_StartTime);
+            DateTime CURR = get_CURR();
             
+
+            //TODO Simulate data
+            //for (int i = 0; i < GraphicLineDataArr.Length; i++)
+            //{
+
+            //}
+            //
+
+            //in_control.SetEmpty();
+
+
+
         }
 
         private void DataGridPresenter(DataGridView in_control, DateTime in_StartTime)
@@ -394,7 +428,7 @@ namespace CalanderPresentation
             label1.Text =  sql_obj.GetOperatorName() ;
 
             TimeLinePresenter(timeLine1, dateTimePicker1.Value);
-            GraphicLinePresenter(graphicLine1);
+            GraphicLinePresenter(graphicLine1, dateTimePicker1.Value);
             DataGridPresenter(dataGridView1, dateTimePicker1.Value);
 
             //Eficiency

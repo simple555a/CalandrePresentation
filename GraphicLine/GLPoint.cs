@@ -8,7 +8,10 @@ namespace GraphicLine
     {
         public int value;
         public DateTime datetime;
-        
+
+        public GLPoint()
+        { }
+
         public GLPoint(int value, DateTime datetime)
         {
             this.value = value;

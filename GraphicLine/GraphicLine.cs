@@ -43,22 +43,21 @@ namespace GraphicLine
 
             //TODO: Too many magic numbers
             #region Draw polygon data
-
-
-
-            /*
-            Random rnd_v = new Random();
-            Point[] points_arr = new Point[100];
-            points_arr[0] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
-            points_arr[1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2 - rnd_v.Next(60));
-            for (int i = 2; i < 98; i++)
+            if (this.Data.Count != 0)
             {
-                points_arr[i] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + 10 * i - 10, this.GraphicLineY2 - rnd_v.Next(20, 60));
+                Point[] points_arr = new Point[this.Data.Count+2]; //720 min + 1 + 2points for bottom part of polygon
+                points_arr[0] = new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
+                for (int i = 1; i < points_arr.Length - 1; i++)
+                {
+                    int temp = (int)((i - 1) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720;
+                    if (this.Data[i] != null)
+                        points_arr[i] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
+                    if (this.Data[i] == null)
+                        points_arr[i] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2);
+                }
+                points_arr[points_arr.Length - 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth -1 + ((points_arr.Length - 2) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720, this.GraphicLineY2);
+                e.Graphics.FillPolygon(brush_005, points_arr);
             }
-            points_arr[98] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + 10 * 98 - 10, this.GraphicLineY2);
-            points_arr[99] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
-            e.Graphics.FillPolygon(brush_005, points_arr);
-            */
             #endregion
 
             //TODO: Too many magic numbers

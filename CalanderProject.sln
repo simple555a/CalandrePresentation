@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalenderPresentation", "Cal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphicLine", "GraphicLine\GraphicLine.csproj", "{8CB0D4AD-3E2D-46A7-8F58-2AEDB649C736}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "auxiliary", "auxiliary", "{2523803E-2904-48DE-985A-03DADF956806}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditGraphicLineXML", "EditGraphicLineXML\EditGraphicLineXML.csproj", "{569E2C13-F5E6-4847-B32E-105C5714DC82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,8 +45,19 @@ Global
 		{8CB0D4AD-3E2D-46A7-8F58-2AEDB649C736}.DebugToVM|Any CPU.Build.0 = DebugToHost|Any CPU
 		{8CB0D4AD-3E2D-46A7-8F58-2AEDB649C736}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CB0D4AD-3E2D-46A7-8F58-2AEDB649C736}.Release|Any CPU.Build.0 = Release|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.DebugToHost|Any CPU.ActiveCfg = Debug|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.DebugToHost|Any CPU.Build.0 = Debug|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.DebugToVM|Any CPU.ActiveCfg = Debug|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.DebugToVM|Any CPU.Build.0 = Debug|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{569E2C13-F5E6-4847-B32E-105C5714DC82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{569E2C13-F5E6-4847-B32E-105C5714DC82} = {2523803E-2904-48DE-985A-03DADF956806}
 	EndGlobalSection
 EndGlobal
