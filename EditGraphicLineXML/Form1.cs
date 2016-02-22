@@ -22,9 +22,9 @@ namespace EditGraphicLineXML
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DateTime T1 = get_T1(get_CURR());
-            DateTime T2 = get_T2(get_CURR());
-            int Size = 90;
+            //DateTime T1 = get_T1(get_CURR());
+            DateTime T1 = new DateTime(2016,02,21,8,0,0);
+            int Size = 11500;
             GraphicLine.GLPoint[] a1 = new GLPoint[Size]; //720 min + 1
             
             Random rnd_v = new Random();

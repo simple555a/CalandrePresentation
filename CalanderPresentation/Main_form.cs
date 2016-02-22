@@ -92,7 +92,7 @@ namespace CalanderPresentation
                 //while (GraphicLineDataArr[i]!=null)                
                 for (int i= GraphicLineDataArr.Length-1;i>=0;i--)
                 {
-                     if (GraphicLineDataArr[i]!=null)
+                    if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime >= get_T1(get_CURR()))
                         graphicLine1.Data.Add(GraphicLineDataArr[i]);
                 }
             }
