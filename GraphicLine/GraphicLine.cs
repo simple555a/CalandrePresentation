@@ -45,17 +45,57 @@ namespace GraphicLine
             #region Draw polygon data
             if (this.Data.Count != 0)
             {
-                Point[] points_arr = new Point[this.Data.Count+2]; //720 min + 1 + 2points for bottom part of polygon
-                points_arr[0] = new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
+                #region old
+                //Point[] points_arr = new Point[this.Data.Count + 2]; //720 min + 1 + 2points for bottom part of polygon
+                //points_arr[0] = new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
+                //int previousX_in_minutes = 0;
+                //for (int i = 0; i < this.Data.Count; i++)
+                //{
+                //    int temp = (int)(((this.Data[i].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                //    if (this.Data[i] != null && this.Data[i].datetime == this.StartTime.AddMinutes(i))
+                //    {
+                //        if ((int)(this.Data[i].datetime - this.StartTime).TotalMinutes - previousX_in_minutes == 1)
+                //            points_arr[i + 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
+                //        if ((int)(this.Data[i].datetime - this.StartTime).TotalMinutes - previousX_in_minutes > 1)
+                //        {
+                //            points_arr[i + 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
+                //        }
+                //        previousX_in_minutes = (int)(this.Data[i].datetime - this.StartTime).TotalMinutes;
+                //    }
+                //    if (this.Data[i] == null || this.Data[i].datetime != this.StartTime.AddMinutes(i))
+                //        points_arr[i + 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2);
+                //}
+                //points_arr[points_arr.Length - 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + (((int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2);
+                //e.Graphics.FillPolygon(brush_005, points_arr);
+                #endregion
+
+                List<Point> points_list = new List<Point>();
+
+                points_list.Add(new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2));
+                int previous_distance = 0;
                 for (int i = 0; i < this.Data.Count; i++)
                 {
-                    int temp = (int)(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
-                    if (this.Data[i] != null)
-                        points_arr[i+1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
-                    if (this.Data[i] == null)
-                        points_arr[i+1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2);
+                    int curr_distance = (int)(this.Data[i].datetime - this.StartTime).TotalMinutes;
+                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                    if ((curr_distance - previous_distance) == 1)
+                        points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
+                    if ((curr_distance - previous_distance) > 1)
+                    {
+                        temp = (int)((previous_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                        points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
+                        temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                        points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
+                        points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
+                    }
+                    previous_distance = curr_distance;
+                   
                 }
-                points_arr[points_arr.Length - 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth  + (((this.Data.Count-1) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2);
+                points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + (((int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2));
+                Point[] points_arr = new Point[points_list.Count]; 
+                for (int i=0;i<points_list.Count;i++)
+                {
+                    points_arr[i] = points_list[i];
+                }
                 e.Graphics.FillPolygon(brush_005, points_arr);
             }
             #endregion

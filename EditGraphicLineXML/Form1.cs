@@ -24,58 +24,14 @@ namespace EditGraphicLineXML
         {
             DateTime T1 = get_T1(get_CURR());
             DateTime T2 = get_T2(get_CURR());
-
-            GraphicLine.GLPoint[] a1 = new GLPoint[720]; //720 min + 1
+            int Size = 90;
+            GraphicLine.GLPoint[] a1 = new GLPoint[Size]; //720 min + 1
             
             Random rnd_v = new Random();
             //for (int i = 0; i < a1.Length; i++)
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < Size; i++)
             {
-                a1[59 - i + 60 * 0] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 1] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 2] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 3] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 4] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 5] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 6] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 7] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 8] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 9] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 10] = new GLPoint(i, T1.AddMinutes(i));
-            }
-            for (int i = 0; i < 60; i++)
-            {
-                a1[59 - i + 60 * 11] = new GLPoint(i, T1.AddMinutes(i));
+                a1[Size-1 - i] = new GLPoint(i % 60 , T1.AddMinutes(i));
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));

@@ -90,7 +90,7 @@ namespace CalanderPresentation
                 reader1.Dispose();
                 
                 //while (GraphicLineDataArr[i]!=null)                
-                for (int i=720-1;i>=0;i--)
+                for (int i= GraphicLineDataArr.Length-1;i>=0;i--)
                 {
                      if (GraphicLineDataArr[i]!=null)
                         graphicLine1.Data.Add(GraphicLineDataArr[i]);
@@ -329,6 +329,8 @@ namespace CalanderPresentation
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
+
+            in_control.AddBasePeriod(T1, T2);
             
 
             //TODO Simulate data
