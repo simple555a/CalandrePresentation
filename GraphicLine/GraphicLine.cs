@@ -117,7 +117,7 @@ namespace GraphicLine
             {
                 e.Graphics.DrawLine(pen1,
                     this.GraphicLineX1 + this.GraphicLineYTitlesWidth+ System.Convert.ToInt16(((i) * (this.GraphicLineWidth- this.GraphicLineYTitlesWidth)) / total_hours),
-                    this.GraphicLineY1+55,
+                    this.GraphicLineY1,
                     this.GraphicLineX1 + this.GraphicLineYTitlesWidth+ System.Convert.ToInt16(((i) * (this.GraphicLineWidth- this.GraphicLineYTitlesWidth)) / total_hours),
                     this.GraphicLineY2);
             }

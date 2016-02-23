@@ -7,8 +7,8 @@
     <ProjectGuid>{22418041-8E7E-4353-A843-B3EB2B8616A8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ApexPresentation</RootNamespace>
-    <AssemblyName>ApexPresentation</AssemblyName>
+    <RootNamespace>CalanderPresentation</RootNamespace>
+    <AssemblyName>CalanderPresentation</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -28,18 +28,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>D:\VirtualBox VMs\mutual\_ApexPresenation_debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'toHost|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
@@ -52,20 +41,30 @@
   <PropertyGroup>
     <ApplicationIcon>cube-6x6.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugToHost|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\DebugToHost\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'toHost|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\toHost\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'toVM|AnyCPU'">
+    <OutputPath>bin\toVM\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'toVM|x86'">
+    <OutputPath>..\..\..\..\VirtualBox VMs\mutualSSD\CalanderPresentation\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'VM|AnyCPU'">
+    <OutputPath>bin\VM\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
+    <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'VM|x86'">
+    <OutputPath>..\..\..\..\VirtualBox VMs\mutualSSD\CalanderPresentation\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GraphicLine">
-      <HintPath>..\GraphicLine\bin\DebugToHost\GraphicLine.dll</HintPath>
-    </Reference>
     <Reference Include="OpcNetApi, Version=2.0.2.0, Culture=neutral, PublicKeyToken=78aea80f6827b5ab, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\OpcNetApi.dll</HintPath>
@@ -149,14 +148,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TimeLine\TimeLine.csproj">
-      <Project>{1FCD10B4-B36C-4A08-A32E-5A4302023A9F}</Project>
-      <Name>TimeLine</Name>
-      <Private>True</Private>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="cube-6x6.ico" />
     <Content Include="logo.ico" />
   </ItemGroup>
@@ -171,6 +162,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GraphicLine\GraphicLine.csproj">
+      <Project>{8cb0d4ad-3e2d-46a7-8f58-2aedb649c736}</Project>
+      <Name>GraphicLine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TimeLine\TimeLine.csproj">
+      <Project>{1fcd10b4-b36c-4a08-a32e-5a4302023a9f}</Project>
+      <Name>TimeLine</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

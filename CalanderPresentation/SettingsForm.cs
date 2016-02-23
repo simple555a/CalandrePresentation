@@ -38,7 +38,8 @@ namespace CalanderPresentation
                 this.textBox6.Text = Settings1.SQLPassword;
 
                 this.textBox3.Text = Settings1.OPCConnectionString;
-                this.textBox4.Text = Settings1.OPCRingsCounterName;
+                this.textBox4.Text = Settings1.OPCCounterName;
+                this.textBox2.Text = Settings1.OPCSpeedName;
 
             }
         }
@@ -52,7 +53,8 @@ namespace CalanderPresentation
             Settings1.SQLPassword = this.textBox6.Text;
 
             Settings1.OPCConnectionString = this.textBox3.Text;
-            Settings1.OPCRingsCounterName = this.textBox4.Text;
+            Settings1.OPCCounterName = this.textBox4.Text;
+            Settings1.OPCSpeedName = this.textBox2.Text;
 
 
             Settings1.SETTINGSFileVersion = "0000";
@@ -82,9 +84,10 @@ namespace CalanderPresentation
         {
             this.button3.Enabled = false;
             this.button3.Text = "Testing...";
-            OPC_class opc_obj = new OPC_class(textBox3.Text,textBox4.Text);
-            Settings1.OPCInitialized = opc_obj.Initialized;
-            label6.Text = (Settings1.OPCInitialized) ? "Ok" : "Not OK";
+            OPC_class opc_obj = new OPC_class(textBox3.Text,textBox4.Text,textBox2.Text);
+            Settings1.OPCCounterNameInitialized = opc_obj.CounterNameInitialized;
+            Settings1.OPCSpeedNameInitialized = opc_obj.SpeedNameInitialized;
+            label6.Text = (Settings1.OPCCounterNameInitialized && Settings1.OPCSpeedNameInitialized) ? "Ok" : "Not OK";
             this.button3.Enabled = true;
             this.button3.Text = "Test connection";
         }
@@ -119,6 +122,11 @@ namespace CalanderPresentation
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
         {
 
         }

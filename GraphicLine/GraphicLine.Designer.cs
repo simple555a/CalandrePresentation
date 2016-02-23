@@ -31,7 +31,6 @@ namespace GraphicLine
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.SuspendLayout();
             // 
             // GraphicLine
@@ -41,7 +40,7 @@ namespace GraphicLine
             this.BackColor = System.Drawing.Color.White;
             this.MinimumSize = new System.Drawing.Size(250, 0);
             this.Name = "GraphicLine";
-            this.Size = new System.Drawing.Size(347, 58);
+            this.Size = new System.Drawing.Size(501, 68);
             this.Load += new System.EventHandler(this.GraphicLine_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.GraphicLine_Paint);
             this.Resize += new System.EventHandler(this.GraphicLine_Resize);

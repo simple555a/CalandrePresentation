@@ -12,14 +12,15 @@ namespace CalanderPresentation
         #region Constructors
         public OPC_class()
         {
-            this.Initialized = false;
+            this.CounterNameInitialized = false;
+            this.SpeedNameInitialized = false;
             InitializeOPC();
         }
-        public OPC_class(String in_URL,  String in_RingsCounterName)
+        public OPC_class(String in_URL,  String in_CounterName, String in_SpeedName)
         {
             try
             {
-                this.Initialized = false;
+                this.CounterNameInitialized = false;
 
                 // 1st: Create a server object and connect
                 Opc.URL url = new Opc.URL(in_URL);
@@ -47,7 +48,7 @@ namespace CalanderPresentation
                 //groupRead.DataChanged += groupRead_DataChanged;
 
                 items[0] = new Opc.Da.Item();
-                items[0].ItemName = in_RingsCounterName;
+                items[0].ItemName = in_CounterName;
                 items = groupRead.AddItems(items);
 
                 Opc.Da.ItemValueResult[] values = groupRead.Read(items);
@@ -55,17 +56,63 @@ namespace CalanderPresentation
 
                 //if no exeption
                 this.URL = in_URL;
-                this.Initialized = true;
+                this.CounterNameInitialized = true;
             }
             catch
             {
-                this.Initialized = false;
+                this.CounterNameInitialized = false;
+            }
+
+            try
+            {
+                this.SpeedNameInitialized = false;
+
+                // 1st: Create a server object and connect
+                Opc.URL url = new Opc.URL(in_URL);
+                Opc.Da.Server server = new Opc.Da.Server(fact, null);
+
+
+                //2nd: Connect to the created server
+                //server.Connect(url, new Opc.ConnectData(new System.Net.NetworkCredential()));
+                try
+                {
+                    server.Connect(url, new Opc.ConnectData(new System.Net.NetworkCredential()));
+                }
+                catch (Exception Ex)
+                {
+                    MessageBox.Show(Ex.Message);
+                    //return false;
+                }
+
+                //3rd Create a group if items            
+                groupState = new Opc.Da.SubscriptionState();
+                groupState.Name = "Group999";
+                groupState.UpdateRate = 1000;// this isthe time between every reads from OPC server
+                groupState.Active = true;//this must be true if you the group has to read value
+                groupRead = (Opc.Da.Subscription)server.CreateSubscription(groupState);
+                //groupRead.DataChanged += groupRead_DataChanged;
+
+                items[0] = new Opc.Da.Item();
+                items[0].ItemName = in_SpeedName;
+                items = groupRead.AddItems(items);
+
+                Opc.Da.ItemValueResult[] values = groupRead.Read(items);
+                MessageBox.Show("Readed value is " + values[0].Value.ToString());
+
+                //if no exeption
+                this.URL = in_URL;
+                this.SpeedNameInitialized = true;
+            }
+            catch
+            {
+                this.SpeedNameInitialized = false;
             }
         }
         #endregion
 
         #region Properties
-            public bool Initialized;
+            public bool CounterNameInitialized;
+            public bool SpeedNameInitialized;
             public Int32 CounterOfRings;
             private String URL;
             private Label ActiveLabel;
@@ -99,7 +146,7 @@ namespace CalanderPresentation
                             Settings Settings1 = (Settings)XmlSerializer1.Deserialize(reader1);
                             reader1.Dispose();
 
-                            if (Settings1.OPCInitialized == true)
+                            if (Settings1.OPCCounterNameInitialized == true)
                             {
                                 // 1st: Create a server object and connect to the RSLinx OPC Server
                                 url = new Opc.URL(Settings1.OPCConnectionString);
@@ -115,29 +162,59 @@ namespace CalanderPresentation
                                 groupRead.DataChanged += groupRead_DataChanged;
 
                                 items[0] = new Opc.Da.Item();
-                                items[0].ItemName = Settings1.OPCRingsCounterName;
+                                items[0].ItemName = Settings1.OPCCounterName;
                                 items = groupRead.AddItems(items);
 
                                 Opc.Da.ItemValueResult[] values = groupRead.Read(items);
                                 //MessageBox.Show("Readed value is " + values[0].Value.ToString());
-                                this.Initialized = true;
+                                this.CounterNameInitialized = true;
                             }
-                            if (Settings1.OPCInitialized != true)
+                            if (Settings1.OPCSpeedNameInitialized == true)
                             {
-                                MessageBox.Show("OPC connection is not tested. See Settings - > Connection...");
-                                this.Initialized = false;
+                                // 1st: Create a server object and connect to the RSLinx OPC Server
+                                url = new Opc.URL(Settings1.OPCConnectionString);
+                                server = new Opc.Da.Server(fact, null);
+                                //2nd: Connect to the created server
+                                server.Connect(url, new Opc.ConnectData(new System.Net.NetworkCredential()));
+                                //3rd Create a group if items            
+                                groupState = new Opc.Da.SubscriptionState();
+                                groupState.Name = "Group999";
+                                groupState.UpdateRate = 1000;// this isthe time between every reads from OPC server
+                                groupState.Active = true;//this must be true if you the group has to read value
+                                groupRead = (Opc.Da.Subscription)server.CreateSubscription(groupState);
+                                groupRead.DataChanged += groupRead_DataChanged;
+
+                                items[0] = new Opc.Da.Item();
+                                items[0].ItemName = Settings1.OPCSpeedName;
+                                items = groupRead.AddItems(items);
+
+                                Opc.Da.ItemValueResult[] values = groupRead.Read(items);
+                                //MessageBox.Show("Readed value is " + values[0].Value.ToString());
+                                this.SpeedNameInitialized = true;
+                            }
+                            if (Settings1.OPCSpeedNameInitialized != true)
+                            {
+                                MessageBox.Show("OPC connection is not tested. See Settings - > Connection... (OPCSpeedNameInitialized)");
+                                this.SpeedNameInitialized = false;
+                            }
+                            if (Settings1.OPCCounterNameInitialized != true)
+                            {
+                                MessageBox.Show("OPC connection is not tested. See Settings - > Connection... (OPCCounterNameInitialized)");
+                                this.CounterNameInitialized = false;
                             }
                         }
                         else
                         {
                             MessageBox.Show("OPC settings is empty. See Settings - > Connection...");
-                            this.Initialized = false;
+                            this.CounterNameInitialized = false;
+                            this.SpeedNameInitialized = false;
                         }
                     }
                     catch
                     {
                         MessageBox.Show("Bad OPC connection. Review connection string");
-                        this.Initialized = false;
+                        this.CounterNameInitialized = false;
+                        this.SpeedNameInitialized = false;
                     }
                 }
 

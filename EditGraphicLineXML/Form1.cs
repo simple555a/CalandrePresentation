@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GraphicLine;
 using System.IO;
@@ -35,7 +28,7 @@ namespace EditGraphicLineXML
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));
-            TextWriter writer = new StreamWriter(@"C:\Users\serzh\Documents\GitHub\CalandrePresentation\CalanderPresentation\bin\DebugToHost\GraphicLineData.xml");
+            TextWriter writer = new StreamWriter(@"C:\Users\serzh\Documents\GitHub\CalandrePresentation\CalanderPresentation\bin\x86\toHost\GraphicLineData.xml");
             serializer.Serialize(writer, a1);
             writer.Dispose();
             

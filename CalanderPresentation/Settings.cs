@@ -15,9 +15,11 @@ namespace CalanderPresentation
         public String SQLPassword;
 
 
-        public bool OPCInitialized;
+        public bool OPCCounterNameInitialized;
+        public bool OPCSpeedNameInitialized;
         public String OPCConnectionString;
-        public String OPCRingsCounterName;
+        public String OPCCounterName;
+        public String OPCSpeedName;
 
         public bool GENERALShowHistoryBrowser;
 
