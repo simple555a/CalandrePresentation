@@ -15,16 +15,17 @@ namespace EditGraphicLineXML
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //DateTime T1 = get_T1(get_CURR());
-            DateTime T1 = new DateTime(2016,02,21,8,0,0);
-            int Size = 11500;
+            DateTime T1 = get_T1(get_CURR());
+            //DateTime T1 = new DateTime(2016,02,28,08,0,0);
+            int Size = 100;
             GraphicLine.GLPoint[] a1 = new GLPoint[Size]; //720 min + 1
             
             Random rnd_v = new Random();
             //for (int i = 0; i < a1.Length; i++)
             for (int i = 0; i < Size; i++)
             {
-                a1[Size-1 - i] = new GLPoint(i % 60 , T1.AddMinutes(i));
+                if (i < 40 || i > 65)
+                    a1[Size-1 - i] = new GLPoint(i % 60 , T1.AddMinutes(i));
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));

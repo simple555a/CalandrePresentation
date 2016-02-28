@@ -24,6 +24,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'toHost|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\toHost\</OutputPath>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'toVM|AnyCPU'">
     <OutputPath>bin\toVM\</OutputPath>
@@ -44,6 +46,8 @@
     <OutputPath>..\..\..\..\VirtualBox VMs\mutualSSD\CalanderPresentation\</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -54,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GLPoint.cs" />
+    <Compile Include="History.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GraphicLine.cs">
       <SubType>UserControl</SubType>

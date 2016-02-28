@@ -44,6 +44,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'toHost|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\toHost\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'toVM|AnyCPU'">
     <OutputPath>bin\toVM\</OutputPath>
@@ -63,6 +67,8 @@
     <OutputPath>..\..\..\..\VirtualBox VMs\mutualSSD\CalanderPresentation\</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpcNetApi, Version=2.0.2.0, Culture=neutral, PublicKeyToken=78aea80f6827b5ab, processorArchitecture=x86">

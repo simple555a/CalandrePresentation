@@ -36,7 +36,9 @@ namespace CalanderPresentation
         /// </summary>
         static DateTime previous_time = new DateTime();
 
-        static GraphicLine.GLPoint[] GraphicLineDataArr = new GLPoint[1440*2];
+        static int HistoryDeep = 10800;
+        static GraphicLine.GLPoint[] GraphicLineDataArr = new GLPoint[HistoryDeep]; //7 days
+        
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -81,22 +83,8 @@ namespace CalanderPresentation
             #region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
-
-            if (File.Exists("GraphicLineData.xml"))
-            {
-                XmlSerializer XmlSerializer1 = new XmlSerializer(typeof(GraphicLine.GLPoint[]));
-                TextReader reader1 = new StreamReader("GraphicLineData.xml");
-                GraphicLineDataArr = (GraphicLine.GLPoint[])XmlSerializer1.Deserialize(reader1);
-                reader1.Dispose();
-                
-                //while (GraphicLineDataArr[i]!=null)                
-                for (int i= GraphicLineDataArr.Length-1;i>=0;i--)
-                {
-                    if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime >= get_T1(get_CURR()))
-                        graphicLine1.Data.Add(GraphicLineDataArr[i]);
-                }
-            }
             
+
             #endregion
 
             GlobalPresenter();
@@ -326,22 +314,31 @@ namespace CalanderPresentation
 
         private void GraphicLinePresenter(GraphicLine.GraphicLine in_control, DateTime in_StartTime)
         {
+
+
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
+
+            in_control.SetEmpty();
+
             in_control.AddBasePeriod(T1, T2);
-            
 
-            //TODO Simulate data
-            //for (int i = 0; i < GraphicLineDataArr.Length; i++)
-            //{
+            //TODO 
+            if (File.Exists("GraphicLineData.xml"))
+            {
+                XmlSerializer XmlSerializer1 = new XmlSerializer(typeof(GraphicLine.GLPoint[]));
+                TextReader reader1 = new StreamReader("GraphicLineData.xml");
+                GraphicLineDataArr = (GraphicLine.GLPoint[])XmlSerializer1.Deserialize(reader1);
+                reader1.Dispose();
 
-            //}
-            //
-
-            //in_control.SetEmpty();
-
+                for (int i = GraphicLineDataArr.Length - 1; i >= 0; i--)
+                {
+                    if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime >= get_T1(get_CURR()))
+                        graphicLine1.Data.Add(GraphicLineDataArr[i]);
+                }
+            }
 
 
         }
