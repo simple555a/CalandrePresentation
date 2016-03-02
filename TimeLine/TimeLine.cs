@@ -25,20 +25,22 @@ namespace TimeLine
             Color color1 = new Color();
             Color color2 = new Color();
             Pen pen1, pen2;
-            System.Drawing.Font font_004 = new System.Drawing.Font("Arial", 9);
-            System.Drawing.Font font_005 = new System.Drawing.Font("Arial", 30);
             SolidBrush brush_004 = new SolidBrush(Color.Black);
             TextureBrush brush_001 = new TextureBrush(Properties.Resources.chess_texture);
             String tempString = "";
 
             this.LeftMargin = 20;
             this.RightMargin = 1;
-            this.TimeLineHeight = 20;
+            this.TimeLineHeight = 30;
             this.TimeLineX1 = this.LeftMargin;
             this.TimeLineY1 = 0;
             this.TimeLineX2 = this.Width - this.RightMargin;
             this.TimeLineY2 = this.TimeLineHeight;
             this.TimeLineWidth = this.TimeLineX2 - this.TimeLineX1;
+
+
+            System.Drawing.Font font_004 = new System.Drawing.Font("Arial", 9);
+            System.Drawing.Font font_005 = new System.Drawing.Font("Arial", this.TimeLineHeight/2);
 
             #region print start and end time
             tempString = this.StartTime.ToString();

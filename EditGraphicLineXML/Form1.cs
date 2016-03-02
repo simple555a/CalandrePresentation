@@ -15,21 +15,23 @@ namespace EditGraphicLineXML
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DateTime T1 = get_T1(get_CURR());
-            //DateTime T1 = new DateTime(2016,02,28,08,0,0);
-            int Size = 100;
+            //DateTime T1 = get_T1(get_CURR());
+            DateTime T1 = new DateTime(2016, 03, 1, 08, 0, 0);
+            int Size = 10000;
             GraphicLine.GLPoint[] a1 = new GLPoint[Size]; //720 min + 1
             
             Random rnd_v = new Random();
             //for (int i = 0; i < a1.Length; i++)
             for (int i = 0; i < Size; i++)
             {
-                if (i < 40 || i > 65)
-                    a1[Size-1 - i] = new GLPoint(i % 60 , T1.AddMinutes(i));
+                //if (i < 40 || i > 65)
+                    a1[Size-1 - i] = new GLPoint((i * 60)/10000 , T1.AddMinutes(i));
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));
-            TextWriter writer = new StreamWriter(@"C:\Users\serzh\Documents\GitHub\CalandrePresentation\CalanderPresentation\bin\x86\toHost\GraphicLineData.xml");
+
+            //TextWriter writer = new StreamWriter(@"C:\Users\serzh\Documents\GitHub\CalandrePresentation\CalanderPresentation\bin\x86\toHost\graphicLine1Data.xml");
+            TextWriter writer = new StreamWriter(@"C:\Users\serzh\VirtualBox VMs\mutualSSD\CalanderPresentation\graphicLine1Data.xml");
             serializer.Serialize(writer, a1);
             writer.Dispose();
             

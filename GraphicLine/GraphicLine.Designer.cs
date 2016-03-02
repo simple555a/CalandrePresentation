@@ -87,6 +87,7 @@ namespace GraphicLine
         }
         
 
+
         public int LeftMargin;
         public int RightMargin;
         public List<GLPoint> Data = new List<GLPoint> { };
@@ -96,7 +97,6 @@ namespace GraphicLine
         /// 0 - sec, 1 - minute, 2 - hour, 3 - day
         /// </summary>
         public int TimeDimension;
-        public String XMLHistoryPath;
 
         private DateTime StartTime;
         private DateTime EndTime;
@@ -108,7 +108,7 @@ namespace GraphicLine
         private int GraphicLineWidth;
         private int GraphicLineYTitlesWidth;
 
-        private HistoryClass History;
+        public HistoryClass History;
 
 
     }

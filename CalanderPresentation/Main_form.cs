@@ -19,10 +19,6 @@ namespace CalanderPresentation
 {
     public partial class Main_form : Form
     {
-        public Main_form()
-        {
-            InitializeComponent();
-        }
 
         static Sql_class sql_obj = new Sql_class();
 #if !bypass_opc_init
@@ -31,16 +27,17 @@ namespace CalanderPresentation
         static Timer global_clock = new Timer();
         static Timer refresh_form_timer = new Timer();
         private static Settings Settings1 = new Settings();
-        /// <summary>
-        /// for zeroing meters
-        /// </summary>
         static DateTime previous_time = new DateTime();
 
         //GraphicLine
         static int HistoryDeep = 10800;
         static GraphicLine.GLPoint[] GraphicLineDataArr = new GLPoint[HistoryDeep]; //7 days
-
         
+
+        public Main_form()
+        {
+            InitializeComponent();
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -85,11 +82,12 @@ namespace CalanderPresentation
             #region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
-            
-
+            graphicLine1.History.Filename = "graphicLine1Data.xml";
+            GraphicLineDataArr = graphicLine1.History.LoadFromXML();
             #endregion
 
             GlobalPresenter();
+
             label5.Text = sql_obj.GetCurrentStatus();
 
             Color temp_color_000 = sql_obj.GetCurrentStatusColor();
@@ -98,8 +96,7 @@ namespace CalanderPresentation
                 label5.ForeColor = Color.Black;
             else
                 label5.ForeColor = Color.White;
-
-
+            
             //history browser
             tableLayoutPanel2.RowStyles[2].Height = 0;
             try
@@ -116,14 +113,11 @@ namespace CalanderPresentation
                 }
             }
             catch
-            {
-
-            }
+            { }
 
             LabelsCenterPositioning(groupBox1);
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
-            
             
             this.Text += " v0.0.1";
 
@@ -133,12 +127,6 @@ namespace CalanderPresentation
             label4.Text = opc_obj.CounterOfRings.ToString();
             opc_obj.SetActiveLabel(label4);
 #endif
-
-
-
-
-
-
             previous_time = get_CURR();
         }
 
@@ -179,21 +167,14 @@ namespace CalanderPresentation
             String hours = (System.DateTime.Now.TimeOfDay.Hours < 10) ? "0" + System.DateTime.Now.TimeOfDay.Hours.ToString() : System.DateTime.Now.TimeOfDay.Hours.ToString();
             String minutes = (System.DateTime.Now.TimeOfDay.Minutes < 10) ? "0" + System.DateTime.Now.TimeOfDay.Minutes.ToString() : System.DateTime.Now.TimeOfDay.Minutes.ToString();
             String seconds = (System.DateTime.Now.TimeOfDay.Seconds < 10) ? "0" + System.DateTime.Now.TimeOfDay.Seconds.ToString() : System.DateTime.Now.TimeOfDay.Seconds.ToString();
-
-
             label2.Text = year + " " + month + " " +day + "  " + hours + ":" + minutes + ":" + seconds;
         }
-
-        
-
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-
-       
-
+        
         private void connectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConnectionForm ConnectionsForm1 = new ConnectionForm();
@@ -322,27 +303,22 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
-
             in_control.SetEmpty();
-
             in_control.AddBasePeriod(T1, T2);
 
-            //TODO 
-            if (File.Exists("GraphicLineData.xml"))
+            //MessageBox.Show(T1.ToString());
+            for (int i = GraphicLineDataArr.Length - 1; i >= 0; i--)
             {
-                XmlSerializer XmlSerializer1 = new XmlSerializer(typeof(GraphicLine.GLPoint[]));
-                TextReader reader1 = new StreamReader("GraphicLineData.xml");
-                GraphicLineDataArr = (GraphicLine.GLPoint[])XmlSerializer1.Deserialize(reader1);
-                reader1.Dispose();
-
-                for (int i = GraphicLineDataArr.Length - 1; i >= 0; i--)
+                if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime >= T1)
                 {
-                    if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime >= get_T1(get_CURR()))
-                        graphicLine1.Data.Add(GraphicLineDataArr[i]);
+                    graphicLine1.Data.Add(GraphicLineDataArr[i]);
+                    //MessageBox.Show(T1.ToString());
                 }
+
             }
+            //MessageBox.Show(GraphicLineDataArr.Length.ToString());
 
-
+            in_control.Refresh();
         }
 
         private void DataGridPresenter(DataGridView in_control, DateTime in_StartTime)
@@ -350,8 +326,7 @@ namespace CalanderPresentation
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
-
-
+            
             List<DataGridRow> a1 = sql_obj.GetTableStatistic(T1, T2, CURR);
             in_control.AllowUserToAddRows = false;
             in_control.Rows.Clear();

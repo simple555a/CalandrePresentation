@@ -15,6 +15,8 @@ namespace GraphicLine
         public GraphicLine()
         {
             InitializeComponent();
+
+            this.History = new HistoryClass();
         }
 
         
