@@ -108,6 +108,8 @@ namespace GraphicLine
         private int GraphicLineWidth;
         private int GraphicLineYTitlesWidth;
 
+        private HistoryClass History;
+
 
     }
 }

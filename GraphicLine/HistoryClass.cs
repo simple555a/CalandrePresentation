@@ -6,9 +6,9 @@ using System.Xml.Serialization;
 
 namespace GraphicLine
 {
-    class History
+    class HistoryClass
     {
-        public History()
+        public HistoryClass()
         {
 
         }
@@ -32,7 +32,10 @@ namespace GraphicLine
 
         public void LoadToXML(GLPoint[] data)
         {
-
+            XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));
+            TextWriter writer = new StreamWriter(@"GraphicLineData.xml");
+            serializer.Serialize(writer, data);
+            writer.Dispose();
         }
     }
 }

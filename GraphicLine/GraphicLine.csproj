@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GLPoint.cs" />
-    <Compile Include="History.cs" />
+    <Compile Include="HistoryClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GraphicLine.cs">
       <SubType>UserControl</SubType>

@@ -36,8 +36,10 @@ namespace CalanderPresentation
         /// </summary>
         static DateTime previous_time = new DateTime();
 
+        //GraphicLine
         static int HistoryDeep = 10800;
         static GraphicLine.GLPoint[] GraphicLineDataArr = new GLPoint[HistoryDeep]; //7 days
+
         
 
         private void Form1_Load(object sender, EventArgs e)
