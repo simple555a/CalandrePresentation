@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GLGlobal.cs" />
     <Compile Include="GLPoint.cs" />
     <Compile Include="HistoryClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

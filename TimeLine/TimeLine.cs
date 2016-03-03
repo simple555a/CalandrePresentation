@@ -23,7 +23,6 @@ namespace TimeLine
         {
             //global settings and vars
             Color color1 = new Color();
-            Color color2 = new Color();
             Pen pen1, pen2;
             SolidBrush brush_004 = new SolidBrush(Color.Black);
             TextureBrush brush_001 = new TextureBrush(Properties.Resources.chess_texture);

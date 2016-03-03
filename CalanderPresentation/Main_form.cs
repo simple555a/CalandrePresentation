@@ -29,9 +29,7 @@ namespace CalanderPresentation
         private static Settings Settings1 = new Settings();
         static DateTime previous_time = new DateTime();
 
-        //GraphicLine
-        static int HistoryDeep = 10800;
-        static GraphicLine.GLPoint[] GraphicLineDataArr = new GLPoint[HistoryDeep]; //7 days
+        static GraphicLine.GLGlobal GLGlobalObject = new GLGlobal();
         
 
         public Main_form()
@@ -83,7 +81,7 @@ namespace CalanderPresentation
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
-            GraphicLineDataArr = graphicLine1.History.LoadFromXML();
+            GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
             #endregion
 
             GlobalPresenter();
@@ -297,8 +295,6 @@ namespace CalanderPresentation
 
         private void GraphicLinePresenter(GraphicLine.GraphicLine in_control, DateTime in_StartTime)
         {
-
-
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
@@ -307,11 +303,11 @@ namespace CalanderPresentation
             in_control.AddBasePeriod(T1, T2);
 
             //MessageBox.Show(T1.ToString());
-            for (int i = GraphicLineDataArr.Length - 1; i >= 0; i--)
+            for (int i = GLGlobalObject.GraphicLineDataArr.Length - 1; i >= 0; i--)
             {
-                if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime >= T1)
+                if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1)
                 {
-                    graphicLine1.Data.Add(GraphicLineDataArr[i]);
+                    graphicLine1.Data.Add(GLGlobalObject.GraphicLineDataArr[i]);
                     //MessageBox.Show(T1.ToString());
                 }
 

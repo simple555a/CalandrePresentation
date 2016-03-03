@@ -25,13 +25,16 @@ namespace GraphicLine
         {
             //global settings and vars
             Color color1 = new Color();
+            Color color2 = new Color();
             Pen pen1;
             Pen pen2;
+            Pen pen3;
             System.Drawing.Font font_004 = new System.Drawing.Font("Arial", 9);
             System.Drawing.Font font_005 = new System.Drawing.Font("Arial", 30);
             SolidBrush brush_004 = new SolidBrush(Color.Black);
             SolidBrush brush_005 = new SolidBrush(Color.YellowGreen);
-            String tempString = "";
+
+            SolidBrush brush_006 = new SolidBrush(Color.Red);
 
             this.GraphicLineYTitlesWidth = 20;
             this.GraphicLineHeight = 60;
@@ -47,31 +50,8 @@ namespace GraphicLine
             #region Draw polygon data
             if (this.Data.Count != 0)
             {
-                #region old
-                //Point[] points_arr = new Point[this.Data.Count + 2]; //720 min + 1 + 2points for bottom part of polygon
-                //points_arr[0] = new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2);
-                //int previousX_in_minutes = 0;
-                //for (int i = 0; i < this.Data.Count; i++)
-                //{
-                //    int temp = (int)(((this.Data[i].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
-                //    if (this.Data[i] != null && this.Data[i].datetime == this.StartTime.AddMinutes(i))
-                //    {
-                //        if ((int)(this.Data[i].datetime - this.StartTime).TotalMinutes - previousX_in_minutes == 1)
-                //            points_arr[i + 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
-                //        if ((int)(this.Data[i].datetime - this.StartTime).TotalMinutes - previousX_in_minutes > 1)
-                //        {
-                //            points_arr[i + 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value);
-                //        }
-                //        previousX_in_minutes = (int)(this.Data[i].datetime - this.StartTime).TotalMinutes;
-                //    }
-                //    if (this.Data[i] == null || this.Data[i].datetime != this.StartTime.AddMinutes(i))
-                //        points_arr[i + 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2);
-                //}
-                //points_arr[points_arr.Length - 1] = new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + (((int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2);
-                //e.Graphics.FillPolygon(brush_005, points_arr);
-                #endregion
-
                 List<Point> points_list = new List<Point>();
+                List<Point> Gaps_list = new List<Point>();
 
                 points_list.Add(new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2));
                 int previous_distance = 0;
@@ -79,14 +59,22 @@ namespace GraphicLine
                 {
                     int curr_distance = (int)(this.Data[i].datetime - this.StartTime).TotalMinutes;
                     int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                    //there is no gaps
                     if ((curr_distance - previous_distance) == 1)
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
+                    //gaps
                     if ((curr_distance - previous_distance) > 1)
                     {
                         temp = (int)((previous_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
+                        Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1+3));
+
                         temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
+                        Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1+3));
+
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
                     }
                     previous_distance = curr_distance;
@@ -99,6 +87,14 @@ namespace GraphicLine
                     points_arr[i] = points_list[i];
                 }
                 e.Graphics.FillPolygon(brush_005, points_arr);
+
+                for (int i=0;i<Gaps_list.Count;i+=2)
+                {
+                    color2 = Color.FromArgb(0, 0, 0);
+                    pen3 = new Pen(color2);
+                    pen3.Width = 6;
+                    e.Graphics.DrawLine(pen3, Gaps_list[i], Gaps_list[i + 1]);
+                }
             }
             #endregion
 
