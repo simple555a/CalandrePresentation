@@ -78,8 +78,8 @@ namespace TimeLine
             this.StartTime = DateTime.MinValue;
             this.EndTime = DateTime.MaxValue;
             this.TimeDimension = 0;
-            this.LeftMargin = 0;
-            this.RightMargin = 0;
+            //this.LeftMargin = 0;
+            //this.RightMargin = 0;
             this.TimeLineHeight = 0;
             this.TimeLineX1 = 0;
             this.TimeLineY1 = 0;

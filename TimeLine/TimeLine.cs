@@ -30,7 +30,7 @@ namespace TimeLine
 
             this.LeftMargin = 20;
             this.RightMargin = 1;
-            this.TimeLineHeight = 30;
+            this.TimeLineHeight = 20;
             this.TimeLineX1 = this.LeftMargin;
             this.TimeLineY1 = 0;
             this.TimeLineX2 = this.Width - this.RightMargin;

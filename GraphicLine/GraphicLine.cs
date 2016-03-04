@@ -119,11 +119,7 @@ namespace GraphicLine
                     this.GraphicLineX1 + this.GraphicLineYTitlesWidth+ System.Convert.ToInt16(((i) * (this.GraphicLineWidth- this.GraphicLineYTitlesWidth)) / total_hours),
                     this.GraphicLineY2);
             }
-
-            //for (int i = GraphicLineX1 + this.GraphicLineYTitlesWidth; i < GraphicLineX2; i += 80)
-            //{
-            //    e.Graphics.DrawLine(pen1, i, GraphicLineY1, i, GraphicLineY2);
-            //}
+            
             #endregion
 
             //TODO: Too many magic numbers

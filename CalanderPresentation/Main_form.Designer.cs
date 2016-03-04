@@ -129,7 +129,6 @@
             this.label4.Size = new System.Drawing.Size(122, 120);
             this.label4.TabIndex = 0;
             this.label4.Text = "--";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -646,7 +645,6 @@
             this.showHistoryBrowserToolStripMenuItem.Name = "showHistoryBrowserToolStripMenuItem";
             this.showHistoryBrowserToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.showHistoryBrowserToolStripMenuItem.Text = "Show history browser";
-            this.showHistoryBrowserToolStripMenuItem.CheckedChanged += new System.EventHandler(this.showHistoryBrowserToolStripMenuItem_CheckedChanged);
             this.showHistoryBrowserToolStripMenuItem.Click += new System.EventHandler(this.showHistoryBrowserToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
@@ -677,8 +675,6 @@
             this.Name = "Main_form";
             this.Text = "CalanderPresentation";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.Shown += new System.EventHandler(this.Main_form_Shown);
-            this.ResizeEnd += new System.EventHandler(this.Main_form_ResizeEnd);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Main_form_Paint);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

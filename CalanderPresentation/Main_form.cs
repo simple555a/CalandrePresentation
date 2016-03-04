@@ -3,15 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using TimeLine;
 using GraphicLine;
 using System.IO;
-using System.Xml;
 using System.Xml.Serialization;
 using CalanderPresentation.TYPES;
 
@@ -39,39 +34,18 @@ namespace CalanderPresentation
 
         private void Form1_Load(object sender, EventArgs e)
         {
-#if !real_time           
+            #region RealTime Indication
+#if !real_time
             toolStripStatusLabel1.Text = "NOT REAL TIME!!!";
             toolStripStatusLabel1.ForeColor = Color.Red;
 #endif
 #if real_time
             toolStripStatusLabel1.Text = "";
 #endif
+            #endregion
             
             label9.Text = sql_obj.GetWCName();
-#if !real_time
-            DateTime BStartTime = new DateTime(2015, 04, 24, 00, 00, 00);
-            dateTimePicker1.Value = BStartTime;
-#endif
-#if real_time
-            if (System.DateTime.Now.Hour<9)
-                dateTimePicker1.Value = System.DateTime.Now.Date-TimeSpan.FromDays(1);
-            if (System.DateTime.Now.Hour >=8)
-                dateTimePicker1.Value = System.DateTime.Now.Date;
-#endif
-            //check shift
-            if (get_CURR().Hour >= 8 && get_CURR().Hour <20) 
-                radioButton1.Checked = true;
-            else
-                radioButton2.Checked = true;
-            
-            global_clock.Interval = 1000;
-            global_clock.Tick += global_clock_Tick;
-            global_clock.Start();
-
-            refresh_form_timer.Interval = 60000;
-            refresh_form_timer.Tick += refresh_form_timer_Tick;
-            refresh_form_timer.Start();
-
+                        
             //set up components
             #region TimeLine
             timeLine1.LeftMargin = 20;
@@ -83,8 +57,7 @@ namespace CalanderPresentation
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
             #endregion
-
-            GlobalPresenter();
+            
 
             label5.Text = sql_obj.GetCurrentStatus();
 
@@ -125,6 +98,36 @@ namespace CalanderPresentation
             label4.Text = opc_obj.CounterOfRings.ToString();
             opc_obj.SetActiveLabel(label4);
 #endif
+
+
+            global_clock.Interval = 1000;
+            global_clock.Tick += global_clock_Tick;
+            global_clock.Start();
+
+            refresh_form_timer.Interval = 60000;
+            refresh_form_timer.Tick += refresh_form_timer_Tick;
+            refresh_form_timer.Start();
+
+            #region Check shift
+
+            if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
+                radioButton1.Checked = true;
+            else
+                radioButton2.Checked = true;
+            #endregion
+            #region Datetime picker current shift (day/night) and run GlobalPresenter() - value change event
+#if !real_time
+            DateTime BStartTime = new DateTime(2015, 04, 24, 00, 00, 00);
+            dateTimePicker1.Value = BStartTime;
+#endif
+#if real_time
+            if (System.DateTime.Now.Hour < 9)
+                dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
+            if (System.DateTime.Now.Hour >= 8)
+                dateTimePicker1.Value = System.DateTime.Now.Date;
+#endif
+            #endregion 
+
             previous_time = get_CURR();
         }
 
@@ -226,7 +229,6 @@ namespace CalanderPresentation
             {
                 T2 = in_StartTime.Date + t1 + t2 + t2;
             }
-
             return T2;
         }
 
@@ -240,6 +242,19 @@ namespace CalanderPresentation
             CURR = DateTime.Now;
 #endif
             return CURR;
+        }
+
+        private DateTime get_CURR_wo_seconds()
+        {
+            DateTime CURR;
+#if !real_time
+            CURR = new DateTime(2015, 04, 24, 19, 39, 00);
+#endif
+#if real_time
+            CURR = DateTime.Now;
+            //CURR.Subtract()
+#endif
+            return new DateTime(CURR.Year,CURR.Month,CURR.Day,CURR.Hour,CURR.Minute,0);
         }
 
         private void TimeLinePresenter(TimeLine.TimeLine in_control,DateTime in_StartTime)
@@ -288,7 +303,6 @@ namespace CalanderPresentation
             {
                 in_control.AddBasePeriod(T1, T2, true);
             }
-
             in_control.Refresh();
         }
 
@@ -301,19 +315,14 @@ namespace CalanderPresentation
 
             in_control.SetEmpty();
             in_control.AddBasePeriod(T1, T2);
-
-            //MessageBox.Show(T1.ToString());
+            
             for (int i = GLGlobalObject.GraphicLineDataArr.Length - 1; i >= 0; i--)
             {
                 if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1)
                 {
                     graphicLine1.Data.Add(GLGlobalObject.GraphicLineDataArr[i]);
-                    //MessageBox.Show(T1.ToString());
                 }
-
             }
-            //MessageBox.Show(GraphicLineDataArr.Length.ToString());
-
             in_control.Refresh();
         }
 
@@ -353,8 +362,6 @@ namespace CalanderPresentation
                 else
                     in_control.Rows[i].Cells[5].Style.BackColor = Color.GreenYellow;
             }
-
-            
         }
 
         public int GetAverageCycleTime(int in_DoneRingsCount)
@@ -384,54 +391,44 @@ namespace CalanderPresentation
         {
             GlobalPresenter();
         }
-
-        private void radioButton1_MouseClick(object sender, MouseEventArgs e)
-        {
-            GlobalPresenter();
-        }
-
-        private void radioButton2_MouseClick(object sender, MouseEventArgs e)
-        {
-            GlobalPresenter();
-        }
-
+        
         private void GlobalPresenter()
         {
             label1.Text =  sql_obj.GetOperatorName() ;
-
             TimeLinePresenter(timeLine1, dateTimePicker1.Value);
             GraphicLinePresenter(graphicLine1, dateTimePicker1.Value);
             DataGridPresenter(dataGridView1, dateTimePicker1.Value);
-
-            //Eficiency
-            //1.real time
-            if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
-                label8.Text = (
-                                Math.Round(
-                                            (1 - (sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()).TotalSeconds / (get_CURR() - get_T1(dateTimePicker1.Value)).TotalSeconds)) * 100, 2
-                                        )
-                            ).ToString()+"%";
-            //2.history
-            if (get_T2(dateTimePicker1.Value) <= get_CURR())
-                label8.Text = (
-                                Math.Round(
-                                            (1 - (sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()).TotalSeconds / 43200)) * 100, 2
-                                        )
-                            ).ToString() + "%";
+            GetEficiency();
             label5.Text = sql_obj.GetCurrentStatus();
             label5.BackColor = sql_obj.GetCurrentStatusColor();
         }
 
-        private void label4_Click(object sender, EventArgs e)
+        private void GetEficiency()
         {
-
+            //1.real time
+            if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
+                label8.Text = (
+                                Math.Round(
+                                                (1 - (sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), 
+                                                                                get_T2(dateTimePicker1.Value), 
+                                                                                get_CURR_wo_seconds()).TotalSeconds / (get_CURR_wo_seconds() - get_T1(dateTimePicker1.Value)).TotalSeconds
+                                                                                )
+                                                ) * 100, 2
+                                            )
+                            ).ToString() + "%";
+            //MessageBox.Show((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
+            //                                                                    get_T2(dateTimePicker1.Value),
+            //                                                                    get_CURR_wo_seconds()).TotalSeconds / (get_CURR_wo_seconds() - get_T1(dateTimePicker1.Value)).TotalSeconds
+            //                                            ).ToString());
+            //2.history
+            if (get_T2(dateTimePicker1.Value) <= get_CURR())
+                label8.Text = (
+                                Math.Round(
+                                            (1 - (sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR_wo_seconds()).TotalSeconds / 43200)) * 100, 2
+                                        )
+                            ).ToString() + "%";
         }
-
-        private void Main_form_Shown(object sender, EventArgs e)
-        {
-            
-        }
-
+        
         private void showHistoryBrowserToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showHistoryBrowserToolStripMenuItem.Checked = !showHistoryBrowserToolStripMenuItem.Checked;
@@ -445,12 +442,7 @@ namespace CalanderPresentation
             writer.Dispose();
 
         }
-
-        private void showHistoryBrowserToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
+        
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AboutForm AboutForm1 = new AboutForm();
@@ -469,22 +461,22 @@ namespace CalanderPresentation
                 }
             }
         }
-
-        private void Main_form_ResizeEnd(object sender, EventArgs e)
-        {
-
-        }
-
+        
         private void Main_form_Paint(object sender, PaintEventArgs e)
         {
             LabelsCenterPositioning(groupBox1);
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
         }
-
-        private void graphicLine1_Load(object sender, EventArgs e)
+        
+        private void radioButton2_MouseClick(object sender, MouseEventArgs e)
         {
+            GlobalPresenter();
+        }
 
+        private void radioButton1_MouseClick(object sender, MouseEventArgs e)
+        {
+            GlobalPresenter();
         }
     }
 }

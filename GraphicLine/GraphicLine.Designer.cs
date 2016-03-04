@@ -53,8 +53,8 @@ namespace GraphicLine
 
         public void SetEmpty()
         {
-            this.LeftMargin = 0;
-            this.RightMargin = 0;
+            //this.LeftMargin = 0;
+            //this.RightMargin = 0;
             this.GraphicLineHeight = 0;
             this.GraphicLineX1 = 0;
             this.GraphicLineY1 = 0;
