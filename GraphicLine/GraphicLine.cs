@@ -55,6 +55,14 @@ namespace GraphicLine
 
                 points_list.Add(new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2));
                 int previous_distance = 0;
+                //if left gap exists
+                if (this.Data[0].datetime!=this.StartTime)
+                {
+                    Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY1 + 3));
+                    int curr_distance = (int)(this.Data[0].datetime - this.StartTime).TotalMinutes;
+                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                    Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
+                }
                 for (int i = 0; i < this.Data.Count; i++)
                 {
                     int curr_distance = (int)(this.Data[i].datetime - this.StartTime).TotalMinutes;
@@ -76,10 +84,22 @@ namespace GraphicLine
                         Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
 
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
+                        
                     }
+
                     previous_distance = curr_distance;
 
                 }
+                //if right gap exists
+                if (this.Data[this.Data.Count-1].datetime != this.EndTime)
+                {
+                    int curr_distance = (int)(this.Data[this.Data.Count-1].datetime - this.StartTime).TotalMinutes;
+                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                    Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
+                    Gaps_list.Add(new Point(GraphicLineX2, this.GraphicLineY1 + 3));
+                }
+
+                //add bottom point of polygon
                 points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + (((int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2));
                 Point[] points_arr = new Point[points_list.Count];
                 for (int i = 0; i < points_list.Count; i++)
@@ -97,6 +117,8 @@ namespace GraphicLine
                     e.Graphics.DrawLine(pen3, Gaps_list[i], Gaps_list[i + 1]);
                 }
             }
+
+
             if (this.Data.Count == 0)
             {
                 color2 = Color.FromArgb(0, 0, 0);

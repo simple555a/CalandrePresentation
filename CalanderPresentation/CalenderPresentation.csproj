@@ -156,6 +156,9 @@
   <ItemGroup>
     <Content Include="cube-6x6.ico" />
     <Content Include="logo.ico" />
+    <None Include="Resources\28.ico" />
+    <None Include="Resources\OPCFoundation.png" />
+    <None Include="Resources\OPC_logo.bmp" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

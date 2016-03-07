@@ -19,6 +19,10 @@ namespace CalanderPresentation
 #if !bypass_opc_init
         static OPC_class opc_obj = new OPC_class();
 #endif
+
+#if !real_time
+        public static DateTime fixed_CURR = new DateTime(2015, 04, 24, 19, 39, 00);
+#endif
         static Timer global_clock = new Timer();
         static Timer refresh_form_timer = new Timer();
         private static Settings Settings1 = new Settings();
@@ -117,7 +121,7 @@ namespace CalanderPresentation
             #endregion
             #region Datetime picker current shift (day/night) and run GlobalPresenter() - value change event
 #if !real_time
-            DateTime BStartTime = new DateTime(2015, 04, 24, 00, 00, 00);
+            DateTime BStartTime = fixed_CURR;
             dateTimePicker1.Value = BStartTime;
 #endif
 #if real_time
@@ -234,25 +238,22 @@ namespace CalanderPresentation
 
         private DateTime get_CURR()
         {
-            DateTime CURR;
 #if !real_time
-            CURR = new DateTime(2015, 04, 24, 19, 39, 00);
+            return fixed_CURR;
 #endif
 #if real_time
-            CURR = DateTime.Now;
+            return DateTime.Now;
 #endif
-            return CURR;
         }
 
         private DateTime get_CURR_wo_seconds()
         {
             DateTime CURR;
 #if !real_time
-            CURR = new DateTime(2015, 04, 24, 19, 39, 00);
+            CURR = fixed_CURR;
 #endif
 #if real_time
             CURR = DateTime.Now;
-            //CURR.Subtract()
 #endif
             return new DateTime(CURR.Year,CURR.Month,CURR.Day,CURR.Hour,CURR.Minute,0);
         }
@@ -318,7 +319,7 @@ namespace CalanderPresentation
             
             for (int i = GLGlobalObject.GraphicLineDataArr.Length - 1; i >= 0; i--)
             {
-                if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1)
+                if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1 && GLGlobalObject.GraphicLineDataArr[i].datetime <= T2)
                 {
                     graphicLine1.Data.Add(GLGlobalObject.GraphicLineDataArr[i]);
                 }
