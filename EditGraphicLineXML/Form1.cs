@@ -16,7 +16,7 @@ namespace EditGraphicLineXML
         private void button1_Click(object sender, EventArgs e)
         {
             //DateTime T1 = get_T1(get_CURR());
-            DateTime T1 = new DateTime(2016, 03, 1, 08, 0, 0);
+            DateTime T1 = new DateTime(2015, 04, 22, 06, 0, 0);
             int Size = 10000;
             GraphicLine.GLPoint[] a1 = new GLPoint[Size]; //720 min + 1
             

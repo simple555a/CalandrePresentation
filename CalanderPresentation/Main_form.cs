@@ -1,4 +1,4 @@
-﻿#define real_time
+﻿//#define real_time
 #define bypass_opc_init
 
 using System;

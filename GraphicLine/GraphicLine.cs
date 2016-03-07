@@ -19,7 +19,7 @@ namespace GraphicLine
             this.History = new HistoryClass();
         }
 
-        
+
 
         private void GraphicLine_Paint(object sender, PaintEventArgs e)
         {
@@ -68,33 +68,44 @@ namespace GraphicLine
                         temp = (int)((previous_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
 
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
-                        Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1+3));
+                        Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
 
                         temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
 
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
-                        Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1+3));
+                        Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
 
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
                     }
                     previous_distance = curr_distance;
-                   
+
                 }
                 points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + (((int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2));
-                Point[] points_arr = new Point[points_list.Count]; 
-                for (int i=0;i<points_list.Count;i++)
+                Point[] points_arr = new Point[points_list.Count];
+                for (int i = 0; i < points_list.Count; i++)
                 {
                     points_arr[i] = points_list[i];
                 }
                 e.Graphics.FillPolygon(brush_005, points_arr);
 
-                for (int i=0;i<Gaps_list.Count;i+=2)
+                //draw out of data area
+                for (int i = 0; i < Gaps_list.Count; i += 2)
                 {
                     color2 = Color.FromArgb(0, 0, 0);
                     pen3 = new Pen(color2);
                     pen3.Width = 6;
                     e.Graphics.DrawLine(pen3, Gaps_list[i], Gaps_list[i + 1]);
                 }
+            }
+            if (this.Data.Count == 0)
+            {
+                color2 = Color.FromArgb(0, 0, 0);
+                pen3 = new Pen(color2);
+                pen3.Width = 6;
+                Point[] temp_point = new Point[2];
+                temp_point[0] = new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY1);
+                temp_point[1] = new Point(this.GraphicLineX2, this.GraphicLineY1);
+                e.Graphics.DrawLine(pen3, temp_point[0], temp_point[1]);
             }
             #endregion
 
@@ -114,18 +125,18 @@ namespace GraphicLine
             for (int i = 1; i < total_hours; i++)
             {
                 e.Graphics.DrawLine(pen1,
-                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth+ System.Convert.ToInt16(((i) * (this.GraphicLineWidth- this.GraphicLineYTitlesWidth)) / total_hours),
+                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth + System.Convert.ToInt16(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_hours),
                     this.GraphicLineY1,
-                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth+ System.Convert.ToInt16(((i) * (this.GraphicLineWidth- this.GraphicLineYTitlesWidth)) / total_hours),
+                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth + System.Convert.ToInt16(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_hours),
                     this.GraphicLineY2);
             }
-            
+
             #endregion
 
             //TODO: Too many magic numbers
             #region Vertical Titles
-            for (int i=10;i<70;i+=10)
-                e.Graphics.DrawString(i.ToString(), font_004, brush_004,GraphicLineX1 , GraphicLineY2 - 2 -i);
+            for (int i = 10; i < 70; i += 10)
+                e.Graphics.DrawString(i.ToString(), font_004, brush_004, GraphicLineX1, GraphicLineY2 - 2 - i);
             #endregion
 
             //TODO: Too many magic numbers
@@ -133,12 +144,12 @@ namespace GraphicLine
             color1 = Color.Red;
             pen2 = new Pen(color1);
             pen2.DashStyle = System.Drawing.Drawing2D.DashStyle.Custom;
-            pen2.DashPattern =new float[] {5,5};
-            e.Graphics.DrawLine(pen2, GraphicLineX1 + this.GraphicLineYTitlesWidth, GraphicLineY2-35, this.GraphicLineX2, GraphicLineY2 - 35);
+            pen2.DashPattern = new float[] { 5, 5 };
+            e.Graphics.DrawLine(pen2, GraphicLineX1 + this.GraphicLineYTitlesWidth, GraphicLineY2 - 35, this.GraphicLineX2, GraphicLineY2 - 35);
             #endregion
 
 
-            
+
 
             //TODO: Too many magic numbers
             #region drawing black border rectangle
@@ -159,7 +170,7 @@ namespace GraphicLine
 
         private void GraphicLine_Load(object sender, EventArgs e)
         {
-           
+
         }
 
 
