@@ -90,6 +90,7 @@ namespace GraphicLine
 
         public int LeftMargin;
         public int RightMargin;
+        public int SetpointSpeed;
         public List<GLPoint> Data = new List<GLPoint> { };
 
 

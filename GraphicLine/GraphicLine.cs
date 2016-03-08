@@ -167,7 +167,7 @@ namespace GraphicLine
             pen2 = new Pen(color1);
             pen2.DashStyle = System.Drawing.Drawing2D.DashStyle.Custom;
             pen2.DashPattern = new float[] { 5, 5 };
-            e.Graphics.DrawLine(pen2, GraphicLineX1 + this.GraphicLineYTitlesWidth, GraphicLineY2 - 35, this.GraphicLineX2, GraphicLineY2 - 35);
+            e.Graphics.DrawLine(pen2, GraphicLineX1 + this.GraphicLineYTitlesWidth, GraphicLineY2 - this.SetpointSpeed, this.GraphicLineX2, GraphicLineY2 - this.SetpointSpeed);
             #endregion
 
 

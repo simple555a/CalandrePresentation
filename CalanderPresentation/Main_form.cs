@@ -58,6 +58,7 @@ namespace CalanderPresentation
             #region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
+            graphicLine1.SetpointSpeed = 35;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
             #endregion
@@ -329,10 +330,14 @@ namespace CalanderPresentation
 
         private void DataGridPresenter(DataGridView in_control, DateTime in_StartTime)
         {
+            
+
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
-            
+
+            label12.Text = GLGlobalObject.GetExeededTimeBelowSpeed(T1, T2, graphicLine1.SetpointSpeed).ToString();
+
             List<DataGridRow> a1 = sql_obj.GetTableStatistic(T1, T2, CURR);
             in_control.AllowUserToAddRows = false;
             in_control.Rows.Clear();
@@ -364,6 +369,8 @@ namespace CalanderPresentation
                     in_control.Rows[i].Cells[5].Style.BackColor = Color.GreenYellow;
             }
         }
+
+
 
         public int GetAverageCycleTime(int in_DoneRingsCount)
         {
