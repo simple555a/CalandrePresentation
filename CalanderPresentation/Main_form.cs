@@ -27,7 +27,7 @@ namespace CalanderPresentation
         static Timer refresh_form_timer = new Timer();
         private static Settings Settings1 = new Settings();
         static DateTime previous_time = new DateTime();
-
+        static TimeLine.Section[] TLGlobalObject;// = new TimeLine.Section();
         static GraphicLine.GLGlobal GLGlobalObject = new GLGlobal();
         
 
@@ -52,13 +52,14 @@ namespace CalanderPresentation
                         
             //set up components
             #region TimeLine
-            timeLine1.LeftMargin = 20;
+            timeLine1.LeftMargin = 0;
             timeLine1.RightMargin = 1;
+            //timeLine1.TimeLineHeight = 30;
             #endregion
             #region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
-            graphicLine1.SetpointSpeed = 35;
+            graphicLine1.SetpointSpeed = 30;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
             #endregion
@@ -268,6 +269,7 @@ namespace CalanderPresentation
             
             TimeLine.Section[] a1;
             a1 = sql_obj.GetTimeLineData(T1, T2, CURR);
+            TLGlobalObject = a1;
 
             in_control.SetEmpty();
 
@@ -319,7 +321,7 @@ namespace CalanderPresentation
             in_control.AddBasePeriod(T1, T2);
             
             for (int i = GLGlobalObject.GraphicLineDataArr.Length - 1; i >= 0; i--)
-            {
+            { 
                 if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1 && GLGlobalObject.GraphicLineDataArr[i].datetime <= T2)
                 {
                     graphicLine1.Data.Add(GLGlobalObject.GraphicLineDataArr[i]);
@@ -336,8 +338,6 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
-            label12.Text = GLGlobalObject.GetExeededTimeBelowSpeed(T1, T2, graphicLine1.SetpointSpeed).ToString();
-
             List<DataGridRow> a1 = sql_obj.GetTableStatistic(T1, T2, CURR);
             in_control.AllowUserToAddRows = false;
             in_control.Rows.Clear();
@@ -348,8 +348,8 @@ namespace CalanderPresentation
                 in_control.Rows[i].Cells[0].Value = a1[i].MachineCode;
                 in_control.Rows[i].Cells[1].Style.BackColor = a1[i].Color;
 
-                String hours = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Hours < 10) 
-                    ? "0" + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Hours.ToString() + "h " 
+                String hours = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Hours < 10)
+                    ? "0" + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Hours.ToString() + "h "
                     : TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Hours.ToString() + "h ";
                 String minutes = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Minutes < 10)
                     ? "0" + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Minutes.ToString() + "min "
@@ -357,9 +357,16 @@ namespace CalanderPresentation
                 String seconds = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Seconds < 10)
                     ? "0" + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Seconds.ToString() + "sec"
                     : TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Seconds.ToString() + "sec";
-                in_control.Rows[i].Cells[2].Value = hours+minutes+seconds;
+                in_control.Rows[i].Cells[2].Value = hours + minutes + seconds;
                 in_control.Rows[i].Cells[3].Value = a1[i].Status;
                 in_control.Rows[i].Cells[4].Value = a1[i].Count;
+                #region  ONLY FOR CALANDER!!!
+                //if speed of line low than setpoint - add exedeed time to final result
+                //if (a1[i].MachineCode == "0")
+                //{
+                //    a1[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)) + GLGlobalObject.GetExeededTimeBelowSpeed(T1, T2, graphicLine1.SetpointSpeed)).TotalSeconds.ToString();
+                //}
+                #endregion
                 in_control.Rows[i].Cells[5].Value = TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Hours.ToString() + 
                     "h " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Minutes.ToString() + 
                     "min " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Seconds.ToString() + "sec ";

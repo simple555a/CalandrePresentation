@@ -33,16 +33,18 @@ namespace GraphicLine
         public TimeSpan GetExeededTimeBelowSpeed(DateTime StartTime, DateTime EndTime, int SetpointSpeed)
         {
             TimeSpan ret_value = new TimeSpan(0, 0, 0);
+            TimeSpan ShiftDuration = new TimeSpan(12, 0, 0);
             TimeSpan add_value = new TimeSpan(0, 1, 0);
             for (int i=0; i<GraphicLineDataArr.Length;i++)
             {
-                if (GraphicLineDataArr[i].datetime>StartTime && GraphicLineDataArr[i].datetime<=EndTime && GraphicLineDataArr[i].value<SetpointSpeed)
+                if (GraphicLineDataArr[i].datetime>StartTime && GraphicLineDataArr[i].datetime<=EndTime && GraphicLineDataArr[i].value>=SetpointSpeed)
                 {
                     ret_value=ret_value.Add(add_value);
                 }
             }
+            ret_value = ShiftDuration - ret_value;
 
-            MessageBox.Show(ret_value.ToString());
+            //MessageBox.Show(ret_value.ToString());
             return ret_value;
         }
     }

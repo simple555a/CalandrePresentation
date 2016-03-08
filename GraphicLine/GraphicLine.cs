@@ -26,9 +26,11 @@ namespace GraphicLine
             //global settings and vars
             Color color1 = new Color();
             Color color2 = new Color();
+            Color color4 = new Color();
             Pen pen1;
             Pen pen2;
             Pen pen3;
+            Pen pen4;
             System.Drawing.Font font_004 = new System.Drawing.Font("Arial", 9);
             System.Drawing.Font font_005 = new System.Drawing.Font("Arial", 30);
             SolidBrush brush_004 = new SolidBrush(Color.Black);
@@ -36,7 +38,7 @@ namespace GraphicLine
 
             SolidBrush brush_006 = new SolidBrush(Color.Red);
 
-            this.GraphicLineYTitlesWidth = 20;
+            this.GraphicLineYTitlesWidth = 0;
             this.GraphicLineHeight = 60;
             this.GraphicLineX1 = this.LeftMargin;
             this.GraphicLineY1 = 0;
@@ -44,7 +46,29 @@ namespace GraphicLine
             this.GraphicLineY2 = this.GraphicLineHeight;
             this.GraphicLineWidth = this.GraphicLineX2 - this.GraphicLineX1;
 
+            //TODO: Too many magic numbers
+            #region drawing grid
 
+            color1 = Color.FromArgb(140, 140, 140);
+            pen1 = new Pen(color1);
+            pen1.Width = 1;
+            //horisontal
+            for (int i = GraphicLineY2; i > 0; i -= 10)
+            {
+                e.Graphics.DrawLine(pen1, GraphicLineX1 + this.GraphicLineYTitlesWidth, i, GraphicLineX2, i);
+            }
+            //vertical
+            int total_hours = 12;
+            for (int i = 1; i < total_hours; i++)
+            {
+                e.Graphics.DrawLine(pen1,
+                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth + System.Convert.ToInt16(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_hours),
+                    this.GraphicLineY1,
+                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth + System.Convert.ToInt16(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_hours),
+                    this.GraphicLineY2);
+            }
+
+            #endregion
 
             //TODO: Too many magic numbers
             #region Draw polygon data
@@ -107,6 +131,11 @@ namespace GraphicLine
                     points_arr[i] = points_list[i];
                 }
                 e.Graphics.FillPolygon(brush_005, points_arr);
+                //border  polygon
+                color4 = Color.FromArgb(0, 0, 0);
+                pen4 = new Pen(color4);
+                pen4.Width = 1;
+                e.Graphics.DrawPolygon(pen4, points_arr);
 
                 //draw out of data area
                 for (int i = 0; i < Gaps_list.Count; i += 2)
@@ -130,31 +159,7 @@ namespace GraphicLine
                 e.Graphics.DrawLine(pen3, temp_point[0], temp_point[1]);
             }
             #endregion
-
-            //TODO: Too many magic numbers
-            #region drawing grid
-
-            color1 = Color.FromArgb(140, 140, 140);
-            pen1 = new Pen(color1);
-            pen1.Width = 1;
-            //horisontal
-            for (int i = GraphicLineY2; i > 0; i -= 10)
-            {
-                e.Graphics.DrawLine(pen1, GraphicLineX1 + this.GraphicLineYTitlesWidth, i, GraphicLineX2, i);
-            }
-            //vertical
-            int total_hours = 12;
-            for (int i = 1; i < total_hours; i++)
-            {
-                e.Graphics.DrawLine(pen1,
-                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth + System.Convert.ToInt16(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_hours),
-                    this.GraphicLineY1,
-                    this.GraphicLineX1 + this.GraphicLineYTitlesWidth + System.Convert.ToInt16(((i) * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_hours),
-                    this.GraphicLineY2);
-            }
-
-            #endregion
-
+            
             //TODO: Too many magic numbers
             #region Vertical Titles
             for (int i = 10; i < 70; i += 10)
@@ -166,7 +171,8 @@ namespace GraphicLine
             color1 = Color.Red;
             pen2 = new Pen(color1);
             pen2.DashStyle = System.Drawing.Drawing2D.DashStyle.Custom;
-            pen2.DashPattern = new float[] { 5, 5 };
+            pen2.DashPattern = new float[] { 2, 2 };
+            pen2.Width = 2;
             e.Graphics.DrawLine(pen2, GraphicLineX1 + this.GraphicLineYTitlesWidth, GraphicLineY2 - this.SetpointSpeed, this.GraphicLineX2, GraphicLineY2 - this.SetpointSpeed);
             #endregion
 

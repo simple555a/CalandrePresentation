@@ -105,7 +105,7 @@ namespace TimeLine
         private DateTime StartTime;
         private DateTime EndTime;
         private System.Windows.Forms.ToolTip toolTip1;
-        private int TimeLineHeight;
+        public int TimeLineHeight;
         private int TimeLineX1;
         private int TimeLineY1;
         private int TimeLineX2;

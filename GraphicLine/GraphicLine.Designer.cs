@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace GraphicLine
 {
@@ -93,11 +94,12 @@ namespace GraphicLine
         public int SetpointSpeed;
         public List<GLPoint> Data = new List<GLPoint> { };
 
-
+        public string Category { get; }
         /// <summary>
         /// 0 - sec, 1 - minute, 2 - hour, 3 - day
         /// </summary>
         public int TimeDimension;
+
 
         private DateTime StartTime;
         private DateTime EndTime;
