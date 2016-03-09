@@ -341,12 +341,12 @@ namespace CalanderPresentation
 
             #region  ONLY FOR CALANDER!!!
             //if speed of line low than setpoint - add exedeed time to final resultcalculate calander 0 status
-            TimeSpan cal_exeeded_time = new TimeSpan(0, 0, 0);
+            TimeSpan cal_green_time = new TimeSpan(0, 0, 0);
             for (int i = 0; i < TLGlobalObject.Length; i++)
             {
                 if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime <= T2)
                 {
-                    cal_exeeded_time += GLGlobalObject.GetExeededTimeBelowSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
+                    cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                 }
             }
             #endregion
@@ -377,8 +377,7 @@ namespace CalanderPresentation
                 //if speed of line low than setpoint - add exedeed time to final result
                 if (a1[i].MachineCode == "0")
                 {
-                    a1[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)) + cal_exeeded_time).TotalSeconds.ToString();
-
+                    a1[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
                 }
                 #endregion
                 in_control.Rows[i].Cells[5].Value = TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Hours.ToString() +
