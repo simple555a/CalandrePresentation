@@ -69,7 +69,7 @@ namespace GraphicLine
             }
 
             #endregion
-
+            //MessageBox.Show(this.Data.Count.ToString());
             //TODO: Too many magic numbers
             #region Draw polygon data
             if (this.Data.Count != 0)
@@ -78,7 +78,7 @@ namespace GraphicLine
                 List<Point> Gaps_list = new List<Point>();
 
                 points_list.Add(new Point(this.GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY2));
-                int previous_distance = 0;
+                int previous_distance = -1;
                 //if left gap exists
                 if (this.Data[0].datetime!=this.StartTime)
                 {
@@ -89,16 +89,18 @@ namespace GraphicLine
                 }
                 for (int i = 0; i < this.Data.Count; i++)
                 {
+                    
                     int curr_distance = (int)(this.Data[i].datetime - this.StartTime).TotalMinutes;
                     int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
                     //there is no gaps
                     if ((curr_distance - previous_distance) == 1)
+                    {
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
+                    }
                     //gaps
                     if ((curr_distance - previous_distance) > 1)
                     {
                         temp = (int)((previous_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
-
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
                         Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
 
@@ -108,7 +110,6 @@ namespace GraphicLine
                         Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
 
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
-                        
                     }
 
                     previous_distance = curr_distance;

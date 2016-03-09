@@ -29,7 +29,8 @@ namespace CalanderPresentation
         static DateTime previous_time = new DateTime();
         static TimeLine.Section[] TLGlobalObject;// = new TimeLine.Section();
         static GraphicLine.GLGlobal GLGlobalObject = new GLGlobal();
-        
+        static TimeSpan cal_exeeded_time = new TimeSpan(0, 0, 0);
+
 
         public Main_form()
         {
@@ -47,9 +48,9 @@ namespace CalanderPresentation
             toolStripStatusLabel1.Text = "";
 #endif
             #endregion
-            
+
             label9.Text = sql_obj.GetWCName();
-                        
+
             //set up components
             #region TimeLine
             timeLine1.LeftMargin = 20;
@@ -63,17 +64,17 @@ namespace CalanderPresentation
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
             #endregion
-            
+
 
             label5.Text = sql_obj.GetCurrentStatus();
 
             Color temp_color_000 = sql_obj.GetCurrentStatusColor();
             label5.BackColor = temp_color_000;
-            if ((((int)temp_color_000.R + (int)temp_color_000.G + (int)temp_color_000.B))/3>=170)
+            if ((((int)temp_color_000.R + (int)temp_color_000.G + (int)temp_color_000.B)) / 3 >= 170)
                 label5.ForeColor = Color.Black;
             else
                 label5.ForeColor = Color.White;
-            
+
             //history browser
             tableLayoutPanel2.RowStyles[2].Height = 0;
             try
@@ -95,7 +96,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox1);
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
-            
+
             this.Text += " v0.0.1";
 
             //OPC
@@ -162,7 +163,7 @@ namespace CalanderPresentation
                 opc_obj.CounterOfRings = 0;
             previous_time = get_CURR();
 #endif
-            
+
             GlobalPresenter();
         }
 
@@ -174,14 +175,14 @@ namespace CalanderPresentation
             String hours = (System.DateTime.Now.TimeOfDay.Hours < 10) ? "0" + System.DateTime.Now.TimeOfDay.Hours.ToString() : System.DateTime.Now.TimeOfDay.Hours.ToString();
             String minutes = (System.DateTime.Now.TimeOfDay.Minutes < 10) ? "0" + System.DateTime.Now.TimeOfDay.Minutes.ToString() : System.DateTime.Now.TimeOfDay.Minutes.ToString();
             String seconds = (System.DateTime.Now.TimeOfDay.Seconds < 10) ? "0" + System.DateTime.Now.TimeOfDay.Seconds.ToString() : System.DateTime.Now.TimeOfDay.Seconds.ToString();
-            label2.Text = year + " " + month + " " +day + "  " + hours + ":" + minutes + ":" + seconds;
+            label2.Text = year + " " + month + " " + day + "  " + hours + ":" + minutes + ":" + seconds;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
         }
-        
+
         private void connectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ConnectionForm ConnectionsForm1 = new ConnectionForm();
@@ -257,16 +258,16 @@ namespace CalanderPresentation
 #if real_time
             CURR = DateTime.Now;
 #endif
-            return new DateTime(CURR.Year,CURR.Month,CURR.Day,CURR.Hour,CURR.Minute,0);
+            return new DateTime(CURR.Year, CURR.Month, CURR.Day, CURR.Hour, CURR.Minute, 0);
         }
 
-        private void TimeLinePresenter(TimeLine.TimeLine in_control,DateTime in_StartTime)
+        private void TimeLinePresenter(TimeLine.TimeLine in_control, DateTime in_StartTime)
         {
 
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
-            
+
             TimeLine.Section[] a1;
             a1 = sql_obj.GetTimeLineData(T1, T2, CURR);
             TLGlobalObject = a1;
@@ -283,7 +284,7 @@ namespace CalanderPresentation
                 //empty left
                 if (a1[0].StartTime >= T1)
                     in_control.AddPeriod(a1[0].colorRed, a1[0].colorGreen, a1[0].colorBlue, a1[0].StartTime, a1[0].EndTime, false);
-                for (int i = 1; i < a1.Length-1; i++)
+                for (int i = 1; i < a1.Length - 1; i++)
                 {
                     in_control.AddPeriod(a1[i].colorRed, a1[i].colorGreen, a1[i].colorBlue, a1[i].StartTime, a1[i].EndTime, false);
                 }
@@ -319,9 +320,9 @@ namespace CalanderPresentation
 
             in_control.SetEmpty();
             in_control.AddBasePeriod(T1, T2);
-            
+
             for (int i = GLGlobalObject.GraphicLineDataArr.Length - 1; i >= 0; i--)
-            { 
+            {
                 if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1 && GLGlobalObject.GraphicLineDataArr[i].datetime <= T2)
                 {
                     graphicLine1.Data.Add(GLGlobalObject.GraphicLineDataArr[i]);
@@ -332,26 +333,23 @@ namespace CalanderPresentation
 
         private void DataGridPresenter(DataGridView in_control, DateTime in_StartTime)
         {
-            
+
 
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
-            //calculate calander 0 status
-            TimeSpan cal_exeeded_time = new TimeSpan(0,0,0);
+            #region  ONLY FOR CALANDER!!!
+            //if speed of line low than setpoint - add exedeed time to final resultcalculate calander 0 status
+            TimeSpan cal_exeeded_time = new TimeSpan(0, 0, 0);
             for (int i = 0; i < TLGlobalObject.Length; i++)
             {
-                if (TLGlobalObject[i].MachineState==0 && TLGlobalObject[i].StartTime>=T1 && TLGlobalObject[i].EndTime<=T2)
+                if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime <= T2)
                 {
-                    cal_exeeded_time+=GLGlobalObject.GetExeededTimeBelowSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
-                    //MessageBox.Show(cal_exeeded_time.TotalHours.ToString());
-                    //MessageBox.Show(GLGlobalObject.GetExeededTimeBelowSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString());
-
+                    cal_exeeded_time += GLGlobalObject.GetExeededTimeBelowSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                 }
-                
             }
-
+            #endregion
 
             List<DataGridRow> a1 = sql_obj.GetTableStatistic(T1, T2, CURR);
             in_control.AllowUserToAddRows = false;
@@ -380,11 +378,11 @@ namespace CalanderPresentation
                 if (a1[i].MachineCode == "0")
                 {
                     a1[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)) + cal_exeeded_time).TotalSeconds.ToString();
-                    
+
                 }
                 #endregion
-                in_control.Rows[i].Cells[5].Value = TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Hours.ToString() + 
-                    "h " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Minutes.ToString() + 
+                in_control.Rows[i].Cells[5].Value = TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Hours.ToString() +
+                    "h " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Minutes.ToString() +
                     "min " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Seconds.ToString() + "sec ";
                 if (a1[i].ExceededTime != "0")
                     in_control.Rows[i].Cells[5].Style.BackColor = Color.Red;
@@ -422,10 +420,10 @@ namespace CalanderPresentation
         {
             GlobalPresenter();
         }
-        
+
         private void GlobalPresenter()
         {
-            label1.Text =  sql_obj.GetOperatorName() ;
+            label1.Text = sql_obj.GetOperatorName();
             TimeLinePresenter(timeLine1, dateTimePicker1.Value);
             GraphicLinePresenter(graphicLine1, dateTimePicker1.Value);
             DataGridPresenter(dataGridView1, dateTimePicker1.Value);
@@ -440,17 +438,13 @@ namespace CalanderPresentation
             if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
                 label8.Text = (
                                 Math.Round(
-                                                (1 - (sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), 
-                                                                                get_T2(dateTimePicker1.Value), 
+                                                (1 - (sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
+                                                                                get_T2(dateTimePicker1.Value),
                                                                                 get_CURR_wo_seconds()).TotalSeconds / (get_CURR_wo_seconds() - get_T1(dateTimePicker1.Value)).TotalSeconds
                                                                                 )
                                                 ) * 100, 2
                                             )
                             ).ToString() + "%";
-            //MessageBox.Show((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
-            //                                                                    get_T2(dateTimePicker1.Value),
-            //                                                                    get_CURR_wo_seconds()).TotalSeconds / (get_CURR_wo_seconds() - get_T1(dateTimePicker1.Value)).TotalSeconds
-            //                                            ).ToString());
             //2.history
             if (get_T2(dateTimePicker1.Value) <= get_CURR())
                 label8.Text = (
@@ -459,7 +453,7 @@ namespace CalanderPresentation
                                         )
                             ).ToString() + "%";
         }
-        
+
         private void showHistoryBrowserToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showHistoryBrowserToolStripMenuItem.Checked = !showHistoryBrowserToolStripMenuItem.Checked;
@@ -473,7 +467,7 @@ namespace CalanderPresentation
             writer.Dispose();
 
         }
-        
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AboutForm AboutForm1 = new AboutForm();
@@ -492,14 +486,14 @@ namespace CalanderPresentation
                 }
             }
         }
-        
+
         private void Main_form_Paint(object sender, PaintEventArgs e)
         {
             LabelsCenterPositioning(groupBox1);
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
         }
-        
+
         private void radioButton2_MouseClick(object sender, MouseEventArgs e)
         {
             GlobalPresenter();
