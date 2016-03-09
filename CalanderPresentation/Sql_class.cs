@@ -366,7 +366,8 @@ ON [SLC_rsActive_alt].[dbo].[APP_USER].[user_name]=[SFI_local_PC_SQL].[dbo].[tbl
                         {
                             reader.Read();
                             a1[i] = new Section();
-                                a1[i].StartTime = reader.GetDateTime(2);
+                            a1[i].MachineState = reader.GetInt32(0);
+                            a1[i].StartTime = reader.GetDateTime(2);
 
                             try
                             {

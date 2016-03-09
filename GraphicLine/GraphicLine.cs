@@ -38,7 +38,7 @@ namespace GraphicLine
 
             SolidBrush brush_006 = new SolidBrush(Color.Red);
 
-            this.GraphicLineYTitlesWidth = 0;
+            this.GraphicLineYTitlesWidth = 20;
             this.GraphicLineHeight = 60;
             this.GraphicLineX1 = this.LeftMargin;
             this.GraphicLineY1 = 0;

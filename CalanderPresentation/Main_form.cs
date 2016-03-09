@@ -52,7 +52,7 @@ namespace CalanderPresentation
                         
             //set up components
             #region TimeLine
-            timeLine1.LeftMargin = 0;
+            timeLine1.LeftMargin = 20;
             timeLine1.RightMargin = 1;
             //timeLine1.TimeLineHeight = 30;
             #endregion
@@ -338,6 +338,21 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
+            //calculate calander 0 status
+            TimeSpan cal_exeeded_time = new TimeSpan(0,0,0);
+            for (int i = 0; i < TLGlobalObject.Length; i++)
+            {
+                if (TLGlobalObject[i].MachineState==0 && TLGlobalObject[i].StartTime>=T1 && TLGlobalObject[i].EndTime<=T2)
+                {
+                    cal_exeeded_time+=GLGlobalObject.GetExeededTimeBelowSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
+                    //MessageBox.Show(cal_exeeded_time.TotalHours.ToString());
+                    //MessageBox.Show(GLGlobalObject.GetExeededTimeBelowSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString());
+
+                }
+                
+            }
+
+
             List<DataGridRow> a1 = sql_obj.GetTableStatistic(T1, T2, CURR);
             in_control.AllowUserToAddRows = false;
             in_control.Rows.Clear();
@@ -362,10 +377,11 @@ namespace CalanderPresentation
                 in_control.Rows[i].Cells[4].Value = a1[i].Count;
                 #region  ONLY FOR CALANDER!!!
                 //if speed of line low than setpoint - add exedeed time to final result
-                //if (a1[i].MachineCode == "0")
-                //{
-                //    a1[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)) + GLGlobalObject.GetExeededTimeBelowSpeed(T1, T2, graphicLine1.SetpointSpeed)).TotalSeconds.ToString();
-                //}
+                if (a1[i].MachineCode == "0")
+                {
+                    a1[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)) + cal_exeeded_time).TotalSeconds.ToString();
+                    
+                }
                 #endregion
                 in_control.Rows[i].Cells[5].Value = TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Hours.ToString() + 
                     "h " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Minutes.ToString() + 

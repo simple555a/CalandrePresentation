@@ -6,6 +6,8 @@ namespace TimeLine
 {
     public class Section 
     {
+        public Int32 MachineState;
+
         public byte colorRed;
         public byte colorGreen;
         public byte colorBlue;
