@@ -430,6 +430,39 @@ ON [SLC_rsActive_alt].[dbo].[APP_USER].[user_name]=[SFI_local_PC_SQL].[dbo].[tbl
             return return_string;
         }
         #endregion
+        #region public String GetCurrentStatusAsInt()
+        public int GetCurrentStatusAsInt()
+        {
+            if (!this.Initialized) return -1;
+            
+
+            String SQLQuery = @"SELECT DISTINCT
+                                [MachineState],
+                                [StartTime],
+                                [EndTime] 
+                                FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_MachineStateHistory]
+                                WHERE 
+                                [EndTime] IS NULL";
+
+            using (SqlConnection con = new SqlConnection(this.ConnectionString))
+            {
+                con.Open();
+
+                using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        reader.Read();
+                        return reader.GetInt32(0);
+
+
+                    }
+                }
+            }
+            
+            return -1;
+        }
+        #endregion
         #region public Color GetCurrentStatusColor()
         public Color GetCurrentStatusColor()
         {
