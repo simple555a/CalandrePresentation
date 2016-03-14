@@ -85,9 +85,8 @@ namespace CalanderPresentation
             this.button3.Enabled = false;
             this.button3.Text = "Testing...";
             OPC_class opc_obj = new OPC_class(textBox3.Text,textBox4.Text,textBox2.Text);
-            Settings1.OPCCounterNameInitialized = opc_obj.CounterNameInitialized;
-            Settings1.OPCSpeedNameInitialized = opc_obj.SpeedNameInitialized;
-            label6.Text = (Settings1.OPCCounterNameInitialized && Settings1.OPCSpeedNameInitialized) ? "Ok" : "Not OK";
+            Settings1.OPCVariablesInitialized = opc_obj.VariablesInitialized;
+            label6.Text = (Settings1.OPCVariablesInitialized) ? "Ok" : "Not OK";
             this.button3.Enabled = true;
             this.button3.Text = "Test connection";
         }

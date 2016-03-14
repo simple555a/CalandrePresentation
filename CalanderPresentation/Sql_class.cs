@@ -141,7 +141,7 @@ VALUES
 
         #endregion
 
-        #region 3. Metods
+        #region 3. Metods 
 
         #region private void InitializeSQL()
         private void InitializeSQL()
@@ -389,8 +389,8 @@ ON [SLC_rsActive_alt].[dbo].[APP_USER].[user_name]=[SFI_local_PC_SQL].[dbo].[tbl
             return a1;
         }
         #endregion
-        #region public String GetCurrentStatus()
-        public String GetCurrentStatus()
+        #region public String GetCurrentStatusAsString()
+        public String GetCurrentStatusAsString()
         {
             if (!this.Initialized) return "***************";
 

@@ -177,9 +177,7 @@ namespace GraphicLine
             e.Graphics.DrawLine(pen2, GraphicLineX1 + this.GraphicLineYTitlesWidth, GraphicLineY2 - this.SetpointSpeed, this.GraphicLineX2, GraphicLineY2 - this.SetpointSpeed);
             #endregion
 
-
-
-
+            
             //TODO: Too many magic numbers
             #region drawing black border rectangle
             color1 = Color.FromArgb(0, 0, 0);

@@ -15,8 +15,7 @@ namespace CalanderPresentation
         public String SQLPassword;
 
 
-        public bool OPCCounterNameInitialized;
-        public bool OPCSpeedNameInitialized;
+        public bool OPCVariablesInitialized;
         public String OPCConnectionString;
         public String OPCCounterName;
         public String OPCSpeedName;
