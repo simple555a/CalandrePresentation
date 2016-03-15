@@ -698,8 +698,8 @@ ORDER BY [StartTime]";
             return return_value;
         }
         #endregion
-        #region public Int32 GetRingsCounter()
-        public Int32 GetRingsCounter()
+        #region public Int32 GetProductionCounter()
+        public Int32 GetProductionCounter()
         {
             if (!this.Initialized) return 0;
 

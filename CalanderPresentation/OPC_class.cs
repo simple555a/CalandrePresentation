@@ -68,87 +68,88 @@ namespace CalanderPresentation
         #endregion
 
         #region Properties
-            public bool VariablesInitialized;
-            public Int32 CounterOfMaterial;
-            private String URL;
-            private Label ActiveLabel;
+        public bool VariablesInitialized;
+        public Int32 CounterOfMaterial;
+        private String URL;
+        private Label ActiveLabel;
+        public bool lockCount;
 
-            #region Variables for OPC client
+        #region Variables for OPC client
 
-            private Opc.URL url;
-            private Opc.Da.Server server;
-            private OpcCom.Factory fact = new OpcCom.Factory();
-            private Opc.Da.Subscription groupRead;
-            private Opc.Da.SubscriptionState groupState;
-            private Opc.Da.Item[] items = new Opc.Da.Item[2];
+        private Opc.URL url;
+        private Opc.Da.Server server;
+        private OpcCom.Factory fact = new OpcCom.Factory();
+        private Opc.Da.Subscription groupRead;
+        private Opc.Da.SubscriptionState groupState;
+        private Opc.Da.Item[] items = new Opc.Da.Item[2];
 
-            #endregion
+        #endregion
 
         #endregion
 
         #region Metods
 
-            #region InitializeOPC()
-                private void InitializeOPC()
+        #region InitializeOPC()
+            private void InitializeOPC()
+            {
+                try
                 {
-                    try
+                    if (File.Exists("settings.xml"))
                     {
-                        if (File.Exists("settings.xml"))
+                        this.CounterOfMaterial = 0;
+
+                        XmlSerializer XmlSerializer1 = new XmlSerializer(typeof(Settings));
+                        TextReader reader1 = new StreamReader("settings.xml");
+                        Settings Settings1 = (Settings)XmlSerializer1.Deserialize(reader1);
+                        reader1.Dispose();
+
+                        if (Settings1.OPCVariablesInitialized == true)
                         {
-                            this.CounterOfMaterial = 0;
+                            // 1st: Create a server object and connect to the RSLinx OPC Server
+                            url = new Opc.URL(Settings1.OPCConnectionString);
+                            server = new Opc.Da.Server(fact, null);
+                            //2nd: Connect to the created server
+                            server.Connect(url, new Opc.ConnectData(new System.Net.NetworkCredential()));
+                            //3rd Create a group if items            
+                            groupState = new Opc.Da.SubscriptionState();
+                            groupState.Name = "Group999";
+                            groupState.UpdateRate = 1000;// this isthe time between every reads from OPC server
+                            groupState.Active = true;//this must be true if you the group has to read value
+                            groupRead = (Opc.Da.Subscription)server.CreateSubscription(groupState);
+                            groupRead.DataChanged += groupRead_DataChanged;
 
-                            XmlSerializer XmlSerializer1 = new XmlSerializer(typeof(Settings));
-                            TextReader reader1 = new StreamReader("settings.xml");
-                            Settings Settings1 = (Settings)XmlSerializer1.Deserialize(reader1);
-                            reader1.Dispose();
+                            items[0] = new Opc.Da.Item();
+                            items[0].ItemName = Settings1.OPCCounterName;
+                            items[1] = new Opc.Da.Item();
+                            items[1].ItemName = Settings1.OPCSpeedName;
+                            items = groupRead.AddItems(items);
 
-                            if (Settings1.OPCVariablesInitialized == true)
-                            {
-                                // 1st: Create a server object and connect to the RSLinx OPC Server
-                                url = new Opc.URL(Settings1.OPCConnectionString);
-                                server = new Opc.Da.Server(fact, null);
-                                //2nd: Connect to the created server
-                                server.Connect(url, new Opc.ConnectData(new System.Net.NetworkCredential()));
-                                //3rd Create a group if items            
-                                groupState = new Opc.Da.SubscriptionState();
-                                groupState.Name = "Group999";
-                                groupState.UpdateRate = 1000;// this isthe time between every reads from OPC server
-                                groupState.Active = true;//this must be true if you the group has to read value
-                                groupRead = (Opc.Da.Subscription)server.CreateSubscription(groupState);
-                                groupRead.DataChanged += groupRead_DataChanged;
-
-                                items[0] = new Opc.Da.Item();
-                                items[0].ItemName = Settings1.OPCCounterName;
-                                items[1] = new Opc.Da.Item();
-                                items[1].ItemName = Settings1.OPCSpeedName;
-                                items = groupRead.AddItems(items);
-
-                                Opc.Da.ItemValueResult[] values = groupRead.Read(items);
-                                //MessageBox.Show("Readed value is " + values[0].Value.ToString());
-                                this.VariablesInitialized = true;
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("OPC settings is empty. See Settings - > Connection...");
-                            this.VariablesInitialized = false;
+                            Opc.Da.ItemValueResult[] values = groupRead.Read(items);
+                            this.VariablesInitialized = true;
                         }
                     }
-                    catch
+                    else
                     {
-                        MessageBox.Show("Bad OPC connection. Review connection string");
+                        MessageBox.Show("OPC settings is empty. See Settings - > Connection...");
                         this.VariablesInitialized = false;
                     }
                 }
-
-                void groupRead_DataChanged(object subscriptionHandle, object requestHandle, Opc.Da.ItemValueResult[] values)
+                catch
                 {
-                    //Convert.ToInt32(values[0].Value);
-                    this.ActiveLabel.Text = (this.CounterOfMaterial != Convert.ToInt32(values[0].Value)) ? (this.CounterOfMaterial + 2).ToString() : this.CounterOfMaterial.ToString();
-                    this.CounterOfMaterial+=2;
-                    //this.CounterOfRings = Convert.ToInt32(values[0].Value);
+                    MessageBox.Show("Bad OPC connection. Review connection string");
+                    this.VariablesInitialized = false;
                 }
-            #endregion
+            }
+
+            void groupRead_DataChanged(object subscriptionHandle, object requestHandle, Opc.Da.ItemValueResult[] values)
+            {
+                if (this.lockCount != true)
+                {
+                    this.ActiveLabel.Text = (this.CounterOfMaterial != Convert.ToInt32(values[0].Value)) ? (this.CounterOfMaterial + 2).ToString() : this.CounterOfMaterial.ToString();
+                    this.CounterOfMaterial += 2;
+                }
+            }
+        #endregion
             #region void SetActiveLabel(Label in_control)
             public void SetActiveLabel(Label in_control)
             {
