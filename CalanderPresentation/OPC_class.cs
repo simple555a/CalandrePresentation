@@ -12,6 +12,7 @@ namespace CalanderPresentation
         #region Constructors
         public OPC_class()
         {
+            this.previous_value_of_counter = 0;
             this.VariablesInitialized = false;
             InitializeOPC();
         }
@@ -71,18 +72,18 @@ namespace CalanderPresentation
         public bool VariablesInitialized;
         public Int32 CounterOfMaterial;
         private String URL;
-        private Label ActiveLabel;
+        private Label MaterialCounterLabel;
+        private Label CurrentSpeedLabels;
         public bool lockCount;
+        private int previous_value_of_counter = 0;
 
         #region Variables for OPC client
-
         private Opc.URL url;
         private Opc.Da.Server server;
         private OpcCom.Factory fact = new OpcCom.Factory();
         private Opc.Da.Subscription groupRead;
         private Opc.Da.SubscriptionState groupState;
         private Opc.Da.Item[] items = new Opc.Da.Item[2];
-
         #endregion
 
         #endregion
@@ -125,6 +126,9 @@ namespace CalanderPresentation
                             items = groupRead.AddItems(items);
 
                             Opc.Da.ItemValueResult[] values = groupRead.Read(items);
+
+                            this.previous_value_of_counter = Convert.ToInt32(values[0].Value);
+
                             this.VariablesInitialized = true;
                         }
                     }
@@ -145,21 +149,22 @@ namespace CalanderPresentation
             {
                 if (this.lockCount != true)
                 {
-                    this.ActiveLabel.Text = (this.CounterOfMaterial != Convert.ToInt32(values[0].Value)) ? (this.CounterOfMaterial + 2).ToString() : this.CounterOfMaterial.ToString();
-                    this.CounterOfMaterial += 2;
+                    this.MaterialCounterLabel.Text = (this.CounterOfMaterial != Convert.ToInt32(values[0].Value)) ? (this.CounterOfMaterial + (Convert.ToInt32(values[0].Value) - this.CounterOfMaterial)).ToString() : this.CounterOfMaterial.ToString();
+                    this.CounterOfMaterial += (Convert.ToInt32(values[0].Value)- this.CounterOfMaterial);
                 }
+
+            this.CurrentSpeedLabels.Text = Convert.ToInt32(values[1].Value).ToString();
             }
         #endregion
-            #region void SetActiveLabel(Label in_control)
-            public void SetActiveLabel(Label in_control)
-            {
-                this.ActiveLabel = in_control;
-            }
+        #region void SetActiveLabel(Label in_control)
+        public void SetActiveLabel(Label in_MaterialCounterLabel, Label in_CurrentSpeedLabel)
+        {
+            this.MaterialCounterLabel = in_MaterialCounterLabel;
+            this.CurrentSpeedLabels= in_CurrentSpeedLabel;
+        }
 
         #endregion
 
         #endregion
-
-
     }
 }

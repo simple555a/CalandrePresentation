@@ -1,4 +1,4 @@
-﻿//#define real_time
+﻿#define real_time
 //#define bypass_opc_init
 
 using System;
@@ -108,7 +108,7 @@ namespace CalanderPresentation
 #if !bypass_opc_init
             opc_obj.CounterOfMaterial = sql_obj.GetProductionCounter();
             label4.Text = opc_obj.CounterOfMaterial.ToString();
-            opc_obj.SetActiveLabel(label4);
+            opc_obj.SetActiveLabel(label4,label6);
             opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt()==0) ? false : true;
 #endif
 
@@ -163,16 +163,13 @@ namespace CalanderPresentation
             }
             //set average cycle time
 #if !bypass_opc_init
-            label6.Text = GetAverageCycleTime(opc_obj.CounterOfMaterial).ToString();
+            //label6.Text = GetAverageCycleTime(opc_obj.CounterOfMaterial).ToString();
             //reset "rings counter" and "average cycle time" each shift change
             if (previous_time.Hour == 7 && get_CURR().Hour == 8 || previous_time.Hour == 19 && get_CURR().Hour == 20)
                 opc_obj.CounterOfMaterial = 0;
             previous_time = get_CURR();
 #endif
-
-            //opc
-            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
-
+            
             GlobalPresenter();
         }
 
@@ -185,6 +182,11 @@ namespace CalanderPresentation
             String minutes = (System.DateTime.Now.TimeOfDay.Minutes < 10) ? "0" + System.DateTime.Now.TimeOfDay.Minutes.ToString() : System.DateTime.Now.TimeOfDay.Minutes.ToString();
             String seconds = (System.DateTime.Now.TimeOfDay.Seconds < 10) ? "0" + System.DateTime.Now.TimeOfDay.Seconds.ToString() : System.DateTime.Now.TimeOfDay.Seconds.ToString();
             label2.Text = year + " " + month + " " + day + "  " + hours + ":" + minutes + ":" + seconds;
+
+
+            //opc
+            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
+            //label6.Text = opc_obj.CurrentSpeed.ToString();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -385,23 +387,23 @@ namespace CalanderPresentation
             }
         }
         
-        public int GetAverageCycleTime(int in_DoneRingsCount)
-        {
-            if (in_DoneRingsCount == 0) return 0;
-            if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
-            {
-                return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) - TimeSpan.FromHours(8))).TotalSeconds / in_DoneRingsCount);
-            }
-            if (get_CURR().Hour >= 20 && get_CURR().Hour < 24)
-            {
-                return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) - TimeSpan.FromHours(20))).TotalSeconds / in_DoneRingsCount);
-            }
-            if (get_CURR().Hour >= 0 && get_CURR().Hour < 8)
-            {
-                return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) + TimeSpan.FromHours(4))).TotalSeconds / in_DoneRingsCount);
-            }
-            return 0;
-        }
+        //public int GetAverageCycleTime(int in_DoneRingsCount)
+        //{
+        //    if (in_DoneRingsCount == 0) return 0;
+        //    if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
+        //    {
+        //        return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) - TimeSpan.FromHours(8))).TotalSeconds / in_DoneRingsCount);
+        //    }
+        //    if (get_CURR().Hour >= 20 && get_CURR().Hour < 24)
+        //    {
+        //        return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) - TimeSpan.FromHours(20))).TotalSeconds / in_DoneRingsCount);
+        //    }
+        //    if (get_CURR().Hour >= 0 && get_CURR().Hour < 8)
+        //    {
+        //        return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) + TimeSpan.FromHours(4))).TotalSeconds / in_DoneRingsCount);
+        //    }
+        //    return 0;
+        //}
 
         private void exitToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
@@ -447,6 +449,7 @@ namespace CalanderPresentation
             {
                 if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime <= T2)
                 {
+                    MessageBox.Show(TLGlobalObject[i].StartTime.ToString()+" "+ TLGlobalObject[i].EndTime.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                 }
             }

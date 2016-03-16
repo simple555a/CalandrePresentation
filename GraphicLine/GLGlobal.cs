@@ -37,9 +37,16 @@ namespace GraphicLine
             TimeSpan add_value = new TimeSpan(0, 1, 0);
             for (int i=0; i<GraphicLineDataArr.Length;i++)
             {
-                if (GraphicLineDataArr[i].datetime>StartTime && GraphicLineDataArr[i].datetime<=EndTime && GraphicLineDataArr[i].value>=SetpointSpeed)
+                try
                 {
-                    ret_value=ret_value.Add(add_value);
+                    if (GraphicLineDataArr[i].datetime > StartTime && GraphicLineDataArr[i].datetime <= EndTime && GraphicLineDataArr[i].value >= SetpointSpeed)
+                    {
+                        ret_value = ret_value.Add(add_value);
+                    }
+                }
+                catch
+                {
+                    //MessageBox.Show("catch");
                 }
             }
             //ret_value = ShiftDuration - ret_value;
