@@ -1,4 +1,4 @@
-﻿#define real_time
+﻿//#define real_time
 //#define bypass_opc_init
 
 using System;
@@ -44,31 +44,40 @@ namespace CalanderPresentation
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            #region RealTime Indication
+            #region Indication
+
+            toolStripStatusLabel1.Text = "REAL TIME";
 #if !real_time
-            toolStripStatusLabel1.Text = "NOT REAL TIME!!!";
             toolStripStatusLabel1.ForeColor = Color.Red;
 #endif
 #if real_time
-            toolStripStatusLabel1.Text = "";
+            toolStripStatusLabel1.ForeColor = Color.Green;
+#endif
+
+            toolStripStatusLabel2.Text = "OPC Enagaged";
+#if bypass_opc_init
+            toolStripStatusLabel2.ForeColor = Color.Red;
+#endif
+#if !bypass_opc_init
+            toolStripStatusLabel2.ForeColor = Color.Green;
 #endif
             #endregion
 
             label9.Text = sql_obj.GetWCName();
 
             //set up components
-            #region TimeLine
+#region TimeLine
             timeLine1.LeftMargin = 20;
             timeLine1.RightMargin = 1;
             //timeLine1.TimeLineHeight = 30;
-            #endregion
-            #region GraphicLine
+#endregion
+#region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
             graphicLine1.SetpointSpeed = 30;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
-            #endregion
+#endregion
 
 
             label5.Text = sql_obj.GetCurrentStatusAsString();
@@ -121,14 +130,14 @@ namespace CalanderPresentation
             Tick60sec.Tick += Tick60sec_Tick;
             Tick60sec.Start();
 
-            #region Check shift
+#region Check shift
 
             if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
                 radioButton1.Checked = true;
             else
                 radioButton2.Checked = true;
-            #endregion
-            #region Datetime picker current shift (day/night) and run GlobalPresenter() - value change event
+#endregion
+#region Datetime picker current shift (day/night) and run GlobalPresenter() - value change event
 #if !real_time
             DateTime BStartTime = fixed_CURR;
             dateTimePicker1.Value = BStartTime;
@@ -139,7 +148,7 @@ namespace CalanderPresentation
             if (System.DateTime.Now.Hour >= 8)
                 dateTimePicker1.Value = System.DateTime.Now.Date;
 #endif
-            #endregion 
+#endregion
 
             previous_time = get_CURR();
         }
@@ -433,15 +442,15 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
-            #region TimeLine
+#region TimeLine
             TLGlobalObject = sql_obj.GetTimeLineData(T1, T2, CURR);
-            #endregion
+#endregion
 
-            #region GraphicLine (empty)
-            #endregion
+#region GraphicLine (empty)
+#endregion
 
-            #region DataGridPresenter
-            #region  ONLY FOR CALANDER!!!
+#region DataGridPresenter
+#region  ONLY FOR CALANDER!!!
             //if speed of line low than setpoint - add exedeed time to final resultcalculate calander 0 status
             cal_green_time = new TimeSpan(0, 0, 0);
 
@@ -453,9 +462,9 @@ namespace CalanderPresentation
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                 }
             }
-            #endregion
+#endregion
             DGGlobalObject = sql_obj.GetTableStatistic(T1, T2, CURR);
-            #region  ONLY FOR CALANDER!!!
+#region  ONLY FOR CALANDER!!!
             //calulating final exeeded time for calander
             for (int i=0;i< DGGlobalObject.Count; i++)
             {
@@ -464,13 +473,13 @@ namespace CalanderPresentation
                     DGGlobalObject[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
                 }
             }
-            #endregion
-            #endregion
+#endregion
+#endregion
         }
 
         private void GetEficiency()
         {
-            #region Only For Calander
+#region Only For Calander
             //get summary balasted time for calander
             TimeSpan SummaryExeeded0Statustime = new TimeSpan(0, 0, 0);
             for (int i = 0; i < DGGlobalObject.Count; i++)
@@ -480,7 +489,7 @@ namespace CalanderPresentation
                     SummaryExeeded0Statustime = TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time;
                 }
             }
-            #endregion
+#endregion
             //1.real time
             if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
                 label8.Text = (
