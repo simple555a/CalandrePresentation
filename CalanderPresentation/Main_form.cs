@@ -449,7 +449,7 @@ namespace CalanderPresentation
             {
                 if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime <= T2)
                 {
-                    MessageBox.Show(TLGlobalObject[i].StartTime.ToString()+" "+ TLGlobalObject[i].EndTime.ToString());
+                    //MessageBox.Show(TLGlobalObject[i].StartTime.ToString()+" "+ TLGlobalObject[i].EndTime.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                 }
             }
@@ -481,25 +481,30 @@ namespace CalanderPresentation
                 }
             }
             #endregion
-
             //1.real time
             if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
                 label8.Text = (
                                 Math.Round(
                                                 (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
                                                                                 get_T2(dateTimePicker1.Value),
-                                                                                get_CURR_wo_seconds()) + SummaryExeeded0Statustime).TotalSeconds / (get_CURR_wo_seconds() - get_T1(dateTimePicker1.Value)).TotalSeconds
+                                                                                get_CURR()) + SummaryExeeded0Statustime).TotalSeconds / (get_CURR() - get_T1(dateTimePicker1.Value)).TotalSeconds
                                                                                 )
-                                                ) * 100, 2
+                                                ) * 100, 1
                                             )
                             ).ToString() + "%";
+            //MessageBox.Show((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
+            //                                                                    get_T2(dateTimePicker1.Value),
+            //                                                                    get_CURR_wo_seconds()) + SummaryExeeded0Statustime).ToString());
+            //MessageBox.Show((get_CURR() - get_T1(dateTimePicker1.Value)).ToString());
             //2.history
             if (get_T2(dateTimePicker1.Value) <= get_CURR())
                 label8.Text = (
                                 Math.Round(
-                                            (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR_wo_seconds()) + SummaryExeeded0Statustime).TotalSeconds / 43200)) * 100, 2
+                                            (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()) + SummaryExeeded0Statustime).TotalSeconds / 43200)) * 100, 2
                                         )
                             ).ToString() + "%";
+            //MessageBox.Show((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()) + SummaryExeeded0Statustime).ToString());
+            // 
         }
 
         private void showHistoryBrowserToolStripMenuItem_Click(object sender, EventArgs e)
