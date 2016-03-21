@@ -29,7 +29,7 @@ namespace GraphicLine
                 return GraphicLineDataArr;
             }
 
-            return new GLPoint[0];
+            return new GLPoint[GLGlobal.HistoryDeep];
         }
 
         public void LoadToXML(GLPoint[] data)

@@ -87,6 +87,9 @@ namespace GraphicLine
                     int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
                     Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
                 }
+                //MessageBox.Show(this.Data[0].datetime.ToString()+ "=" + this.Data[this.Data.Count - 1].datetime.ToString() + "=" + this.Data.Count.ToString());
+                //MessageBox.Show(this.Data[this.Data.Count - 1].datetime.ToString());
+                //MessageBox.Show(this.Data.Count.ToString());
                 for (int i = 0; i < this.Data.Count; i++)
                 {
                     
@@ -120,8 +123,8 @@ namespace GraphicLine
                 {
                     int curr_distance = (int)(this.Data[this.Data.Count-1].datetime - this.StartTime).TotalMinutes;
                     int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
-                    Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
-                    Gaps_list.Add(new Point(GraphicLineX2, this.GraphicLineY1 + 3));
+                    Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1));
+                    Gaps_list.Add(new Point(GraphicLineX2, this.GraphicLineY1));
                 }
 
                 //add bottom point of polygon
@@ -141,9 +144,10 @@ namespace GraphicLine
                 //draw out of data area
                 for (int i = 0; i < Gaps_list.Count; i += 2)
                 {
+                    
                     color2 = Color.FromArgb(0, 0, 0);
-                    pen3 = new Pen(color2);
-                    pen3.Width = 6;
+                    pen3 = new Pen(color1);
+                    pen3.Width = 12;
                     e.Graphics.DrawLine(pen3, Gaps_list[i], Gaps_list[i + 1]);
                 }
             }

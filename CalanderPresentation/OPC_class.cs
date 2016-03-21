@@ -70,10 +70,11 @@ namespace CalanderPresentation
 
         #region Properties
         public bool VariablesInitialized;
-        public Int32 CounterOfMaterial;
+        public Int32 CurrentCounterOfMaterial;
+        public Int32 CurrentSpeed;
         private String URL;
         private Label MaterialCounterLabel;
-        private Label CurrentSpeedLabels;
+        private Label CurrentSpeedLabel;
         public bool lockCount;
         private int previous_value_of_counter = 0;
 
@@ -97,7 +98,7 @@ namespace CalanderPresentation
                 {
                     if (File.Exists("settings.xml"))
                     {
-                        this.CounterOfMaterial = 0;
+                        this.CurrentCounterOfMaterial = 0;
 
                         XmlSerializer XmlSerializer1 = new XmlSerializer(typeof(Settings));
                         TextReader reader1 = new StreamReader("settings.xml");
@@ -149,18 +150,18 @@ namespace CalanderPresentation
             {
                 if (this.lockCount != true)
                 {
-                    this.MaterialCounterLabel.Text = (this.CounterOfMaterial != Convert.ToInt32(values[0].Value)) ? (this.CounterOfMaterial + (Convert.ToInt32(values[0].Value) - this.CounterOfMaterial)).ToString() : this.CounterOfMaterial.ToString();
-                    this.CounterOfMaterial += (Convert.ToInt32(values[0].Value)- this.CounterOfMaterial);
+                    this.MaterialCounterLabel.Text = (this.CurrentCounterOfMaterial != Convert.ToInt32(values[0].Value)) ? (this.CurrentCounterOfMaterial + (Convert.ToInt32(values[0].Value) - this.CurrentCounterOfMaterial)).ToString() : this.CurrentCounterOfMaterial.ToString();
+                    this.CurrentCounterOfMaterial += (Convert.ToInt32(values[0].Value)- this.CurrentCounterOfMaterial);
                 }
-
-            this.CurrentSpeedLabels.Text = Convert.ToInt32(values[1].Value).ToString();
+            this.CurrentSpeed = Convert.ToInt32(values[1].Value);
+            this.CurrentSpeedLabel.Text = this.CurrentSpeed.ToString();
             }
         #endregion
         #region void SetActiveLabel(Label in_control)
         public void SetActiveLabel(Label in_MaterialCounterLabel, Label in_CurrentSpeedLabel)
         {
             this.MaterialCounterLabel = in_MaterialCounterLabel;
-            this.CurrentSpeedLabels= in_CurrentSpeedLabel;
+            this.CurrentSpeedLabel= in_CurrentSpeedLabel;
         }
 
         #endregion

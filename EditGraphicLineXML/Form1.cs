@@ -17,7 +17,7 @@ namespace EditGraphicLineXML
         {
             //DateTime T1 = get_T1(get_CURR());
             DateTime T1 = new DateTime(2015, 04, 22, 06, 0, 0);
-            int Size = 10000;
+            int Size = 10800;
             GraphicLine.GLPoint[] a1 = new GLPoint[Size]; //720 min + 1
             
             Random rnd_v = new Random();
@@ -25,7 +25,7 @@ namespace EditGraphicLineXML
             for (int i = 0; i < Size; i++)
             {
                 //if (i < 40 || i > 65)
-                    a1[Size-1 - i] = new GLPoint((i * 60)/10000 , T1.AddMinutes(i));
+                    a1[i] = new GLPoint((i * 60)/10800 , T1.AddMinutes(i));
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));

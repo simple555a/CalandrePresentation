@@ -1,4 +1,4 @@
-﻿//#define real_time
+﻿#define real_time
 //#define bypass_opc_init
 
 using System;
@@ -66,18 +66,20 @@ namespace CalanderPresentation
             label9.Text = sql_obj.GetWCName();
 
             //set up components
-#region TimeLine
+            #region TimeLine
             timeLine1.LeftMargin = 20;
             timeLine1.RightMargin = 1;
             //timeLine1.TimeLineHeight = 30;
-#endregion
-#region GraphicLine
+            #endregion
+            #region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
             graphicLine1.SetpointSpeed = 30;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
-#endregion
+            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr[0].datetime.ToString());
+            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr[1].datetime.ToString());
+            #endregion
 
 
             label5.Text = sql_obj.GetCurrentStatusAsString();
@@ -115,10 +117,10 @@ namespace CalanderPresentation
 
             //OPC
 #if !bypass_opc_init
-            opc_obj.CounterOfMaterial = sql_obj.GetProductionCounter();
-            label4.Text = opc_obj.CounterOfMaterial.ToString();
-            opc_obj.SetActiveLabel(label4,label6);
-            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt()==0) ? false : true;
+            opc_obj.CurrentCounterOfMaterial = sql_obj.GetProductionCounter();
+            label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
+            opc_obj.SetActiveLabel(label4, label6);
+            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
 #endif
 
 
@@ -130,14 +132,14 @@ namespace CalanderPresentation
             Tick60sec.Tick += Tick60sec_Tick;
             Tick60sec.Start();
 
-#region Check shift
+            #region Check shift
 
             if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
                 radioButton1.Checked = true;
             else
                 radioButton2.Checked = true;
-#endregion
-#region Datetime picker current shift (day/night) and run GlobalPresenter() - value change event
+            #endregion
+            #region Datetime picker current shift (day/night) and run GlobalPresenter() - value change event
 #if !real_time
             DateTime BStartTime = fixed_CURR;
             dateTimePicker1.Value = BStartTime;
@@ -148,7 +150,7 @@ namespace CalanderPresentation
             if (System.DateTime.Now.Hour >= 8)
                 dateTimePicker1.Value = System.DateTime.Now.Date;
 #endif
-#endregion
+            #endregion
 
             previous_time = get_CURR();
         }
@@ -175,10 +177,13 @@ namespace CalanderPresentation
             //label6.Text = GetAverageCycleTime(opc_obj.CounterOfMaterial).ToString();
             //reset "rings counter" and "average cycle time" each shift change
             if (previous_time.Hour == 7 && get_CURR().Hour == 8 || previous_time.Hour == 19 && get_CURR().Hour == 20)
-                opc_obj.CounterOfMaterial = 0;
+                opc_obj.CurrentCounterOfMaterial = 0;
             previous_time = get_CURR();
 #endif
-            
+
+
+
+
             GlobalPresenter();
         }
 
@@ -194,8 +199,14 @@ namespace CalanderPresentation
 
 
             //opc
+#if !bypass_opc_init
             opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
-            //label6.Text = opc_obj.CurrentSpeed.ToString();
+            
+            //push current speed to GLHisory
+            GLGlobalObject.PushPoint(get_CURR(), opc_obj.CurrentSpeed);
+            graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
+            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
+#endif
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -341,7 +352,7 @@ namespace CalanderPresentation
             in_control.SetEmpty();
             in_control.AddBasePeriod(T1, T2);
 
-            for (int i = GLGlobalObject.GraphicLineDataArr.Length - 1; i >= 0; i--)
+            for (int i = 0 ; i < GLGlobalObject.GraphicLineDataArr.Length; i++)
             {
                 if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1 && GLGlobalObject.GraphicLineDataArr[i].datetime <= T2)
                 {
@@ -357,7 +368,7 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
-            
+
             in_control.AllowUserToAddRows = false;
             in_control.Rows.Clear();
             for (int i = 0; i < a1.Count; i++)
@@ -395,7 +406,7 @@ namespace CalanderPresentation
                     in_control.Rows[i].Cells[5].Style.BackColor = Color.GreenYellow;
             }
         }
-        
+
         //public int GetAverageCycleTime(int in_DoneRingsCount)
         //{
         //    if (in_DoneRingsCount == 0) return 0;
@@ -442,15 +453,15 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
-#region TimeLine
+            #region TimeLine
             TLGlobalObject = sql_obj.GetTimeLineData(T1, T2, CURR);
-#endregion
+            #endregion
 
-#region GraphicLine (empty)
-#endregion
+            #region GraphicLine (empty)
+            #endregion
 
-#region DataGridPresenter
-#region  ONLY FOR CALANDER!!!
+            #region DataGridPresenter
+            #region  ONLY FOR CALANDER!!!
             //if speed of line low than setpoint - add exedeed time to final resultcalculate calander 0 status
             cal_green_time = new TimeSpan(0, 0, 0);
 
@@ -462,24 +473,24 @@ namespace CalanderPresentation
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                 }
             }
-#endregion
+            #endregion
             DGGlobalObject = sql_obj.GetTableStatistic(T1, T2, CURR);
-#region  ONLY FOR CALANDER!!!
+            #region  ONLY FOR CALANDER!!!
             //calulating final exeeded time for calander
-            for (int i=0;i< DGGlobalObject.Count; i++)
+            for (int i = 0; i < DGGlobalObject.Count; i++)
             {
                 if (DGGlobalObject[i].MachineCode == "0")
                 {
                     DGGlobalObject[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
                 }
             }
-#endregion
-#endregion
+            #endregion
+            #endregion
         }
 
         private void GetEficiency()
         {
-#region Only For Calander
+            #region Only For Calander
             //get summary balasted time for calander
             TimeSpan SummaryExeeded0Statustime = new TimeSpan(0, 0, 0);
             for (int i = 0; i < DGGlobalObject.Count; i++)
@@ -489,7 +500,7 @@ namespace CalanderPresentation
                     SummaryExeeded0Statustime = TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time;
                 }
             }
-#endregion
+            #endregion
             //1.real time
             if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
                 label8.Text = (

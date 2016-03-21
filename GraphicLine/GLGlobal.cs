@@ -7,35 +7,59 @@ namespace GraphicLine
 {
     public class GLGlobal
     {
+        public static int HistoryDeep = 70; //7 days
+        public GLPoint[] GraphicLineDataArr;
         public GLGlobal()
         {
 
+            GraphicLineDataArr = new GLPoint[HistoryDeep];
+
+            //MessageBox.Show(GraphicLineDataArr.Length.ToString());
         }
 
-        private static int HistoryDeep = 10800; //7 days
-        public GLPoint[] GraphicLineDataArr = new GLPoint[HistoryDeep];
-        
-        public void PushPoint(DateTime in_datetime, int value)
-        {
-            Stack<GLPoint> Stack1 = new Stack<GLPoint>();
-            for (int i=0;i<GraphicLineDataArr.Length;i++)
-            {
-                Stack1.Push(GraphicLineDataArr[i]);
-            }
-            Stack1.Push(new GLPoint(value, in_datetime));
 
-            for (int i = GraphicLineDataArr.Length-1; i >=0; i--)
+        public void PushPoint(DateTime in_datetime, int in_value)
+        {
+
+            bool need_left_shift = true;
+            for (int i = 0; i < GraphicLineDataArr.Length; i++)
             {
-                GraphicLineDataArr[i] = Stack1.Pop();
+                if (GraphicLineDataArr[i]==null)
+                {
+                    GraphicLineDataArr[i] = new GLPoint();
+                    GraphicLineDataArr[i].datetime = in_datetime;
+                    GraphicLineDataArr[i].value = in_value;
+                    need_left_shift = false;
+                    break;
+                }
             }
-        } 
+
+            if (need_left_shift)
+            {
+
+            }
+
+
+
+
+            //if (need_left_shift==true)
+            //{
+            //    for (int i = 0; i < GraphicLineDataArr.Length-1; i++)
+            //    {
+            //        GraphicLineDataArr[i] = GraphicLineDataArr[i + 1];
+            //    }
+            //    GraphicLineDataArr[GraphicLineDataArr.Length - 1].datetime = in_datetime;
+            //    GraphicLineDataArr[GraphicLineDataArr.Length - 1].value = in_value;
+            //}
+
+        }
 
         public TimeSpan GetGreenTimeAboveSpeed(DateTime StartTime, DateTime EndTime, int SetpointSpeed)
         {
             TimeSpan ret_value = new TimeSpan(0, 0, 0);
             TimeSpan ShiftDuration = new TimeSpan(12, 0, 0);
             TimeSpan add_value = new TimeSpan(0, 1, 0);
-            for (int i=0; i<GraphicLineDataArr.Length;i++)
+            for (int i = 0; i < GraphicLineDataArr.Length; i++)
             {
                 try
                 {

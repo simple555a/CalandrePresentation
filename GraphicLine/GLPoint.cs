@@ -17,5 +17,7 @@ namespace GraphicLine
             this.value = value;
             this.datetime = datetime;
         }
+
+       
     }
 }
