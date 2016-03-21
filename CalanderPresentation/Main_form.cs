@@ -1,5 +1,5 @@
-﻿#define real_time
-//#define bypass_opc_init
+﻿//#define real_time
+#define bypass_opc_init
 
 using System;
 using System.Collections.Generic;
@@ -118,8 +118,8 @@ namespace CalanderPresentation
             //OPC
 #if !bypass_opc_init
             opc_obj.CurrentCounterOfMaterial = sql_obj.GetProductionCounter();
+            opc_obj.AskAllValues();
             label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
-            opc_obj.SetActiveLabel(label4, label6);
             opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
 #endif
 
@@ -201,8 +201,11 @@ namespace CalanderPresentation
             //opc
 #if !bypass_opc_init
             opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
-            
+
             //push current speed to GLHisory
+            opc_obj.AskAllValues();
+            label6.Text = opc_obj.CurrentSpeed.ToString();
+            label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
             GLGlobalObject.PushPoint(get_CURR(), opc_obj.CurrentSpeed);
             graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
             //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
@@ -465,14 +468,27 @@ namespace CalanderPresentation
             //if speed of line low than setpoint - add exedeed time to final resultcalculate calander 0 status
             cal_green_time = new TimeSpan(0, 0, 0);
 
+            string temp = "";
             for (int i = 0; i < TLGlobalObject.Length; i++)
             {
+                //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
                 if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime <= T2)
                 {
-                    //MessageBox.Show(TLGlobalObject[i].StartTime.ToString()+" "+ TLGlobalObject[i].EndTime.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
+                    temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString()+ " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString()+"\n";
+                }
+                if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime == DateTime.MaxValue)
+                {
+                    //MessageBox.Show((get_CURR()- TLGlobalObject[i].StartTime).ToString());
+                    cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
+                }
+                if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime < T1 && TLGlobalObject[i].EndTime == DateTime.MaxValue)
+                {
+                    cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR_wo_seconds(), graphicLine1.SetpointSpeed);
                 }
             }
+            //MessageBox.Show(temp);
+
             #endregion
             DGGlobalObject = sql_obj.GetTableStatistic(T1, T2, CURR);
             #region  ONLY FOR CALANDER!!!

@@ -25,7 +25,8 @@ namespace EditGraphicLineXML
             for (int i = 0; i < Size; i++)
             {
                 //if (i < 40 || i > 65)
-                    a1[i] = new GLPoint((i * 60)/10800 , T1.AddMinutes(i));
+                //a1[i] = new GLPoint((i * 60)/10800 , T1.AddMinutes(i));
+                a1[i] = new GLPoint(55, T1.AddMinutes(i));
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));
