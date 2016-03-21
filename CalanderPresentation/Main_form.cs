@@ -1,5 +1,5 @@
-﻿//#define real_time
-#define bypass_opc_init
+﻿#define real_time
+//#define bypass_opc_init
 
 using System;
 using System.Collections.Generic;
@@ -181,7 +181,16 @@ namespace CalanderPresentation
             previous_time = get_CURR();
 #endif
 
+            //opc
+#if !bypass_opc_init
+            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
 
+            //push current speed to GLHisory
+            opc_obj.AskAllValues();
+            GLGlobalObject.PushPoint(get_CURR(), opc_obj.CurrentSpeed);
+            graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
+            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
+#endif
 
 
             GlobalPresenter();
@@ -197,18 +206,11 @@ namespace CalanderPresentation
             String seconds = (System.DateTime.Now.TimeOfDay.Seconds < 10) ? "0" + System.DateTime.Now.TimeOfDay.Seconds.ToString() : System.DateTime.Now.TimeOfDay.Seconds.ToString();
             label2.Text = year + " " + month + " " + day + "  " + hours + ":" + minutes + ":" + seconds;
 
-
             //opc
 #if !bypass_opc_init
-            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
-
-            //push current speed to GLHisory
             opc_obj.AskAllValues();
             label6.Text = opc_obj.CurrentSpeed.ToString();
             label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
-            GLGlobalObject.PushPoint(get_CURR(), opc_obj.CurrentSpeed);
-            graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
-            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
 #endif
         }
 

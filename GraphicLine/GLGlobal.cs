@@ -72,27 +72,27 @@ namespace GraphicLine
             TimeSpan ShiftDuration = new TimeSpan(12, 0, 0);
             TimeSpan add_value = new TimeSpan(0, 1, 0);
             //MessageBox.Show(GraphicLineDataArr.Length.ToString());
-            string temp = "";
             for (int i = 0; i < GraphicLineDataArr.Length-1; i++)
             {
                 try
                 {
-                    if (GraphicLineDataArr[i].datetime > StartTime && GraphicLineDataArr[i].datetime <= EndTime && GraphicLineDataArr[i].value >= SetpointSpeed)
+                    if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime > StartTime && GraphicLineDataArr[i].datetime <= EndTime && GraphicLineDataArr[i].value >= SetpointSpeed)
                     {
-                        //temp+=(StartTime.ToString()+" "+ EndTime.ToString() + " "+ GraphicLineDataArr[i].datetime.ToString())+"\n";
                         if ((GraphicLineDataArr[i].datetime-StartTime).TotalSeconds<=60)
                             ret_value = ret_value.Add(GraphicLineDataArr[i].datetime - StartTime);
 
                         if ((GraphicLineDataArr[i].datetime - StartTime).TotalSeconds > 60)
                             ret_value = ret_value.Add(add_value);
+
+                        if ((EndTime - GraphicLineDataArr[i].datetime).TotalSeconds <= 60)
+                            ret_value = ret_value.Add(EndTime - GraphicLineDataArr[i].datetime);
                     }
                 }
                 catch
                 {
-                    MessageBox.Show("catch GetGreenTimeAboveSpeed" + GraphicLineDataArr[i].datetime.ToString());
+                    MessageBox.Show("catch GetGreenTimeAboveSpeed"+i.ToString());
                 }
             }
-            //MessageBox.Show(temp);
             //ret_value = ShiftDuration - ret_value;
             return ret_value;
             //return EndTime - StartTime;
