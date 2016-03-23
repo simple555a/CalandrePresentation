@@ -27,7 +27,7 @@ namespace TimeLine
             SolidBrush brush_004 = new SolidBrush(Color.Black);
             TextureBrush brush_001 = new TextureBrush(Properties.Resources.chess_texture);
             String tempString = "";
-            
+
             this.TimeLineHeight = 20;
             this.TimeLineX1 = this.LeftMargin;
             this.TimeLineY1 = 0;
