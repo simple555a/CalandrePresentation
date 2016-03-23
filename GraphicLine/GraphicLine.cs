@@ -72,6 +72,10 @@ namespace GraphicLine
             //MessageBox.Show(this.Data.Count.ToString());
             //TODO: Too many magic numbers
             #region Draw polygon data
+
+            int total_values = (720*60)/this.Discontinuity; //seconds in shift / discrete frecuency
+            int curr_distance = 0;
+
             if (this.Data.Count != 0)
             {
                 List<Point> points_list = new List<Point>();
@@ -83,8 +87,9 @@ namespace GraphicLine
                 if (this.Data[0].datetime!=this.StartTime)
                 {
                     Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth, this.GraphicLineY1 + 3));
-                    int curr_distance = (int)(this.Data[0].datetime - this.StartTime).TotalMinutes;
-                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                    
+                    curr_distance = (int)(this.Data[0].datetime - this.StartTime).TotalSeconds / this.Discontinuity;
+                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values);
                     Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
                 }
                 //MessageBox.Show(this.Data[0].datetime.ToString()+ "=" + this.Data[this.Data.Count - 1].datetime.ToString() + "=" + this.Data.Count.ToString());
@@ -92,22 +97,21 @@ namespace GraphicLine
                 //MessageBox.Show(this.Data.Count.ToString());
                 for (int i = 0; i < this.Data.Count; i++)
                 {
-                    
-                    int curr_distance = (int)(this.Data[i].datetime - this.StartTime).TotalMinutes;
-                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                    curr_distance = (int)(this.Data[i].datetime - this.StartTime).TotalSeconds / this.Discontinuity;
+                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values);
                     //there is no gaps
-                    if ((curr_distance - previous_distance) == 1)
+                    if ((curr_distance - previous_distance)<= 2) // - 2 because OPC is too slow. 
                     {
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
                     }
                     //gaps
-                    if ((curr_distance - previous_distance) > 1)
+                    if ((curr_distance - previous_distance) > 2) // - 2 because OPC is too slow
                     {
-                        temp = (int)((previous_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                        temp = (int)((previous_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values);
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
                         Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
 
-                        temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
+                        temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values);
 
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
                         Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 + 3));
@@ -121,25 +125,31 @@ namespace GraphicLine
                 //if right gap exists
                 if (this.Data[this.Data.Count-1].datetime != this.EndTime)
                 {
-                    int curr_distance = (int)(this.Data[this.Data.Count-1].datetime - this.StartTime).TotalMinutes;
-                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720);
-                    Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1));
+                    curr_distance = (int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalSeconds / this.Discontinuity;
+                    int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values);
+                    Gaps_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY1 ));
                     Gaps_list.Add(new Point(GraphicLineX2, this.GraphicLineY1));
                 }
 
                 //add bottom point of polygon
-                points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + (((int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalMinutes * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / 720), this.GraphicLineY2));
+                curr_distance = (int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalSeconds / this.Discontinuity;
+                points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + ((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values), this.GraphicLineY2));
                 Point[] points_arr = new Point[points_list.Count];
                 for (int i = 0; i < points_list.Count; i++)
                 {
                     points_arr[i] = points_list[i];
                 }
+
                 e.Graphics.FillPolygon(brush_005, points_arr);
+
                 //border  polygon
                 color4 = Color.FromArgb(0, 0, 0);
                 pen4 = new Pen(color4);
                 pen4.Width = 1;
                 e.Graphics.DrawPolygon(pen4, points_arr);
+
+
+                
 
                 //draw out of data area
                 for (int i = 0; i < Gaps_list.Count; i += 2)

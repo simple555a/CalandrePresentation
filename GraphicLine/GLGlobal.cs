@@ -7,7 +7,8 @@ namespace GraphicLine
 {
     public class GLGlobal
     {
-        public static int HistoryDeep = 720; //7 days
+        public static int HistoryDeep = 43200; //7 days
+        public int Discontinuity;
         public GLPoint[] GraphicLineDataArr;
         public GLGlobal()
         {
@@ -68,24 +69,24 @@ namespace GraphicLine
 
         public TimeSpan GetGreenTimeAboveSpeed(DateTime StartTime, DateTime EndTime, int SetpointSpeed)
         {
+            
             TimeSpan ret_value = new TimeSpan(0, 0, 0);
             TimeSpan ShiftDuration = new TimeSpan(12, 0, 0);
-            TimeSpan add_value = new TimeSpan(0, 1, 0);
-            //MessageBox.Show(GraphicLineDataArr.Length.ToString());
+            TimeSpan add_value = new TimeSpan(0, 0, this.Discontinuity);
             for (int i = 0; i < GraphicLineDataArr.Length-1; i++)
             {
                 try
                 {
                     if (GraphicLineDataArr[i] != null && GraphicLineDataArr[i].datetime > StartTime && GraphicLineDataArr[i].datetime <= EndTime && GraphicLineDataArr[i].value >= SetpointSpeed)
                     {
-                        if ((GraphicLineDataArr[i].datetime-StartTime).TotalSeconds<=60)
-                            ret_value = ret_value.Add(GraphicLineDataArr[i].datetime - StartTime);
+                        //if ((GraphicLineDataArr[i].datetime-StartTime).TotalSeconds<=1)
+                        //    ret_value = ret_value.Add(GraphicLineDataArr[i].datetime - StartTime);
 
-                        if ((GraphicLineDataArr[i].datetime - StartTime).TotalSeconds > 60)
+                        //if ((GraphicLineDataArr[i].datetime - StartTime).TotalSeconds > 1)
                             ret_value = ret_value.Add(add_value);
 
-                        if ((EndTime - GraphicLineDataArr[i].datetime).TotalSeconds <= 60)
-                            ret_value = ret_value.Add(EndTime - GraphicLineDataArr[i].datetime);
+                        //if ((EndTime - GraphicLineDataArr[i].datetime).TotalSeconds <= 1)
+                        //    ret_value = ret_value.Add(EndTime - GraphicLineDataArr[i].datetime);
                     }
                 }
                 catch

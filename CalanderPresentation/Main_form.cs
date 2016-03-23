@@ -25,6 +25,7 @@ namespace CalanderPresentation
 #endif
         static Timer Tick1sec = new Timer();
         static Timer Tick60sec = new Timer();
+        static Timer TickGLDiscontinuity = new Timer();
         private static Settings Settings1 = new Settings();
         static DateTime previous_time = new DateTime();
         static TimeSpan cal_exeeded_time = new TimeSpan(0, 0, 0);
@@ -75,7 +76,9 @@ namespace CalanderPresentation
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
             graphicLine1.SetpointSpeed = 30;
+            graphicLine1.Discontinuity = 1;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
+            GLGlobalObject.Discontinuity = graphicLine1.Discontinuity;
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
             //MessageBox.Show(GLGlobalObject.GraphicLineDataArr[0].datetime.ToString());
             //MessageBox.Show(GLGlobalObject.GraphicLineDataArr[1].datetime.ToString());
@@ -132,6 +135,10 @@ namespace CalanderPresentation
             Tick60sec.Tick += Tick60sec_Tick;
             Tick60sec.Start();
 
+            TickGLDiscontinuity.Interval = graphicLine1.Discontinuity*1000;
+            TickGLDiscontinuity.Tick += TickGLDiscontinuity_Tick;
+            TickGLDiscontinuity.Start();
+
             #region Check shift
 
             if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
@@ -153,6 +160,19 @@ namespace CalanderPresentation
             #endregion
 
             previous_time = get_CURR();
+        }
+
+        private void TickGLDiscontinuity_Tick(object sender, EventArgs e)
+        {
+
+            DateTime Tic1secCalltime = get_CURR();
+
+#if !bypass_opc_init
+            //push current speed to GLHisory
+            opc_obj.AskAllValues();
+            GLGlobalObject.PushPoint(Tic1secCalltime, opc_obj.CurrentSpeed);
+            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
+#endif
         }
 
         void Tick60sec_Tick(object sender, EventArgs e)
@@ -181,17 +201,8 @@ namespace CalanderPresentation
             previous_time = get_CURR();
 #endif
 
-            //opc
-#if !bypass_opc_init
-            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
-
-            //push current speed to GLHisory
-            opc_obj.AskAllValues();
-            GLGlobalObject.PushPoint(get_CURR(), opc_obj.CurrentSpeed);
+            
             graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
-            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
-#endif
-
 
             GlobalPresenter();
         }
@@ -212,6 +223,17 @@ namespace CalanderPresentation
             label6.Text = opc_obj.CurrentSpeed.ToString();
             label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
 #endif
+
+            //opc
+#if !bypass_opc_init
+            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
+            //push current speed to GLHisory
+            //opc_obj.AskAllValues();
+            //GLGlobalObject.PushPoint(Tic1secCalltime, opc_obj.CurrentSpeed);
+            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
+#endif
+
+            //graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -364,6 +386,8 @@ namespace CalanderPresentation
                     graphicLine1.Data.Add(GLGlobalObject.GraphicLineDataArr[i]);
                 }
             }
+
+            //MessageBox.Show(graphicLine1.Data.Count.ToString());
             in_control.Refresh();
         }
 
@@ -476,17 +500,20 @@ namespace CalanderPresentation
                 //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
                 if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime <= T2)
                 {
+                    //MessageBox.Show(1.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                     temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString()+ " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString()+"\n";
                 }
+                //MessageBox.Show(TLGlobalObject[i].MachineState.ToString());
                 if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
-                    //MessageBox.Show((get_CURR()- TLGlobalObject[i].StartTime).ToString());
+                    //MessageBox.Show(2.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
                 }
                 if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime < T1 && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
-                    cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR_wo_seconds(), graphicLine1.SetpointSpeed);
+                    //MessageBox.Show(3.ToString());
+                    cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
                 }
             }
             //MessageBox.Show(temp);

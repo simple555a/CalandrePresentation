@@ -16,8 +16,8 @@ namespace EditGraphicLineXML
         private void button1_Click(object sender, EventArgs e)
         {
             //DateTime T1 = get_T1(get_CURR());
-            DateTime T1 = new DateTime(2015, 04, 22, 06, 0, 0);
-            int Size = 10800;
+            DateTime T1 = new DateTime(2015, 04, 24, 06, 0, 0);
+            int Size = 43200*7;
             GraphicLine.GLPoint[] a1 = new GLPoint[Size]; //720 min + 1
             
             Random rnd_v = new Random();
@@ -26,7 +26,7 @@ namespace EditGraphicLineXML
             {
                 //if (i < 40 || i > 65)
                 //a1[i] = new GLPoint((i * 60)/10800 , T1.AddMinutes(i));
-                a1[i] = new GLPoint(55, T1.AddMinutes(i));
+                a1[i] = new GLPoint(((i * 60)/(43200*7)) , T1.AddSeconds(i));
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GLPoint[]));
