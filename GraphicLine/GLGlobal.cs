@@ -7,7 +7,7 @@ namespace GraphicLine
 {
     public class GLGlobal
     {
-        public static int HistoryDeep = 43200; //7 days
+        public static int HistoryDeep = 60*60*12*7; //7 shifts
         public int Discontinuity;
         public GLPoint[] GraphicLineDataArr;
         public GLGlobal()
