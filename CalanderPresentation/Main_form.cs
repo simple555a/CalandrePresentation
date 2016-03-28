@@ -1,4 +1,4 @@
-﻿#define real_time
+﻿//#define real_time
 //#define bypass_opc_init
 
 using System;
@@ -29,6 +29,7 @@ namespace CalanderPresentation
         private static Settings Settings1 = new Settings();
         static DateTime previous_time = new DateTime();
         static TimeSpan cal_exeeded_time = new TimeSpan(0, 0, 0);
+        static bool RefreshAsNowInterlock = false;
 
         #region GlobalDataVar
         static TimeSpan cal_green_time = new TimeSpan(0, 0, 0);
@@ -76,7 +77,6 @@ namespace CalanderPresentation
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
             graphicLine1.SetpointSpeed = 30;
-            graphicLine1.Discontinuity = 1;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.Discontinuity = graphicLine1.Discontinuity;
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
@@ -116,7 +116,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v0.0.2";
+            this.Text += " v0.0.3";
 
             //OPC
 #if !bypass_opc_init
@@ -160,6 +160,7 @@ namespace CalanderPresentation
             #endregion
 
             previous_time = get_CURR();
+            toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
         }
 
         private void TickGLDiscontinuity_Tick(object sender, EventArgs e)
@@ -177,34 +178,38 @@ namespace CalanderPresentation
 
         void Tick60sec_Tick(object sender, EventArgs e)
         {
-            //set current data in controls
-            if (System.DateTime.Now.Hour < 9)
-                dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
-            if (System.DateTime.Now.Hour >= 8)
-                dateTimePicker1.Value = System.DateTime.Now.Date;
-            if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
-            {
-                //MessageBox.Show("Day");
-                radioButton1.Checked = true;
-            }
-            if (get_CURR().Hour >= 20 && get_CURR().Hour < 24 || get_CURR().Hour >= 0 && get_CURR().Hour < 8)
-            {
-                //MessageBox.Show("Night");
-                radioButton2.Checked = true;
-            }
-            //set average cycle time
-#if !bypass_opc_init
-            //label6.Text = GetAverageCycleTime(opc_obj.CounterOfMaterial).ToString();
-            //reset "rings counter" and "average cycle time" each shift change
-            if (previous_time.Hour == 7 && get_CURR().Hour == 8 || previous_time.Hour == 19 && get_CURR().Hour == 20)
-                opc_obj.CurrentCounterOfMaterial = 0;
-            previous_time = get_CURR();
-#endif
 
-            
             graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
 
-            GlobalPresenter();
+            #region  refresh all information
+            if (!RefreshAsNowInterlock)
+            {
+                //set current data in controls
+                if (System.DateTime.Now.Hour < 9)
+                    dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
+                if (System.DateTime.Now.Hour >= 8)
+                    dateTimePicker1.Value = System.DateTime.Now.Date;
+                if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
+                {
+                    //MessageBox.Show("Day");
+                    radioButton1.Checked = true;
+                }
+                if (get_CURR().Hour >= 20 && get_CURR().Hour < 24 || get_CURR().Hour >= 0 && get_CURR().Hour < 8)
+                {
+                    //MessageBox.Show("Night");
+                    radioButton2.Checked = true;
+                }
+                //set average cycle time
+#if !bypass_opc_init
+                //label6.Text = GetAverageCycleTime(opc_obj.CounterOfMaterial).ToString();
+                //reset "rings counter" and "average cycle time" each shift change
+                if (previous_time.Hour == 7 && get_CURR().Hour == 8 || previous_time.Hour == 19 && get_CURR().Hour == 20)
+                    opc_obj.CurrentCounterOfMaterial = 0;
+                previous_time = get_CURR();
+#endif
+                GlobalPresenter();
+            }
+            #endregion
         }
 
         void Tic1sec_Tick(object sender, EventArgs e)
@@ -249,6 +254,12 @@ namespace CalanderPresentation
 
         private void button1_Click(object sender, EventArgs e)
         {
+            RefreshAsNowInterlock = false;
+            if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
+                radioButton1.Checked = true;
+            else
+                radioButton2.Checked = true;
+            dateTimePicker1.Value = DateTime.Now;
             GlobalPresenter();
         }
 
@@ -325,7 +336,7 @@ namespace CalanderPresentation
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
-
+            //MessageBox.Show(in_StartTime.ToString());
             //TimeLine.Section[] a1;
             //a1 = sql_obj.GetTimeLineData(T1, T2, CURR);
             //TLGlobalObject = a1;
@@ -389,7 +400,7 @@ namespace CalanderPresentation
                 }
             }
 
-            //MessageBox.Show(graphicLine1.Data.Count.ToString());
+            MessageBox.Show(graphicLine1.Data[graphicLine1.Data.Count-1].datetime.ToString());
             in_control.Refresh();
         }
 
@@ -406,7 +417,7 @@ namespace CalanderPresentation
             {
                 in_control.Rows.Add();
                 in_control.Rows[i].Height = 50;
-                in_control.Rows[i].Cells[0].Value = a1[i].MachineCode;
+                in_control.Rows[i].Cells[0].Value = a1[i].MachineState;
                 in_control.Rows[i].Cells[1].Style.BackColor = a1[i].Color;
 
                 String hours = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)).Hours < 10)
@@ -421,13 +432,6 @@ namespace CalanderPresentation
                 in_control.Rows[i].Cells[2].Value = hours + minutes + seconds;
                 in_control.Rows[i].Cells[3].Value = a1[i].Status;
                 in_control.Rows[i].Cells[4].Value = a1[i].Count;
-                //#region  ONLY FOR CALANDER!!!
-                ////if speed of line low than setpoint - add exedeed time to final result
-                //if (a1[i].MachineCode == "0")
-                //{
-                //    a1[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(a1[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
-                //}
-                //#endregion
                 in_control.Rows[i].Cells[5].Value = TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Hours.ToString() +
                     "h " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Minutes.ToString() +
                     "min " + TimeSpan.FromSeconds(Convert.ToDouble(a1[i].ExceededTime)).Seconds.ToString() + "sec ";
@@ -437,25 +441,7 @@ namespace CalanderPresentation
                     in_control.Rows[i].Cells[5].Style.BackColor = Color.GreenYellow;
             }
         }
-
-        //public int GetAverageCycleTime(int in_DoneRingsCount)
-        //{
-        //    if (in_DoneRingsCount == 0) return 0;
-        //    if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
-        //    {
-        //        return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) - TimeSpan.FromHours(8))).TotalSeconds / in_DoneRingsCount);
-        //    }
-        //    if (get_CURR().Hour >= 20 && get_CURR().Hour < 24)
-        //    {
-        //        return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) - TimeSpan.FromHours(20))).TotalSeconds / in_DoneRingsCount);
-        //    }
-        //    if (get_CURR().Hour >= 0 && get_CURR().Hour < 8)
-        //    {
-        //        return Convert.ToInt32(((TimeSpan.FromHours(get_CURR().Hour) + TimeSpan.FromMinutes(get_CURR().Minute) + TimeSpan.FromSeconds(get_CURR().Second) + TimeSpan.FromHours(4))).TotalSeconds / in_DoneRingsCount);
-        //    }
-        //    return 0;
-        //}
-
+        
         private void exitToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             Application.Exit();
@@ -469,6 +455,8 @@ namespace CalanderPresentation
         private void GlobalPresenter()
         {
             GetGlobalData(dateTimePicker1.Value);
+            //toolStripStatusLabel4.Text = TLGlobalObject[0].StartTime.ToString();
+            toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
             label1.Text = sql_obj.GetOperatorName();
             TimeLinePresenter(timeLine1, dateTimePicker1.Value, TLGlobalObject);
             GraphicLinePresenter(graphicLine1, dateTimePicker1.Value);
@@ -526,7 +514,7 @@ namespace CalanderPresentation
             //calulating final exeeded time for calander
             for (int i = 0; i < DGGlobalObject.Count; i++)
             {
-                if (DGGlobalObject[i].MachineCode == "0")
+                if (DGGlobalObject[i].MachineState == "0")
                 {
                     DGGlobalObject[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
                 }
@@ -542,7 +530,7 @@ namespace CalanderPresentation
             TimeSpan SummaryExeeded0Statustime = new TimeSpan(0, 0, 0);
             for (int i = 0; i < DGGlobalObject.Count; i++)
             {
-                if (DGGlobalObject[i].MachineCode == "0")
+                if (DGGlobalObject[i].MachineState == "0")
                 {
                     SummaryExeeded0Statustime = TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time;
                 }
@@ -618,6 +606,30 @@ namespace CalanderPresentation
         private void radioButton1_MouseClick(object sender, MouseEventArgs e)
         {
             GlobalPresenter();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            RefreshAsNowInterlock = true;
+            if (dateTimePicker1.Value.Hour >= 8 && dateTimePicker1.Value.Hour < 20)
+                radioButton1.Checked = true;
+            else
+                radioButton2.Checked = true;
+            dateTimePicker1.Value -= new TimeSpan(12, 0, 0);
+            //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
+            //GlobalPresenter();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            RefreshAsNowInterlock = true;
+            if (dateTimePicker1.Value.Hour >= 8 && dateTimePicker1.Value.Hour < 20)
+                radioButton1.Checked = true;
+            else
+                radioButton2.Checked = true;
+            dateTimePicker1.Value += new TimeSpan(12, 0, 0);
+            //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
+            //GlobalPresenter();
         }
     }
 }

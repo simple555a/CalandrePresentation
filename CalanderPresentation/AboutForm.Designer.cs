@@ -110,7 +110,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(105, 13);
             this.label1.TabIndex = 16;
-            this.label1.Text = "Russia, Kaluga 2015";
+            this.label1.Text = "Russia, Kaluga 2016";
             // 
             // label2
             // 

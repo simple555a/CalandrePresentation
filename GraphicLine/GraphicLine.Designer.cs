@@ -92,14 +92,10 @@ namespace GraphicLine
         public int LeftMargin;
         public int RightMargin;
         public int SetpointSpeed;
-        public int Discontinuity;
+        public int Discontinuity=1;
         public List<GLPoint> Data = new List<GLPoint> { };
 
         public string Category { get; }
-        /// <summary>
-        /// 0 - sec, 1 - minute, 2 - hour, 3 - day
-        /// </summary>
-        public int TimeDimension;
 
 
         private DateTime StartTime;

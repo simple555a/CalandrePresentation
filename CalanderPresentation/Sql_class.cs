@@ -687,7 +687,7 @@ ORDER BY [StartTime]";
                         {
                             using (DataGridRow a1 = new DataGridRow())
                             {
-                                a1.MachineCode = reader.GetInt32(0).ToString();
+                                a1.MachineState = reader.GetInt32(0).ToString();
                                 a1.Color = Color.FromArgb(Convert.ToByte((reader.GetInt64(1) & 255)), Convert.ToByte((reader.GetInt64(1) >> 8) & 255), Convert.ToByte(reader.GetInt64(1) >> 16));
                                 a1.Status = reader.GetString(2);
                                 a1.SummaryTime = reader.GetInt32(3).ToString();

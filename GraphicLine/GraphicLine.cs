@@ -17,6 +17,7 @@ namespace GraphicLine
             InitializeComponent();
 
             this.History = new HistoryClass();
+            this.Discontinuity = 1;
         }
 
 
@@ -98,12 +99,12 @@ namespace GraphicLine
                     curr_distance = (int)(this.Data[i].datetime - this.StartTime).TotalSeconds / this.Discontinuity;
                     int temp = (int)((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values);
                     //there is no gaps
-                    if ((curr_distance - previous_distance)<= 5) // - 5 because OPC is too slow. 
+                    if ((curr_distance - previous_distance)<= this.Discontinuity * 5) // - 5 because OPC is too slow. 
                     {
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2 - this.Data[i].value));
                     }
                     //gaps
-                    if ((curr_distance - previous_distance) > 5) // - 5 because OPC is too slow
+                    if ((curr_distance - previous_distance) > this.Discontinuity * 5) // - 5 because OPC is too slow
                     {
                         temp = (int)((previous_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values);
                         points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + temp, this.GraphicLineY2));
@@ -131,6 +132,13 @@ namespace GraphicLine
 
                 //add bottom point of polygon
                 curr_distance = (int)(this.Data[this.Data.Count - 1].datetime - this.StartTime).TotalSeconds / this.Discontinuity;
+                //MessageBox.Show(this.Data[0].datetime.ToString() + "\n" +
+                //    this.Data[1].datetime.ToString() + "\n" +
+                //    this.Data[2].datetime.ToString() + "\n" +
+                //    this.Data[this.Data.Count - 4].datetime.ToString() + "\n" +
+                //    this.Data[this.Data.Count - 3].datetime.ToString() + "\n" +
+                //    this.Data[this.Data.Count - 2].datetime.ToString() + "\n" +
+                //    this.Data[this.Data.Count - 1].datetime.ToString());
                 points_list.Add(new Point(GraphicLineX1 + this.GraphicLineYTitlesWidth + ((curr_distance * (this.GraphicLineWidth - this.GraphicLineYTitlesWidth)) / total_values), this.GraphicLineY2));
                 Point[] points_arr = new Point[points_list.Count];
                 for (int i = 0; i < points_list.Count; i++)
