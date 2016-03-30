@@ -496,7 +496,7 @@ namespace CalanderPresentation
             for (int i = 0; i < TLGlobalObject.Length; i++)
             {
                 //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
-                if ((TLGlobalObject[i].MachineState == 0 || TLGlobalObject[i].MachineState == 11)
+                if (TLGlobalObject[i].MachineState == 0
                     && TLGlobalObject[i].StartTime >= T1 
                     && TLGlobalObject[i].EndTime <= T2)
                 {
@@ -505,19 +505,19 @@ namespace CalanderPresentation
                     temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString()+ " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString()+"\n";
                 }
                 //MessageBox.Show(TLGlobalObject[i].MachineState.ToString());
-                if ((TLGlobalObject[i].MachineState == 0 || TLGlobalObject[i].MachineState == 11)
+                if (TLGlobalObject[i].MachineState == 0 
                     && TLGlobalObject[i].StartTime >= T1 
                     && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
                     //MessageBox.Show(2.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
                 }
-                if ((TLGlobalObject[i].MachineState == 0 || TLGlobalObject[i].MachineState == 11)
+                if (TLGlobalObject[i].MachineState == 0 
                     && TLGlobalObject[i].StartTime < T1 
                     && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
                     //MessageBox.Show(3.ToString());
-                    cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
+                    cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(T1, get_CURR(), graphicLine1.SetpointSpeed);
                 }
             }
             //MessageBox.Show(temp);
