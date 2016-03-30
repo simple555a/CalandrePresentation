@@ -1,4 +1,4 @@
-﻿//#define real_time
+﻿#define real_time
 //#define bypass_opc_init
 
 using System;
@@ -9,6 +9,14 @@ using GraphicLine;
 using System.IO;
 using System.Xml.Serialization;
 using CalanderPresentation.TYPES;
+
+
+/*
+Problems:
+1. When repainting TL and Gl - at first appear day before, and after this refresh correctly
+2. Page navigation doesnt work properly
+3. 0 and 11 state - how to calculate efficiency time
+*/
 
 namespace CalanderPresentation
 {
@@ -21,7 +29,7 @@ namespace CalanderPresentation
 #endif
 
 #if !real_time
-        public static DateTime fixed_CURR = new DateTime(2015, 04, 24, 19, 39, 00);
+        public static DateTime fixed_CURR = new DateTime(2016, 03, 27, 19, 39, 00);
 #endif
         static Timer Tick1sec = new Timer();
         static Timer Tick60sec = new Timer();
@@ -400,7 +408,7 @@ namespace CalanderPresentation
                 }
             }
 
-            MessageBox.Show(graphicLine1.Data[graphicLine1.Data.Count-1].datetime.ToString());
+            //MessageBox.Show(graphicLine1.Data[graphicLine1.Data.Count-1].datetime.ToString());
             in_control.Refresh();
         }
 
@@ -488,19 +496,25 @@ namespace CalanderPresentation
             for (int i = 0; i < TLGlobalObject.Length; i++)
             {
                 //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
-                if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime <= T2)
+                if ((TLGlobalObject[i].MachineState == 0 || TLGlobalObject[i].MachineState == 11)
+                    && TLGlobalObject[i].StartTime >= T1 
+                    && TLGlobalObject[i].EndTime <= T2)
                 {
                     //MessageBox.Show(1.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
                     temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString()+ " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString()+"\n";
                 }
                 //MessageBox.Show(TLGlobalObject[i].MachineState.ToString());
-                if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime >= T1 && TLGlobalObject[i].EndTime == DateTime.MaxValue)
+                if ((TLGlobalObject[i].MachineState == 0 || TLGlobalObject[i].MachineState == 11)
+                    && TLGlobalObject[i].StartTime >= T1 
+                    && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
                     //MessageBox.Show(2.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
                 }
-                if (TLGlobalObject[i].MachineState == 0 && TLGlobalObject[i].StartTime < T1 && TLGlobalObject[i].EndTime == DateTime.MaxValue)
+                if ((TLGlobalObject[i].MachineState == 0 || TLGlobalObject[i].MachineState == 11)
+                    && TLGlobalObject[i].StartTime < T1 
+                    && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
                     //MessageBox.Show(3.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
@@ -514,7 +528,7 @@ namespace CalanderPresentation
             //calulating final exeeded time for calander
             for (int i = 0; i < DGGlobalObject.Count; i++)
             {
-                if (DGGlobalObject[i].MachineState == "0")
+                if (DGGlobalObject[i].MachineState == "0" )
                 {
                     DGGlobalObject[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
                 }
