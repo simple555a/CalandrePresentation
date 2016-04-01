@@ -160,9 +160,9 @@ namespace CalanderPresentation
             dateTimePicker1.Value = BStartTime;
 #endif
 #if real_time
-            if (System.DateTime.Now.Hour < 9)
-                dateTimePicker1.Value = System.DateTime.Now - TimeSpan.FromDays(1);
-            if (System.DateTime.Now.Hour >= 8)
+            //if (System.DateTime.Now.Hour < 9)
+            //    dateTimePicker1.Value = System.DateTime.Now - TimeSpan.FromDays(1);
+            //if (System.DateTime.Now.Hour >= 8)
                 dateTimePicker1.Value = System.DateTime.Now;
 #endif
             #endregion
@@ -348,6 +348,7 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
             //MessageBox.Show(in_StartTime.ToString());
+            //MessageBox.Show(T1.ToString());
 
             in_control.SetEmpty();
 
@@ -472,7 +473,7 @@ namespace CalanderPresentation
             GetEficiency();
             label5.Text = sql_obj.GetCurrentStatusAsString();
             label5.BackColor = sql_obj.GetCurrentStatusColor();
-            //MessageBox.Show(TLGlobalObject[TLGlobalObject.Length-1].EndTime.ToString());
+            //MessageBox.Show(dateTimePicker1.Value.ToString());
         }
 
         private void GetGlobalData(DateTime in_StartTime)
