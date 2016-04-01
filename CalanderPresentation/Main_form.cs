@@ -161,9 +161,9 @@ namespace CalanderPresentation
 #endif
 #if real_time
             if (System.DateTime.Now.Hour < 9)
-                dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
+                dateTimePicker1.Value = System.DateTime.Now - TimeSpan.FromDays(1);
             if (System.DateTime.Now.Hour >= 8)
-                dateTimePicker1.Value = System.DateTime.Now.Date;
+                dateTimePicker1.Value = System.DateTime.Now;
 #endif
             #endregion
 
@@ -184,7 +184,7 @@ namespace CalanderPresentation
 #endif
         }
 
-        void Tick60sec_Tick(object sender, EventArgs e)
+        private void Tick60sec_Tick(object sender, EventArgs e)
         {
 
             graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
@@ -220,7 +220,7 @@ namespace CalanderPresentation
             #endregion
         }
 
-        void Tic1sec_Tick(object sender, EventArgs e)
+        private void Tic1sec_Tick(object sender, EventArgs e)
         {
             String year = System.DateTime.Now.Year.ToString();
             String month = System.DateTime.Now.ToString("MMMM");
@@ -260,16 +260,7 @@ namespace CalanderPresentation
             ConnectionsForm1.Show();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            RefreshAsNowInterlock = false;
-            if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
-                radioButton1.Checked = true;
-            else
-                radioButton2.Checked = true;
-            dateTimePicker1.Value = DateTime.Now;
-            GlobalPresenter();
-        }
+        
 
         /// <summary>
         /// Get EStart shift time
@@ -280,16 +271,21 @@ namespace CalanderPresentation
         {
             TimeSpan t1 = new TimeSpan(8, 0, 0);
             TimeSpan t2 = new TimeSpan(12, 0, 0);
-            DateTime T1;
+            TimeSpan t3 = new TimeSpan(4, 0, 0);
+            DateTime T1 = new DateTime();
 
-            if (radioButton1.Checked)
-            {
-                T1 = in_StartTime.Date + t1;
-            }
-            else
-            {
-                T1 = in_StartTime.Date + t1 + t2;
-            }
+            //if (radioButton1.Checked)
+            //{
+            //    T1 = in_StartTime.Date + t1;
+            //}
+            //else
+            //{
+            //    T1 = in_StartTime.Date + t1 + t2;
+            //}
+
+            if (in_StartTime.Hour < 8) T1 = in_StartTime.Date - t3;
+            if (in_StartTime.Hour >= 20) T1 = in_StartTime.Date + t1 + t2;
+            if (in_StartTime.Hour >=8 && in_StartTime.Hour < 20) T1 = in_StartTime.Date + t1;
 
             return T1;
         }
@@ -303,16 +299,23 @@ namespace CalanderPresentation
         {
             TimeSpan t1 = new TimeSpan(8, 0, 0);
             TimeSpan t2 = new TimeSpan(12, 0, 0);
-            DateTime T2;
+            TimeSpan t3 = new TimeSpan(4, 0, 0);
+            DateTime T2 = new DateTime();
 
-            if (radioButton1.Checked)
-            {
-                T2 = in_StartTime.Date + t1 + t2;
-            }
-            else
-            {
-                T2 = in_StartTime.Date + t1 + t2 + t2;
-            }
+            //if (radioButton1.Checked)
+            //{
+            //    T2 = in_StartTime.Date + t1 + t2;
+            //}
+            //else
+            //{
+            //    T2 = in_StartTime.Date + t1 + t2 + t2;
+            //}
+
+
+            if (in_StartTime.Hour < 8) T2 = in_StartTime.Date + t1;
+            if (in_StartTime.Hour >= 20) T2 = in_StartTime.Date + t1 + t2 + t2 + t2;
+            if (in_StartTime.Hour >= 8 && in_StartTime.Hour < 20) T2 = in_StartTime.Date + t1+t2;
+
             return T2;
         }
 
@@ -480,6 +483,8 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
 
+            //MessageBox.Show(in_StartTime.ToString());
+            //MessageBox.Show(T1.ToString());
             #region TimeLine
             TLGlobalObject = sql_obj.GetTimeLineData(T1, T2, CURR);
             #endregion
@@ -622,13 +627,24 @@ namespace CalanderPresentation
             GlobalPresenter();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            RefreshAsNowInterlock = true;
-            if (dateTimePicker1.Value.Hour >= 8 && dateTimePicker1.Value.Hour < 20)
+            RefreshAsNowInterlock = false;
+            if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
                 radioButton1.Checked = true;
             else
                 radioButton2.Checked = true;
+            dateTimePicker1.Value = DateTime.Now;
+            GlobalPresenter();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            RefreshAsNowInterlock = true;
+            if (radioButton1.Checked)
+                radioButton2.Checked = true;
+            else
+                radioButton1.Checked = true;
             dateTimePicker1.Value -= new TimeSpan(12, 0, 0);
             //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
             //GlobalPresenter();
@@ -637,10 +653,10 @@ namespace CalanderPresentation
         private void button3_Click(object sender, EventArgs e)
         {
             RefreshAsNowInterlock = true;
-            if (dateTimePicker1.Value.Hour >= 8 && dateTimePicker1.Value.Hour < 20)
-                radioButton1.Checked = true;
-            else
+            if (radioButton1.Checked)
                 radioButton2.Checked = true;
+            else
+                radioButton1.Checked = true;
             dateTimePicker1.Value += new TimeSpan(12, 0, 0);
             //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
             //GlobalPresenter();
