@@ -14,8 +14,8 @@ using CalanderPresentation.TYPES;
 /*
 Problems:
 1. When repainting TL and Gl - at first appear day before, and after this refresh correctly
-2. Page navigation doesnt work properly
-3. 0 and 11 state - how to calculate efficiency time
+2. (solved) Page navigation doesnt work properly
+3. (solved - 11 as rest rule )0 and 11 state - how to calculate efficiency time
 */
 
 namespace CalanderPresentation
@@ -168,7 +168,7 @@ namespace CalanderPresentation
             #endregion
 
             previous_time = get_CURR();
-            toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
+            //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
         }
 
         private void TickGLDiscontinuity_Tick(object sender, EventArgs e)
@@ -193,10 +193,10 @@ namespace CalanderPresentation
             if (!RefreshAsNowInterlock)
             {
                 //set current data in controls
-                if (System.DateTime.Now.Hour < 9)
-                    dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
-                if (System.DateTime.Now.Hour >= 8)
-                    dateTimePicker1.Value = System.DateTime.Now.Date;
+                //if (System.DateTime.Now.Hour < 9)
+                //    dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
+                //if (System.DateTime.Now.Hour >= 8)
+                //    dateTimePicker1.Value = System.DateTime.Now.Date;
                 if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
                 {
                     //MessageBox.Show("Day");
@@ -313,7 +313,7 @@ namespace CalanderPresentation
 
 
             if (in_StartTime.Hour < 8) T2 = in_StartTime.Date + t1;
-            if (in_StartTime.Hour >= 20) T2 = in_StartTime.Date + t1 + t2 + t2 + t2;
+            if (in_StartTime.Hour >= 20) T2 = in_StartTime.Date + t1 + t2 + t2;
             if (in_StartTime.Hour >= 8 && in_StartTime.Hour < 20) T2 = in_StartTime.Date + t1+t2;
 
             return T2;
@@ -348,9 +348,6 @@ namespace CalanderPresentation
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
             //MessageBox.Show(in_StartTime.ToString());
-            //TimeLine.Section[] a1;
-            //a1 = sql_obj.GetTimeLineData(T1, T2, CURR);
-            //TLGlobalObject = a1;
 
             in_control.SetEmpty();
 
@@ -380,7 +377,7 @@ namespace CalanderPresentation
                     in_control.AddPeriod(a1[a1.Length - 1].colorRed, a1[a1.Length - 1].colorGreen, a1[a1.Length - 1].colorBlue, T1, CURR, temp_is_last);
                 if (temp_is_last && T1 < CURR && CURR < T2 && a1[a1.Length - 1].StartTime >= T1)
                     in_control.AddPeriod(a1[a1.Length - 1].colorRed, a1[a1.Length - 1].colorGreen, a1[a1.Length - 1].colorBlue, a1[a1.Length - 1].StartTime, CURR, temp_is_last);
-                //MessageBox.Show((a1.Length).ToString());
+                //MessageBox.Show(temp_is_last.ToString());
                 if (!temp_is_last && a1[a1.Length - 1].StartTime >= T1)
                     in_control.AddPeriod(a1[a1.Length - 1].colorRed, a1[a1.Length - 1].colorGreen, a1[a1.Length - 1].colorBlue, a1[a1.Length - 1].StartTime, T2, temp_is_last);
                 if (!temp_is_last && a1[a1.Length - 1].StartTime < T1)
@@ -467,7 +464,7 @@ namespace CalanderPresentation
         {
             GetGlobalData(dateTimePicker1.Value);
             //toolStripStatusLabel4.Text = TLGlobalObject[0].StartTime.ToString();
-            toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
+            //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
             label1.Text = sql_obj.GetOperatorName();
             TimeLinePresenter(timeLine1, dateTimePicker1.Value, TLGlobalObject);
             GraphicLinePresenter(graphicLine1, dateTimePicker1.Value);
@@ -475,6 +472,7 @@ namespace CalanderPresentation
             GetEficiency();
             label5.Text = sql_obj.GetCurrentStatusAsString();
             label5.BackColor = sql_obj.GetCurrentStatusColor();
+            //MessageBox.Show(TLGlobalObject[TLGlobalObject.Length-1].EndTime.ToString());
         }
 
         private void GetGlobalData(DateTime in_StartTime)
@@ -619,12 +617,12 @@ namespace CalanderPresentation
 
         private void radioButton2_MouseClick(object sender, MouseEventArgs e)
         {
-            GlobalPresenter();
+            dateTimePicker1.Value += new TimeSpan(12, 0, 0);
         }
 
         private void radioButton1_MouseClick(object sender, MouseEventArgs e)
         {
-            GlobalPresenter();
+            dateTimePicker1.Value -= new TimeSpan(12, 0, 0);
         }
 
         private void button1_Click(object sender, EventArgs e)

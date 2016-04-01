@@ -93,11 +93,6 @@ VALUES
 INSERT INTO 
 @rules_unlimited_times
 VALUES      
-(11);
-
-INSERT INTO 
-@rules_unlimited_times
-VALUES      
 (111);
 
 INSERT INTO 

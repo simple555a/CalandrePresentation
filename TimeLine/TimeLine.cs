@@ -74,6 +74,7 @@ namespace TimeLine
 
             #region drawing per hour metric (for each hour, undepend Data list)
             int total_hours = (this.EndTime - this.StartTime).Hours;
+            //MessageBox.Show(1.ToString());
             for (int i = 1; i < total_hours; i++)
             {
                 color1 = Color.FromArgb(0, 0, 0);
