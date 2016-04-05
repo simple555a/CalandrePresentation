@@ -124,7 +124,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v0.0.3";
+            this.Text += " v0.0.4";
 
             //OPC
 #if !bypass_opc_init
@@ -196,7 +196,7 @@ namespace CalanderPresentation
                 //if (System.DateTime.Now.Hour < 9)
                 //    dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
                 //if (System.DateTime.Now.Hour >= 8)
-                //    dateTimePicker1.Value = System.DateTime.Now.Date;
+                dateTimePicker1.Value = System.DateTime.Now;
                 if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
                 {
                     //MessageBox.Show("Day");
