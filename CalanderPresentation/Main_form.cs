@@ -32,12 +32,17 @@ namespace CalanderPresentation
         public static DateTime fixed_CURR = new DateTime(2016, 03, 27, 19, 39, 00);
 #endif
         static Timer Tick1sec = new Timer();
+        static Timer Tick50msec = new Timer();
         static Timer Tick60sec = new Timer();
         static Timer TickGLDiscontinuity = new Timer();
         private static Settings Settings1 = new Settings();
         static DateTime previous_time = new DateTime();
         static TimeSpan cal_exeeded_time = new TimeSpan(0, 0, 0);
         static bool RefreshAsNowInterlock = false;
+
+        //inteface global
+        static bool MarketStartMoving=false;
+        static double previous_efficiency_value = 0;
 
         #region GlobalDataVar
         static TimeSpan cal_green_time = new TimeSpan(0, 0, 0);
@@ -147,6 +152,12 @@ namespace CalanderPresentation
             TickGLDiscontinuity.Tick += TickGLDiscontinuity_Tick;
             TickGLDiscontinuity.Start();
 
+            Tick50msec.Interval = 70;
+            Tick50msec.Tick += Tick50msec_Tick;
+            Tick50msec.Start();
+
+            
+
             #region Check shift
 
             if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
@@ -169,6 +180,18 @@ namespace CalanderPresentation
 
             previous_time = get_CURR();
             //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
+        }
+
+        private void Tick50msec_Tick(object sender, EventArgs e)
+        {
+            if (MarketStartMoving)
+            {
+                label8.BackColor = Color.FromArgb((byte)((int)label8.BackColor.A - 5), label8.BackColor.R, label8.BackColor.G, label8.BackColor.B);
+            }
+            if (label8.BackColor.A < 5)
+            {
+                MarketStartMoving = false;
+            }
         }
 
         private void TickGLDiscontinuity_Tick(object sender, EventArgs e)
@@ -556,19 +579,29 @@ namespace CalanderPresentation
             #endregion
             //1.real time
             if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
-                label8.Text = (
+            {
+                double current_efficiency_value = 
                                 Math.Round(
                                                 (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
                                                                                 get_T2(dateTimePicker1.Value),
                                                                                 get_CURR()) + SummaryExeeded0Statustime).TotalSeconds / (get_CURR() - get_T1(dateTimePicker1.Value)).TotalSeconds
                                                                                 )
                                                 ) * 100, 1
-                                            )
-                            ).ToString() + "%";
-            //MessageBox.Show((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
-            //                                                                    get_T2(dateTimePicker1.Value),
-            //                                                                    get_CURR_wo_seconds()) + SummaryExeeded0Statustime).ToString());
-            //MessageBox.Show((get_CURR() - get_T1(dateTimePicker1.Value)).ToString());
+                                            );
+                label8.Text = current_efficiency_value.ToString() + "%";
+                //MessageBox.Show(previous_efficiency_value.ToString() + "        " + current_efficiency_value.ToString());
+                if (previous_efficiency_value<current_efficiency_value)
+                {
+                    MarketStartMoving = true;
+                    label8.BackColor = Color.FromArgb(255, 0, 255, 0);
+                }
+                if (previous_efficiency_value > current_efficiency_value)
+                {
+                    MarketStartMoving = true;
+                    label8.BackColor = Color.FromArgb(255, 255, 0, 0);
+                }
+                previous_efficiency_value = current_efficiency_value;
+            }
             //2.history
             if (get_T2(dateTimePicker1.Value) <= get_CURR())
                 label8.Text = (
@@ -576,8 +609,6 @@ namespace CalanderPresentation
                                             (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()) + SummaryExeeded0Statustime).TotalSeconds / 43200)) * 100, 2
                                         )
                             ).ToString() + "%";
-            //MessageBox.Show((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()) + SummaryExeeded0Statustime).ToString());
-            // 
         }
 
         private void showHistoryBrowserToolStripMenuItem_Click(object sender, EventArgs e)
@@ -634,7 +665,7 @@ namespace CalanderPresentation
             else
                 radioButton2.Checked = true;
             dateTimePicker1.Value = DateTime.Now;
-            GlobalPresenter();
+            //GlobalPresenter();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -659,6 +690,33 @@ namespace CalanderPresentation
             dateTimePicker1.Value += new TimeSpan(12, 0, 0);
             //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
             //GlobalPresenter();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            MarketStartMoving = true;
+            label8.BackColor = Color.FromArgb(255, 255, 0, 0);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            MarketStartMoving = true;
+            label8.BackColor = Color.FromArgb(255, 0, 255, 0);
+        }
+
+        private void label8_Paint(object sender, PaintEventArgs e)
+        {
+            LabelsCenterPositioning(groupBox3);
+        }
+
+        private void label6_Paint(object sender, PaintEventArgs e)
+        {
+            LabelsCenterPositioning(groupBox2);
+        }
+
+        private void label4_Paint(object sender, PaintEventArgs e)
+        {
+            LabelsCenterPositioning(groupBox1);
         }
     }
 }
