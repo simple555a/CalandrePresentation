@@ -149,12 +149,14 @@ namespace CalanderPresentation
         public void AskAllValues()
         {
             Opc.Da.ItemValueResult[] values = groupRead.Read(items);
+            /*
             if (this.lockCount != true)
             {
                 //this.MaterialCounterLabel.Text = (this.CurrentCounterOfMaterial != Convert.ToInt32(values[0].Value)) ? (this.CurrentCounterOfMaterial + (Convert.ToInt32(values[0].Value) - this.CurrentCounterOfMaterial)).ToString() : this.CurrentCounterOfMaterial.ToString();
                 this.CurrentCounterOfMaterial += (Convert.ToInt32(values[0].Value) - this.CurrentCounterOfMaterial);
                 //this.CurrentCounterOfMaterial = Convert.ToInt32(values[0].Value);
             }
+            */
             this.CurrentSpeed = Convert.ToInt32(values[1].Value);
         }
 

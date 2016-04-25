@@ -36,6 +36,7 @@ namespace CalanderPresentation
                 this.radioButton2.Checked = (Settings1.SQLWindowsAuthorization) ? false : true;
                 this.textBox5.Text = Settings1.SQLLogin;
                 this.textBox6.Text = Settings1.SQLPassword;
+                this.checkBox1.Checked = Settings1.SQLAllowWriteToSFIDatabases;
 
                 this.textBox3.Text = Settings1.OPCConnectionString;
                 this.textBox4.Text = Settings1.OPCCounterName;
@@ -51,6 +52,7 @@ namespace CalanderPresentation
             Settings1.SQLWindowsAuthorization = (this.radioButton1.Checked == true && this.radioButton2.Checked == false) ? true : false;
             Settings1.SQLLogin = this.textBox5.Text;
             Settings1.SQLPassword = this.textBox6.Text;
+            Settings1.SQLAllowWriteToSFIDatabases = this.checkBox1.Checked;
 
             Settings1.OPCConnectionString = this.textBox3.Text;
             Settings1.OPCCounterName = this.textBox4.Text;
@@ -126,6 +128,11 @@ namespace CalanderPresentation
         }
 
         private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
         {
 
         }

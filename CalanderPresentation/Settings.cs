@@ -13,6 +13,7 @@ namespace CalanderPresentation
         public bool SQLWindowsAuthorization;
         public String SQLLogin;
         public String SQLPassword;
+        public bool SQLAllowWriteToSFIDatabases;
 
 
         public bool OPCVariablesInitialized;

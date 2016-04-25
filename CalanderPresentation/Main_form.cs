@@ -129,11 +129,12 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v0.0.4";
+            this.Text += " v0.0.5";
 
             //OPC
 #if !bypass_opc_init
-            opc_obj.CurrentCounterOfMaterial = sql_obj.GetProductionCounter();
+            //opc_obj.CurrentCounterOfMaterial = sql_obj.GetProductionCounter();
+            opc_obj.CurrentCounterOfMaterial = sql_obj.GetProductionCounterFromOrder();
             opc_obj.AskAllValues();
             label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
             opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
@@ -152,10 +153,9 @@ namespace CalanderPresentation
             TickGLDiscontinuity.Tick += TickGLDiscontinuity_Tick;
             TickGLDiscontinuity.Start();
 
-            Tick50msec.Interval = 70;
+            Tick50msec.Interval = 50;
             Tick50msec.Tick += Tick50msec_Tick;
             Tick50msec.Start();
-
             
 
             #region Check shift
@@ -230,14 +230,32 @@ namespace CalanderPresentation
                     //MessageBox.Show("Night");
                     radioButton2.Checked = true;
                 }
+
+                label4.Text = sql_obj.GetProductionCounterFromOrder().ToString();
                 //set average cycle time
 #if !bypass_opc_init
                 //label6.Text = GetAverageCycleTime(opc_obj.CounterOfMaterial).ToString();
                 //reset "rings counter" and "average cycle time" each shift change
-                if (previous_time.Hour == 7 && get_CURR().Hour == 8 || previous_time.Hour == 19 && get_CURR().Hour == 20)
-                    opc_obj.CurrentCounterOfMaterial = 0;
-                previous_time = get_CURR();
+                //if (previous_time.Hour == 7 && get_CURR().Hour == 8 || previous_time.Hour == 19 && get_CURR().Hour == 20)
+                //    opc_obj.CurrentCounterOfMaterial = 0;
+                //previous_time = get_CURR();
+
+
+
+                //set SFI statuses
+                if (Settings1.SQLAllowWriteToSFIDatabases)
+                {
+                    if (opc_obj.CurrentSpeed < graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt()==0)
+                    {
+                        sql_obj.Set700Status();
+                    }
+                    if (opc_obj.CurrentSpeed >= graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 700)
+                    {
+                        sql_obj.Set700Status();
+                    }
+                }
 #endif
+
                 GlobalPresenter();
             }
             #endregion
@@ -257,7 +275,7 @@ namespace CalanderPresentation
 #if !bypass_opc_init
             opc_obj.AskAllValues();
             label6.Text = opc_obj.CurrentSpeed.ToString();
-            label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
+            //label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
 #endif
 
             //opc
