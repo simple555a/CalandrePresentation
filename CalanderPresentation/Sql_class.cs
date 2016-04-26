@@ -200,60 +200,88 @@ VALUES
         #region public void Set700Status()
         public void Set700Status()
         {
-            String SQLQuery = @"SELECT [guid]
-      ,[WCName]
-      ,[MachineState]
-      ,[StartTime]
-      ,[EndTime]
-      ,[LastModified]
-  FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_MachineStateHistory]
-WHERE [EndTime] IS NULL";
+            try {
+                String SQLQuery = @"DECLARE @SFI_DB_Name nvarchar(64);
+DECLARE @SQL_String nvarchar(256);
+DECLARE @WCName nvarchar(64);
 
-            using (SqlConnection con = new SqlConnection(this.ConnectionString))
-            {
-                con.Open();
+SELECT 
+@WCName=[WCName]
+FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_Workcenter]
 
-                using (SqlDataAdapter da = new SqlDataAdapter(SQLQuery, con))
+
+SELECT TOP 1 @SFI_DB_Name = name
+FROM sys.databases 
+WHERE name like 'SFI_logic%'
+
+SET @SQL_String = '[' + @SFI_DB_Name + '].[dbo].[sp_slc_MachineStateChange]'
+
+EXEC @SQL_String @WCName, '700', NULL, '1'";
+
+                using (SqlConnection con = new SqlConnection(this.ConnectionString))
                 {
-                    using (SqlCommandBuilder cmdBuilder = new SqlCommandBuilder(da))
-                    {
-                        DataSet DataSet1 = new DataSet();
-                        da.Fill(DataSet1, "tbl_slc_MachineStateHistory");
-                        DataSet1.Tables["tbl_slc_MachineStateHistory"].Rows[0]["MachineState"] = 700;
-                        da.Update(DataSet1, "tbl_slc_MachineStateHistory");
-                    }
+                    con.Open();
 
+                    using (SqlDataAdapter da = new SqlDataAdapter(SQLQuery, con))
+                    {
+                        using (SqlCommandBuilder cmdBuilder = new SqlCommandBuilder(da))
+                        {
+                            DataSet DataSet1 = new DataSet();
+                            da.Fill(DataSet1, "tbl_slc_MachineStateHistory");
+                            DataSet1.Tables["tbl_slc_MachineStateHistory"].Rows[0]["MachineState"] = 700;
+                            da.Update(DataSet1, "tbl_slc_MachineStateHistory");
+                        }
+
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
         #endregion
         #region public void Set0Status()
         public void Set0Status()
         {
-            String SQLQuery = @"SELECT [guid]
-      ,[WCName]
-      ,[MachineState]
-      ,[StartTime]
-      ,[EndTime]
-      ,[LastModified]
-  FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_MachineStateHistory]
-WHERE [EndTime] IS NULL";
+            try {
+                String SQLQuery = @"DECLARE @SFI_DB_Name nvarchar(64);
+DECLARE @SQL_String nvarchar(256);
+DECLARE @WCName nvarchar(64);
 
-            using (SqlConnection con = new SqlConnection(this.ConnectionString))
-            {
-                con.Open();
+SELECT 
+@WCName=[WCName]
+FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_Workcenter]
 
-                using (SqlDataAdapter da = new SqlDataAdapter(SQLQuery, con))
+
+SELECT TOP 1 @SFI_DB_Name = name
+FROM sys.databases 
+WHERE name like 'SFI_logic%'
+
+SET @SQL_String = '[' + @SFI_DB_Name + '].[dbo].[sp_slc_MachineStateChange]'
+
+EXEC @SQL_String @WCName, '0', NULL, '1'";
+
+                using (SqlConnection con = new SqlConnection(this.ConnectionString))
                 {
-                    using (SqlCommandBuilder cmdBuilder = new SqlCommandBuilder(da))
-                    {
-                        DataSet DataSet1 = new DataSet();
-                        da.Fill(DataSet1, "tbl_slc_MachineStateHistory");
-                        DataSet1.Tables["tbl_slc_MachineStateHistory"].Rows[0]["MachineState"] = 0;
-                        da.Update(DataSet1, "tbl_slc_MachineStateHistory");
-                    }
+                    con.Open();
 
+                    using (SqlDataAdapter da = new SqlDataAdapter(SQLQuery, con))
+                    {
+                        using (SqlCommandBuilder cmdBuilder = new SqlCommandBuilder(da))
+                        {
+                            DataSet DataSet1 = new DataSet();
+                            da.Fill(DataSet1, "tbl_slc_MachineStateHistory");
+                            DataSet1.Tables["tbl_slc_MachineStateHistory"].Rows[0]["MachineState"] = 0;
+                            da.Update(DataSet1, "tbl_slc_MachineStateHistory");
+                        }
+
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
         #endregion
@@ -286,6 +314,8 @@ WHERE [EndTime] IS NULL";
         #region public String GetOperatorName()
         public String GetOperatorName()
         {
+            #region OLD
+            /*
             if (!this.Initialized) return "***************";
 
             String SQLQuery = @"SELECT  
@@ -357,7 +387,41 @@ ON [SLC_rsActive_alt].[dbo].[APP_USER].[user_name]=[SFI_local_PC_SQL].[dbo].[tbl
                     
                 }
                 return "Nobody";
-        }
+                */
+            #endregion
+
+            if (!this.Initialized) return "***************";
+
+            String SQLQuery = @"SELECT TOP 1
+[CurrentUserDescription]
+,[CurrentUserLogonTime]
+FROM[SFI_local_PC_SQL].[dbo].[tbl_slc_WCUser]
+ORDER BY[CurrentUserLogonTime] desc";
+
+            using (SqlConnection con = new SqlConnection(this.ConnectionString))
+            {
+                con.Open();
+
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+
+                            while (reader.Read())
+                            {
+                                return reader.GetString(0);
+                            }
+                        return "Nobody";
+                    }
+                }
+                catch
+                {
+                }
+                return "***************";
+            }
+
+            }
         #endregion
         #region public Section[] GetTimeLineData(DateTime in_StartTime, DateTime in_EndTime, DateTime in_CURR)
         public Section[] GetTimeLineData(DateTime in_StartTime, DateTime in_EndTime, DateTime in_CURR)
@@ -822,7 +886,7 @@ WHERE [ShiftDate] = @StartShiftDate AND [ShiftID] = @ShiftID AND [ClientPC] is n
             if (!this.Initialized) return 0;
 
             String SQLQuery = @"SELECT [StatusValue]
-      ,([ScheduledQty]-[ActualQty]) AS Done
+      ,([ActualQty]) AS Done
   FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_Order]
   WHERE [StatusValue]='150'";
 
@@ -833,10 +897,16 @@ WHERE [ShiftDate] = @StartShiftDate AND [ShiftID] = @ShiftID AND [ClientPC] is n
                 using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
                 {
                     using (SqlDataReader reader = cmd.ExecuteReader())
-
-                        while (reader.Read())
+                        try
                         {
-                            return Convert.ToInt32(reader.GetDecimal(1));
+                            while (reader.Read())
+                            {
+                                return Convert.ToInt32(reader.GetDecimal(1));
+                            }
+                        }
+                        catch
+                        {
+                            return 0;
                         }
                     return 0;
                 }

@@ -251,7 +251,7 @@ namespace CalanderPresentation
                     }
                     if (opc_obj.CurrentSpeed >= graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 700)
                     {
-                        sql_obj.Set700Status();
+                        sql_obj.Set0Status();
                     }
                 }
 #endif

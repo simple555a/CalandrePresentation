@@ -605,10 +605,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.graphicLine1.BackColor = System.Drawing.Color.Transparent;
-            this.graphicLine1.Location = new System.Drawing.Point(3, 234);
+            this.graphicLine1.Location = new System.Drawing.Point(3, 235);
+            this.graphicLine1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
             this.graphicLine1.MinimumSize = new System.Drawing.Size(250, 0);
             this.graphicLine1.Name = "graphicLine1";
-            this.graphicLine1.Size = new System.Drawing.Size(958, 63);
+            this.graphicLine1.Size = new System.Drawing.Size(958, 62);
             this.graphicLine1.TabIndex = 8;
             // 
             // statusStrip1
