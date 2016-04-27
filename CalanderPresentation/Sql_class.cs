@@ -81,6 +81,65 @@ INSERT INTO
 VALUES      
 (210,40);
 
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(213,20);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(301,30);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(330,240);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(500,60);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(510,60);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(511,90);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(530,60);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(531,15);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(532,60);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(551,20);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(700,30);
+
+INSERT INTO 
+@rules_limited_times
+VALUES      
+(711,5);
 ";
         #endregion
         #region public static String rules_unlimited_times
@@ -109,33 +168,6 @@ INSERT INTO
 @rules_unlimited_times
 VALUES      
 (612);
-
-INSERT INTO 
-@rules_unlimited_times
-VALUES      
-(641);
-
-INSERT INTO 
-@rules_unlimited_times
-VALUES      
-(824);
-
-INSERT INTO 
-@rules_unlimited_times
-VALUES      
-(825);
-
-INSERT INTO 
-@rules_unlimited_times
-VALUES      
-(836);
-
-INSERT INTO 
-@rules_unlimited_times
-VALUES      
-(851);
-
-
 ";
         #endregion
 

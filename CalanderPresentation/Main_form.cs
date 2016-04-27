@@ -129,7 +129,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v0.0.5";
+            this.Text += " v1.0.1";
 
             //OPC
 #if !bypass_opc_init
