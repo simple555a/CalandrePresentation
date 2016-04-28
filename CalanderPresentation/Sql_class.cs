@@ -168,6 +168,11 @@ INSERT INTO
 @rules_unlimited_times
 VALUES      
 (612);
+
+INSERT INTO 
+@rules_unlimited_times
+VALUES      
+(811);
 ";
         #endregion
 
