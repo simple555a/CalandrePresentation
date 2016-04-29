@@ -89,7 +89,7 @@ namespace CalanderPresentation
             #region GraphicLine
             graphicLine1.LeftMargin = 0;
             graphicLine1.RightMargin = 1;
-            graphicLine1.SetpointSpeed = 30;
+            graphicLine1.SetpointSpeed = 40;
             graphicLine1.History.Filename = "graphicLine1Data.xml";
             GLGlobalObject.Discontinuity = graphicLine1.Discontinuity;
             GLGlobalObject.GraphicLineDataArr = graphicLine1.History.LoadFromXML();
@@ -129,7 +129,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v1.1.1";
+            this.Text += " v1.1.2";
 
             //OPC
 #if !bypass_opc_init
