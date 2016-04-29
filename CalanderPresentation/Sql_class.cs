@@ -134,12 +134,15 @@ VALUES
 INSERT INTO 
 @rules_limited_times
 VALUES      
-(700,30);
-
-INSERT INTO 
-@rules_limited_times
-VALUES      
 (711,5);
+";
+        #endregion
+        #region public static String rules_summary_limited_times
+        public static String rules_summary_limited_times = @"
+INSERT INTO 
+@rules_summary_limited_times
+VALUES      
+(700,30);
 ";
         #endregion
         #region public static String rules_unlimited_times
@@ -738,7 +741,9 @@ SELECT
 FROM @TB3
 GROUP BY [MachineState]
 
-DECLARE @rules_limited_times table (MachineState int, ApprovedTime int)"+rules_limited_times+
+DECLARE @rules_limited_times table (MachineState int, ApprovedTime int)" + rules_limited_times +
+@"
+DECLARE @rules_summary_limited_times table (MachineState int, ApprovedTime int)" + rules_summary_limited_times +
 @"
 DECLARE @rules_unlimited_times table (MachineState int)" + rules_unlimited_times +
 @"
@@ -762,30 +767,40 @@ SELECT
         )											
 FROM @TB1
 									    
-DECLARE @excessed_times table (MachineState int, ExceededTimeSumValue int)
-INSERT INTO @excessed_times  
+DECLARE @excessed_times_step1 table (MachineState int, ExceededTimeSumValue int)
+INSERT INTO @excessed_times_step1 
 select 
 [@correct_tb1].[MachineState]
 ,SUM(CAST(
 	CASE
 --if exist in LIMITED times	
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NOT NULL) 
+		WHEN  ([@rules_limited_times].[MachineState] IS NOT NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NULL)
 				AND (DATEDIFF(SECOND,[StartTime],[EndTime])-[@rules_limited_times].[ApprovedTime]*60)>=0
 		THEN (DATEDIFF(SECOND,[StartTime],[EndTime])-[@rules_limited_times].[ApprovedTime]*60)
 		
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NOT NULL) 
+		WHEN  ([@rules_limited_times].[MachineState] IS NOT NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NULL)
 				AND (DATEDIFF(SECOND,[StartTime],[EndTime])-[@rules_limited_times].[ApprovedTime]*60)<0
 		THEN 0
 
+--if exist in SUMMARY_LIMITED times	
+		WHEN  ([@rules_limited_times].[MachineState] IS NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NOT NULL)
+				AND ([@rules_unlimited_times].[MachineState] IS NULL)
+		THEN (DATEDIFF(SECOND,[StartTime],[EndTime]))
+
 --if exist in UNLIMITED times		
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NULL) 
+		WHEN  ([@rules_limited_times].[MachineState] IS NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NOT NULL)
 		THEN 0
 		
---if doesnt exist in LIMITED and UNLIMITED
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NULL) 
+--if doesnt exist in LIMITED and SUMMARY_LIMITED and UNLIMITED
+		WHEN  ([@rules_limited_times].[MachineState] IS NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NULL)
 		THEN (DATEDIFF(SECOND,[StartTime],[EndTime]))
 		
@@ -795,9 +810,32 @@ LEFT JOIN
 @rules_limited_times
 ON [@correct_tb1].[MachineState]=[@rules_limited_times].[MachineState]
 LEFT JOIN 
+@rules_summary_limited_times
+ON [@correct_tb1].[MachineState]=[@rules_summary_limited_times].[MachineState]
+LEFT JOIN 
 @rules_unlimited_times
 ON [@correct_tb1].[MachineState]=[@rules_unlimited_times].[MachineState]
 group by  [@correct_tb1].[MachineState]
+
+--SUBSTRACT SUMMMARY_LIMITED TIMES 
+DECLARE @excessed_times_step2 table (MachineState int, ExceededTimeSumValue int)
+INSERT INTO @excessed_times_step2
+SELECT 
+[@excessed_times_step1].[MachineState]
+, CAST(
+    CASE
+        WHEN ([@rules_summary_limited_times].[MachineState] IS NOT NULL)
+        THEN [@excessed_times_step1].[ExceededTimeSumValue]-[@rules_summary_limited_times].[ApprovedTime]*60
+        
+        WHEN ([@rules_summary_limited_times].[MachineState] IS NULL)
+        THEN [@excessed_times_step1].[ExceededTimeSumValue]
+
+    END AS INT)
+FROM
+@excessed_times_step1
+LEFT JOIN 
+@rules_summary_limited_times
+ON [@excessed_times_step1].[MachineState]=[@rules_summary_limited_times].[MachineState]
 
 DECLARE @status_count table(MachineState int, _count int)
 INSERT INTO @status_count            
@@ -814,7 +852,7 @@ select distinct
 ,[@TB2].DateDifference
 ,[StartTime]
 ,[@status_count].[_count]
-,[@excessed_times].[ExceededTimeSumValue]
+,[@excessed_times_step2].[ExceededTimeSumValue]
 FROM @TB4
 INNER JOIN
 @TB2
@@ -823,8 +861,8 @@ INNER JOIN
 [SFI_local_PC_SQL].[dbo].[tbl_slc_MachineStates]
 ON [@TB4].[MachineState]=[SFI_local_PC_SQL].[dbo].[tbl_slc_MachineStates].StatusCode
 INNER JOIN
-@excessed_times
-ON [@TB4].[MachineState]=[@excessed_times].[MachineState]
+@excessed_times_step2
+ON [@TB4].[MachineState]=[@excessed_times_step2].[MachineState]
 INNER JOIN
 @status_count
 ON [@TB4].[MachineState]=[@status_count].[MachineState]
@@ -1024,6 +1062,8 @@ GROUP BY [MachineState]
 
 DECLARE @rules_limited_times table (MachineState int, ApprovedTime int)"+rules_limited_times+
 @"
+DECLARE @rules_summary_limited_times table (MachineState int, ApprovedTime int)" + rules_summary_limited_times +
+@"
 DECLARE @rules_unlimited_times table (MachineState int)" + rules_unlimited_times +
 @"
 
@@ -1046,29 +1086,40 @@ SELECT
         )											
 FROM @TB1
 									    
-DECLARE @excessed_times table (MachineState int, ExceededTimeSumValue int)
-INSERT INTO @excessed_times            
-select 
+DECLARE @excessed_times_step1 table (MachineState int, ExceededTimeSumValue int)
+INSERT INTO @excessed_times_step1          
+SELECT 
 [@correct_tb1].[MachineState]
 ,SUM(CAST(
 	CASE
 --if exist in LIMITED times	
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NOT NULL) 
+		WHEN  ([@rules_limited_times].[MachineState] IS NOT NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NULL)
 				AND (DATEDIFF(SECOND,[StartTime],[EndTime])-[@rules_limited_times].[ApprovedTime]*60)>=0
 		THEN (DATEDIFF(SECOND,[StartTime],[EndTime])-[@rules_limited_times].[ApprovedTime]*60)
 		
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NOT NULL) 
+		WHEN  ([@rules_limited_times].[MachineState] IS NOT NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NULL)
 				AND (DATEDIFF(SECOND,[StartTime],[EndTime])-[@rules_limited_times].[ApprovedTime]*60)<0
 		THEN 0
+
+--if exist in SUMMARY_LIMITED times	
+		WHEN  ([@rules_limited_times].[MachineState] IS NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NOT NULL)
+				AND ([@rules_unlimited_times].[MachineState] IS NULL)
+		THEN (DATEDIFF(SECOND,[StartTime],[EndTime]))
+
 --if exist in UNLIMITED times		
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NULL) 
+		WHEN  ([@rules_limited_times].[MachineState] IS NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NOT NULL)
 		THEN 0
 		
---if doesnt exist in LIMITED and UNLIMITED
-		WHEN  ([@rules_limited_times].[ApprovedTime] IS NULL) 
+--if doesnt exist in LIMITED and SUMMARY_LIMITED and UNLIMITED
+		WHEN  ([@rules_limited_times].[MachineState] IS NULL) 
+				AND ([@rules_summary_limited_times].[MachineState] IS NULL)
 				AND ([@rules_unlimited_times].[MachineState] IS NULL)
 		THEN (DATEDIFF(SECOND,[StartTime],[EndTime]))
 		
@@ -1078,9 +1129,32 @@ LEFT JOIN
 @rules_limited_times
 ON [@correct_tb1].[MachineState]=[@rules_limited_times].[MachineState]
 LEFT JOIN 
+@rules_summary_limited_times
+ON [@correct_tb1].[MachineState]=[@rules_summary_limited_times].[MachineState]
+LEFT JOIN 
 @rules_unlimited_times
 ON [@correct_tb1].[MachineState]=[@rules_unlimited_times].[MachineState]
 group by  [@correct_tb1].[MachineState]
+
+--SUBSTRACT SUMMMARY_LIMITED TIMES 
+DECLARE @excessed_times_step2 table (MachineState int, ExceededTimeSumValue int)
+INSERT INTO @excessed_times_step2
+SELECT 
+[@excessed_times_step1].[MachineState]
+,CAST(
+    CASE
+        WHEN ([@rules_summary_limited_times].[MachineState] IS NOT NULL)
+        THEN [@excessed_times_step1].[ExceededTimeSumValue]-[@rules_summary_limited_times].[ApprovedTime]*60
+        
+        WHEN ([@rules_summary_limited_times].[MachineState] IS NULL)
+        THEN [@excessed_times_step1].[ExceededTimeSumValue]
+
+    END AS INT)
+FROM
+@excessed_times_step1
+LEFT JOIN 
+@rules_summary_limited_times
+ON [@excessed_times_step1].[MachineState]=[@rules_summary_limited_times].[MachineState]
 
 DECLARE @status_count table(MachineState int, _count int)
 INSERT INTO @status_count            
@@ -1091,11 +1165,11 @@ from @TB1
 GROUP BY [MachineState]
 
 select distinct
-ISNULL(SUM([@excessed_times].[ExceededTimeSumValue]),0)
+ISNULL(SUM([@excessed_times_step2].[ExceededTimeSumValue]),0)
 FROM @TB4
 INNER JOIN
-@excessed_times
-ON [@TB4].[MachineState]=[@excessed_times].[MachineState]";
+@excessed_times_step2
+ON [@TB4].[MachineState]=[@excessed_times_step2].[MachineState]";
 
             using (SqlConnection con = new SqlConnection(this.ConnectionString))
             {
