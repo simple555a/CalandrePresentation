@@ -824,8 +824,13 @@ SELECT
 [@excessed_times_step1].[MachineState]
 , CAST(
     CASE
-        WHEN ([@rules_summary_limited_times].[MachineState] IS NOT NULL)
+        WHEN ([@rules_summary_limited_times].[MachineState] IS NOT NULL
+                AND ([@excessed_times_step1].[ExceededTimeSumValue]-[@rules_summary_limited_times].[ApprovedTime]*60)>=0)
         THEN [@excessed_times_step1].[ExceededTimeSumValue]-[@rules_summary_limited_times].[ApprovedTime]*60
+
+        WHEN ([@rules_summary_limited_times].[MachineState] IS NOT NULL
+                AND ([@excessed_times_step1].[ExceededTimeSumValue]-[@rules_summary_limited_times].[ApprovedTime]*60)<0)
+        THEN 0
         
         WHEN ([@rules_summary_limited_times].[MachineState] IS NULL)
         THEN [@excessed_times_step1].[ExceededTimeSumValue]
