@@ -106,6 +106,12 @@
     <Compile Include="Main_form.Designer.cs">
       <DependentUpon>Main_form.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShiftStatistic.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShiftStatistic.Designer.cs">
+      <DependentUpon>ShiftStatistic.cs</DependentUpon>
+    </Compile>
     <Compile Include="testform.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,6 +143,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="ShiftStatistic.resx">
+      <DependentUpon>ShiftStatistic.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="testform.resx">
       <DependentUpon>testform.cs</DependentUpon>
     </EmbeddedResource>

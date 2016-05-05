@@ -80,6 +80,7 @@
             this.showHistoryBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button4 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -251,6 +252,7 @@
             this.tableLayoutPanel4.Controls.Add(this.button1, 6, 0);
             this.tableLayoutPanel4.Controls.Add(this.button2, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.button3, 3, 0);
+            this.tableLayoutPanel4.Controls.Add(this.button4, 7, 0);
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 201);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
@@ -708,6 +710,16 @@
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(901, 3);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(54, 21);
+            this.button4.TabIndex = 11;
+            this.button4.Text = "button4";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            // 
             // Main_form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -802,6 +814,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
     }
 }
 
