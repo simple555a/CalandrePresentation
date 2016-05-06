@@ -741,5 +741,26 @@ namespace CalanderPresentation
         {
 
         }
+
+        private void inputResultsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel9_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            ShiftStatistic ShiftStatisticForm = new ShiftStatistic();
+            ShiftStatisticForm.Show();
+        }
     }
 }
