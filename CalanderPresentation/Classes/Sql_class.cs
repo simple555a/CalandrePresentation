@@ -237,54 +237,11 @@ VALUES
                 }
             }
         #endregion
-        #region public void Set700Status()
-        public void Set700Status()
-        {
-            try {
-                String SQLQuery = @"DECLARE @SFI_DB_Name nvarchar(64);
-DECLARE @SQL_String nvarchar(256);
-DECLARE @WCName nvarchar(64);
-
-SELECT 
-@WCName=[WCName]
-FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_Workcenter]
-
-
-SELECT TOP 1 @SFI_DB_Name = name
-FROM sys.databases 
-WHERE name like 'SFI_logic%'
-
-SET @SQL_String = '[' + @SFI_DB_Name + '].[dbo].[sp_slc_MachineStateChange]'
-
-EXEC @SQL_String @WCName, '700', NULL, '1'";
-
-                using (SqlConnection con = new SqlConnection(this.ConnectionString))
-                {
-                    con.Open();
-
-                    using (SqlDataAdapter da = new SqlDataAdapter(SQLQuery, con))
-                    {
-                        using (SqlCommandBuilder cmdBuilder = new SqlCommandBuilder(da))
-                        {
-                            DataSet DataSet1 = new DataSet();
-                            da.Fill(DataSet1, "tbl_slc_MachineStateHistory");
-                            DataSet1.Tables["tbl_slc_MachineStateHistory"].Rows[0]["MachineState"] = 700;
-                            da.Update(DataSet1, "tbl_slc_MachineStateHistory");
-                        }
-
-                    }
-                }
-            }
-            catch
-            {
-
-            }
-        }
-        #endregion
         #region public void Set0Status()
         public void Set0Status()
         {
-            try {
+            try
+            {
                 String SQLQuery = @"DECLARE @SFI_DB_Name nvarchar(64);
 DECLARE @SQL_String nvarchar(256);
 DECLARE @WCName nvarchar(64);
@@ -306,16 +263,97 @@ EXEC @SQL_String @WCName, '0', NULL, '1'";
                 {
                     con.Open();
 
-                    using (SqlDataAdapter da = new SqlDataAdapter(SQLQuery, con))
+                    using (SqlCommand cmd = new SqlCommand())
                     {
-                        using (SqlCommandBuilder cmdBuilder = new SqlCommandBuilder(da))
-                        {
-                            DataSet DataSet1 = new DataSet();
-                            da.Fill(DataSet1, "tbl_slc_MachineStateHistory");
-                            DataSet1.Tables["tbl_slc_MachineStateHistory"].Rows[0]["MachineState"] = 0;
-                            da.Update(DataSet1, "tbl_slc_MachineStateHistory");
-                        }
+                        cmd.CommandText = SQLQuery;
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = con;
 
+                        using (SqlDataReader reader = cmd.ExecuteReader()) { };
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+        #endregion
+        #region public void Set700Status()
+        public void Set700Status()
+        {
+            try
+            {
+                String SQLQuery = @"DECLARE @SFI_DB_Name nvarchar(64);
+DECLARE @SQL_String nvarchar(256);
+DECLARE @WCName nvarchar(64);
+
+SELECT 
+@WCName=[WCName]
+FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_Workcenter]
+
+
+SELECT TOP 1 @SFI_DB_Name = name
+FROM sys.databases 
+WHERE name like 'SFI_logic%'
+
+SET @SQL_String = '[' + @SFI_DB_Name + '].[dbo].[sp_slc_MachineStateChange]'
+
+EXEC @SQL_String @WCName, '700', NULL, '1'";
+
+                using (SqlConnection con = new SqlConnection(this.ConnectionString))
+                {
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        cmd.CommandText = SQLQuery;
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = con;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader()) { };
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+        #endregion
+        #region public void Set999Status()
+        public void Set999Status()
+        {
+            try
+            {
+                String SQLQuery = @"DECLARE @SFI_DB_Name nvarchar(64);
+DECLARE @SQL_String nvarchar(256);
+DECLARE @WCName nvarchar(64);
+
+SELECT 
+@WCName=[WCName]
+FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_Workcenter]
+
+
+SELECT TOP 1 @SFI_DB_Name = name
+FROM sys.databases 
+WHERE name like 'SFI_logic%'
+
+SET @SQL_String = '[' + @SFI_DB_Name + '].[dbo].[sp_slc_MachineStateChange]'
+
+EXEC @SQL_String @WCName, '999', NULL, '1'";
+
+                using (SqlConnection con = new SqlConnection(this.ConnectionString))
+                {
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        cmd.CommandText = SQLQuery;
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = con;
+
+                        using (SqlDataReader reader = cmd.ExecuteReader()) { };
                     }
                 }
             }
@@ -558,7 +596,7 @@ ORDER BY[CurrentUserLogonTime] desc";
         {
             if (!this.Initialized) return "***************";
 
-            string return_string="";
+            string return_string="###";
 
             String SQLQuery = @"SELECT DISTINCT
                                 [StatusDescription],
@@ -571,24 +609,24 @@ ORDER BY[CurrentUserLogonTime] desc";
                                 WHERE 
                                 [EndTime] IS NULL 
                                 AND ([Language]='ru-RU' OR [Language]='en-US')";
-
-            using (SqlConnection con = new SqlConnection(this.ConnectionString))
-            {
-                con.Open();
-
-                using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
+            try {
+                using (SqlConnection con = new SqlConnection(this.ConnectionString))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
                     {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
                             reader.Read();
                             return_string += reader.GetString(0);
                             reader.Read();
-                            return_string += " - "+reader.GetString(0);
-                            
-
+                            return_string += " - " + reader.GetString(0);
+                        }
                     }
                 }
             }
+            catch { }
             
 
             return return_string;
@@ -632,9 +670,9 @@ ORDER BY[CurrentUserLogonTime] desc";
         {
             if (!this.Initialized) return Color.White;
 
-            Byte colorBlue,
-                colorGreen,
-                colorRed;
+            Byte colorBlue = 100,
+                colorGreen = 100,
+                colorRed = 100;
 
             String SQLQuery = @"SELECT DISTINCT
                                 [ColorValue]
@@ -646,22 +684,27 @@ ORDER BY[CurrentUserLogonTime] desc";
                                 [EndTime] IS NULL 
                                 AND ([Language]='ru-RU' OR [Language]='en-US')";
 
-            using (SqlConnection con = new SqlConnection(this.ConnectionString))
+            try
             {
-                con.Open();
-
-                using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
+                using (SqlConnection con = new SqlConnection(this.ConnectionString))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
                     {
-                        reader.Read();
-                        colorBlue = Convert.ToByte(reader.GetInt64(0) >> 16);
-                        colorGreen = Convert.ToByte((reader.GetInt64(0) >> 8) & 255);
-                        colorRed = Convert.ToByte((reader.GetInt64(0) & 255));
-
-
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            reader.Read();
+                            colorBlue = Convert.ToByte(reader.GetInt64(0) >> 16);
+                            colorGreen = Convert.ToByte((reader.GetInt64(0) >> 8) & 255);
+                            colorRed = Convert.ToByte((reader.GetInt64(0) & 255));
+                        }
                     }
                 }
+            }
+            catch
+            {
+
             }
 
 

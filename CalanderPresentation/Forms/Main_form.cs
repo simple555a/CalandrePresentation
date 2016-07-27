@@ -1,5 +1,6 @@
 ﻿#define real_time
 //#define bypass_opc_init
+#define hide_future_functional
 
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace CalanderPresentation
         static bool RefreshAsNowInterlock = false;
 
         //inteface global
-        static bool MarketStartMoving=false;
+        static bool MarketStartMoving = false;
         static double previous_efficiency_value = 0;
 
         #region GlobalDataVar
@@ -60,7 +61,6 @@ namespace CalanderPresentation
         private void Form1_Load(object sender, EventArgs e)
         {
             #region Indication
-
             toolStripStatusLabel1.Text = "REAL TIME";
 #if !real_time
             toolStripStatusLabel1.ForeColor = Color.Red;
@@ -77,6 +77,11 @@ namespace CalanderPresentation
             toolStripStatusLabel2.ForeColor = Color.Green;
 #endif
             #endregion
+
+#if hide_future_functional
+            tableLayoutPanel9.Visible = false;
+            button5.Visible = false;
+#endif
 
             label9.Text = sql_obj.GetWCName();
 
@@ -129,7 +134,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v1.1.3";
+            this.Text += " v1.1.4";
 
             //OPC
 #if !bypass_opc_init
@@ -139,8 +144,7 @@ namespace CalanderPresentation
             label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
             opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
 #endif
-
-
+            
             Tick1sec.Interval = 1000;
             Tick1sec.Tick += Tic1sec_Tick;
             Tick1sec.Start();
@@ -149,14 +153,14 @@ namespace CalanderPresentation
             Tick60sec.Tick += Tick60sec_Tick;
             Tick60sec.Start();
 
-            TickGLDiscontinuity.Interval = graphicLine1.Discontinuity*1000;
+            TickGLDiscontinuity.Interval = graphicLine1.Discontinuity * 1000;
             TickGLDiscontinuity.Tick += TickGLDiscontinuity_Tick;
             TickGLDiscontinuity.Start();
 
             Tick50msec.Interval = 50;
             Tick50msec.Tick += Tick50msec_Tick;
             Tick50msec.Start();
-            
+
 
             #region Check shift
 
@@ -174,7 +178,7 @@ namespace CalanderPresentation
             //if (System.DateTime.Now.Hour < 9)
             //    dateTimePicker1.Value = System.DateTime.Now - TimeSpan.FromDays(1);
             //if (System.DateTime.Now.Hour >= 8)
-                dateTimePicker1.Value = System.DateTime.Now;
+            dateTimePicker1.Value = System.DateTime.Now;
 #endif
             #endregion
 
@@ -245,13 +249,17 @@ namespace CalanderPresentation
                 //set SFI statuses
                 if (Settings1.SQLAllowWriteToSFIDatabases)
                 {
-                    if (opc_obj.CurrentSpeed < graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt()==0)
+                    if (opc_obj.CurrentSpeed < graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 0)
                     {
                         sql_obj.Set700Status();
                     }
                     if (opc_obj.CurrentSpeed >= graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 700)
                     {
                         sql_obj.Set0Status();
+                    }
+                    if (opc_obj.CurrentSpeed == 0 && sql_obj.GetCurrentStatusAsInt() == 700)
+                    {
+                        sql_obj.Set999Status();
                     }
                 }
 #endif
@@ -301,7 +309,7 @@ namespace CalanderPresentation
             ConnectionsForm1.Show();
         }
 
-        
+
 
         /// <summary>
         /// Get EStart shift time
@@ -326,7 +334,7 @@ namespace CalanderPresentation
 
             if (in_StartTime.Hour < 8) T1 = in_StartTime.Date - t3;
             if (in_StartTime.Hour >= 20) T1 = in_StartTime.Date + t1 + t2;
-            if (in_StartTime.Hour >=8 && in_StartTime.Hour < 20) T1 = in_StartTime.Date + t1;
+            if (in_StartTime.Hour >= 8 && in_StartTime.Hour < 20) T1 = in_StartTime.Date + t1;
 
             return T1;
         }
@@ -355,7 +363,7 @@ namespace CalanderPresentation
 
             if (in_StartTime.Hour < 8) T2 = in_StartTime.Date + t1;
             if (in_StartTime.Hour >= 20) T2 = in_StartTime.Date + t1 + t2 + t2;
-            if (in_StartTime.Hour >= 8 && in_StartTime.Hour < 20) T2 = in_StartTime.Date + t1+t2;
+            if (in_StartTime.Hour >= 8 && in_StartTime.Hour < 20) T2 = in_StartTime.Date + t1 + t2;
 
             return T2;
         }
@@ -442,7 +450,7 @@ namespace CalanderPresentation
             in_control.SetEmpty();
             in_control.AddBasePeriod(T1, T2);
 
-            for (int i = 0 ; i < GLGlobalObject.GraphicLineDataArr.Length; i++)
+            for (int i = 0; i < GLGlobalObject.GraphicLineDataArr.Length; i++)
             {
                 if (GLGlobalObject.GraphicLineDataArr[i] != null && GLGlobalObject.GraphicLineDataArr[i].datetime >= T1 && GLGlobalObject.GraphicLineDataArr[i].datetime <= T2)
                 {
@@ -491,7 +499,7 @@ namespace CalanderPresentation
                     in_control.Rows[i].Cells[5].Style.BackColor = Color.GreenYellow;
             }
         }
-        
+
         private void exitToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             Application.Exit();
@@ -542,23 +550,23 @@ namespace CalanderPresentation
             {
                 //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
                 if (TLGlobalObject[i].MachineState == 0
-                    && TLGlobalObject[i].StartTime >= T1 
+                    && TLGlobalObject[i].StartTime >= T1
                     && TLGlobalObject[i].EndTime <= T2)
                 {
                     //MessageBox.Show(1.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
-                    temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString()+ " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString()+"\n";
+                    temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString() + " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString() + "\n";
                 }
                 //MessageBox.Show(TLGlobalObject[i].MachineState.ToString());
-                if (TLGlobalObject[i].MachineState == 0 
-                    && TLGlobalObject[i].StartTime >= T1 
+                if (TLGlobalObject[i].MachineState == 0
+                    && TLGlobalObject[i].StartTime >= T1
                     && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
                     //MessageBox.Show(2.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, get_CURR(), graphicLine1.SetpointSpeed);
                 }
-                if (TLGlobalObject[i].MachineState == 0 
-                    && TLGlobalObject[i].StartTime < T1 
+                if (TLGlobalObject[i].MachineState == 0
+                    && TLGlobalObject[i].StartTime < T1
                     && TLGlobalObject[i].EndTime == DateTime.MaxValue)
                 {
                     //MessageBox.Show(3.ToString());
@@ -573,7 +581,7 @@ namespace CalanderPresentation
             //calulating final exeeded time for calander
             for (int i = 0; i < DGGlobalObject.Count; i++)
             {
-                if (DGGlobalObject[i].MachineState == "0" )
+                if (DGGlobalObject[i].MachineState == "0")
                 {
                     DGGlobalObject[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
                 }
@@ -598,7 +606,7 @@ namespace CalanderPresentation
             //1.real time
             if (get_T1(dateTimePicker1.Value) <= get_CURR() && get_CURR() < get_T2(dateTimePicker1.Value))
             {
-                double current_efficiency_value = 
+                double current_efficiency_value =
                                 Math.Round(
                                                 (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
                                                                                 get_T2(dateTimePicker1.Value),
@@ -608,7 +616,7 @@ namespace CalanderPresentation
                                             );
                 label8.Text = current_efficiency_value.ToString() + "%";
                 //MessageBox.Show(previous_efficiency_value.ToString() + "        " + current_efficiency_value.ToString());
-                if (previous_efficiency_value<current_efficiency_value)
+                if (previous_efficiency_value < current_efficiency_value)
                 {
                     MarketStartMoving = true;
                     label8.BackColor = Color.FromArgb(255, 0, 255, 0);
@@ -651,10 +659,11 @@ namespace CalanderPresentation
 
         private void LabelsCenterPositioning(GroupBox in_GroupBox)
         {
-
+            int i = 0;
             foreach (Control ctrlChild in in_GroupBox.Controls)
             {
-                ctrlChild.Location = new Point(in_GroupBox.Size.Width / 2 - ctrlChild.Size.Width / 2, in_GroupBox.Size.Height / 2 - ctrlChild.Size.Height / 2 + 7);
+                ctrlChild.Location = new Point(in_GroupBox.Size.Width / 2 - ctrlChild.Size.Width / 2, in_GroupBox.Size.Height / 2 - (ctrlChild.Size.Height * in_GroupBox.Controls.Count) / 2 + ctrlChild.Size.Height * i + 7);
+                i++;
             }
         }
 
@@ -735,26 +744,6 @@ namespace CalanderPresentation
         private void label4_Paint(object sender, PaintEventArgs e)
         {
             LabelsCenterPositioning(groupBox1);
-        }
-
-        private void button4_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void inputResultsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label12_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tableLayoutPanel9_Click(object sender, EventArgs e)
-        {
-            
         }
 
         private void button5_Click_1(object sender, EventArgs e)
