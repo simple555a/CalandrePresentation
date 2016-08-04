@@ -596,7 +596,7 @@ ORDER BY[CurrentUserLogonTime] desc";
         {
             if (!this.Initialized) return "***************";
 
-            string return_string="###";
+            string return_string="";
 
             String SQLQuery = @"SELECT DISTINCT
                                 [StatusDescription],
@@ -626,7 +626,7 @@ ORDER BY[CurrentUserLogonTime] desc";
                     }
                 }
             }
-            catch { }
+            catch { return_string = "###"; }
             
 
             return return_string;
@@ -645,21 +645,27 @@ ORDER BY[CurrentUserLogonTime] desc";
                                 FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_MachineStateHistory]
                                 WHERE 
                                 [EndTime] IS NULL";
-
-            using (SqlConnection con = new SqlConnection(this.ConnectionString))
+            try
             {
-                con.Open();
-
-                using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
+                using (SqlConnection con = new SqlConnection(this.ConnectionString))
                 {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(SQLQuery, con))
                     {
-                        reader.Read();
-                        return reader.GetInt32(0);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            reader.Read();
+                            return reader.GetInt32(0);
 
 
+                        }
                     }
                 }
+            }
+            catch
+            {
+
             }
             
             return -1;

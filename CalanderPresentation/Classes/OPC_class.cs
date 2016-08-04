@@ -73,8 +73,8 @@ namespace CalanderPresentation
         public Int32 CurrentCounterOfMaterial;
         public Int32 CurrentSpeed;
         private String URL;
-        private Label MaterialCounterLabel;
-        private Label CurrentSpeedLabel;
+        //private Label MaterialCounterLabel;
+        //private Label CurrentSpeedLabel;
         public bool lockCount;
         private int previous_value_of_counter = 0;
 

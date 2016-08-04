@@ -1834,6 +1834,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ShiftStatistic";
             this.Text = "ShiftStatistic";
+            this.Load += new System.EventHandler(this.ShiftStatistic_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();

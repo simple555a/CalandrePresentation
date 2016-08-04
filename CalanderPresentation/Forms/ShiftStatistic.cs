@@ -5,79 +5,121 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 //using CalanderPresentation.Classes;
 
 namespace CalanderPresentation
 {
     public partial class ShiftStatistic : Form
     {
-        public ShiftStatistic()
+        
+        static ShiftStatisticClass ref_NowStatistic = new ShiftStatisticClass();
+
+        public ShiftStatistic(ShiftStatisticClass a)
         {
+            ref_NowStatistic = a;
             InitializeComponent();
         }
 
-        static ShiftStatisticClass NowStatictic = new ShiftStatisticClass();
         
-
         private void button1_Click(object sender, EventArgs e)
         {
+            bool all_ok_flag = true;
+
             if (!(checkBox1.Checked || checkBox2.Checked || checkBox3.Checked || checkBox4.Checked))
             {
                 checkBox1.BackColor = Color.Red;
                 checkBox2.BackColor = Color.Red;
                 checkBox3.BackColor = Color.Red;
                 checkBox4.BackColor = Color.Red;
+
+                all_ok_flag = false;
             }
 
             //Scrap
             try
             {
-                NowStatictic.ScrapAmount = Convert.ToDouble(textBox1.Text);
+                //ref_NowStatistic.ScrapAmount = Convert.ToDouble(textBox1.Text);
                 textBox1.BackColor = System.Drawing.SystemColors.ControlLight; 
             }
             catch
             {
                 textBox1.BackColor = Color.Red;
+
+                all_ok_flag = false;
             }
             //Additional jobs
             try
             {
-                NowStatictic.AdditionalJobs = Convert.ToDouble(textBox2.Text);
+                //ref_NowStatistic.AdditionalJobs = Convert.ToDouble(textBox2.Text);
                 textBox2.BackColor = System.Drawing.SystemColors.ControlLight;
             }
             catch
             {
                 textBox2.BackColor = Color.Red;
+
+                all_ok_flag = false;
             }
             //A Rolls
             try
             {
-                NowStatictic.A_Rolls_amount = Convert.ToDouble(textBox3.Text);
+                //ref_NowStatistic.A_Rolls_amount = Convert.ToDouble(textBox3.Text);
                 textBox3.BackColor = System.Drawing.SystemColors.ControlLight;
             }
             catch
             {
                 textBox3.BackColor = Color.Red;
+
+                all_ok_flag = false;
             }
             //C Rolls
             try
             {
-                NowStatictic.C_Rolls_amount = Convert.ToDouble(textBox4.Text);
+                //ref_NowStatistic.C_Rolls_amount = Convert.ToDouble(textBox4.Text);
                 textBox4.BackColor = System.Drawing.SystemColors.ControlLight;
             }
             catch
             {
                 textBox4.BackColor = Color.Red;
+
+                all_ok_flag = false;
             }
             //People
             try
             {
-                NowStatictic.PeopleAmount = Convert.ToDouble(textBox5.Text);
+                //ref_NowStatistic.PeopleAmount = Convert.ToInt32(textBox5.Text);
                 textBox5.BackColor = System.Drawing.SystemColors.ControlLight;
             }
             catch
             {
                 textBox5.BackColor = Color.Red;
+
+                all_ok_flag = false;
+            }
+
+            if (all_ok_flag)
+            {
+                if (this.checkBox1.Checked)
+                {
+                    ref_NowStatistic.ShiftName = 1.ToString();
+                }
+                if (this.checkBox2.Checked)
+                {
+                    ref_NowStatistic.ShiftName = 2.ToString();
+                }
+                if (this.checkBox3.Checked)
+                {
+                    ref_NowStatistic.ShiftName = 3.ToString();
+                }
+                if (this.checkBox4.Checked)
+                {
+                    ref_NowStatistic.ShiftName = 4.ToString();
+                }
+                ref_NowStatistic.ScrapAmount            = Convert.ToDouble(textBox1.Text);
+                ref_NowStatistic.AdditionalJobs         = Convert.ToDouble(textBox2.Text);
+                ref_NowStatistic.A_Rolls_amount         = Convert.ToDouble(textBox3.Text);
+                ref_NowStatistic.C_Rolls_amount         = Convert.ToDouble(textBox4.Text);
+                ref_NowStatistic.PeopleAmount           = Convert.ToInt32(textBox5.Text);
             }
         }
 
@@ -166,6 +208,21 @@ namespace CalanderPresentation
                 checkBox3.BackColor = System.Drawing.SystemColors.ControlLight;
                 //checkBox4.BackColor = System.Drawing.SystemColors.ControlLight;
             }
+        }
+
+        private void ShiftStatistic_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private ShiftStatisticClass GetLastShiftData(int shift_number)
+        {
+            ShiftStatisticClass ret_value = new ShiftStatisticClass();
+
+            StreamReader sr = new StreamReader(@"ShiftStatisticData.txt");
+            //sr.
+
+            return ret_value;
         }
     }
 }

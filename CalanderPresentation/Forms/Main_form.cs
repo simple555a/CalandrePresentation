@@ -1,6 +1,6 @@
 ﻿#define real_time
 //#define bypass_opc_init
-#define hide_future_functional
+//#define hide_future_functional
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using GraphicLine;
 using System.IO;
 using System.Xml.Serialization;
 using CalanderPresentation.TYPES;
+using System.Text;
 
 
 /*
@@ -51,6 +52,9 @@ namespace CalanderPresentation
         static GraphicLine.GLGlobal GLGlobalObject = new GLGlobal();
         List<DataGridRow> DGGlobalObject = new List<DataGridRow>();
         #endregion
+
+        //Statistic for shifts per day
+        static ShiftStatisticClass NowStatictic = new ShiftStatisticClass();
 
 
         public Main_form()
@@ -134,7 +138,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v1.1.4";
+            this.Text += " v1.1.5";
 
             //OPC
 #if !bypass_opc_init
@@ -219,20 +223,24 @@ namespace CalanderPresentation
             #region  refresh all information
             if (!RefreshAsNowInterlock)
             {
-                //set current data in controls
-                //if (System.DateTime.Now.Hour < 9)
-                //    dateTimePicker1.Value = System.DateTime.Now.Date - TimeSpan.FromDays(1);
-                //if (System.DateTime.Now.Hour >= 8)
                 dateTimePicker1.Value = System.DateTime.Now;
                 if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
                 {
                     //MessageBox.Show("Day");
                     radioButton1.Checked = true;
+
+                    //Push statistic
+                    PushStatisticData(NowStatictic);
+
                 }
                 if (get_CURR().Hour >= 20 && get_CURR().Hour < 24 || get_CURR().Hour >= 0 && get_CURR().Hour < 8)
                 {
                     //MessageBox.Show("Night");
                     radioButton2.Checked = true;
+
+
+                    //Push statistic
+                    PushStatisticData(NowStatictic);
                 }
 
                 label4.Text = sql_obj.GetProductionCounterFromOrder().ToString();
@@ -748,8 +756,94 @@ namespace CalanderPresentation
 
         private void button5_Click_1(object sender, EventArgs e)
         {
-            ShiftStatistic ShiftStatisticForm = new ShiftStatistic();
+            ShiftStatistic ShiftStatisticForm = new ShiftStatistic(NowStatictic);
             ShiftStatisticForm.Show();
+        }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            label21.Text = NowStatictic.AdditionalJobs.ToString();
+
+            PushStatisticData(NowStatictic);
+        }
+
+        private void PushStatisticData(ShiftStatisticClass a)
+        {
+            //2190 records - 3 years
+
+            List<ShiftStatisticClass> ShiftData_list = new List<ShiftStatisticClass>();
+            ShiftStatisticClass ShiftData_list_entry = new ShiftStatisticClass();
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(@"ShiftStatisticData.txt"))
+                {
+                    String entire_str, part_str;
+                    int local_cnt = 0;  //pointer of data in string 
+                    while (!sr.EndOfStream)
+                    {
+                        //
+                        entire_str = sr.ReadLine();
+                        part_str = "";
+                        for (int i = 0; i < entire_str.Length; i++)
+                        {
+                            if (entire_str[i] == ';')
+                            {
+                                i++;
+                                local_cnt++;
+
+                                if (local_cnt == 1) { ShiftData_list_entry.ShiftStartDateTime = Convert.ToDateTime(part_str); }
+                                if (local_cnt == 2) { ShiftData_list_entry.ShiftName = part_str; }
+                                if (local_cnt == 3) { ShiftData_list_entry.Prodused = 0 /*Convert.ToDouble(part_str)*/; }
+                                if (local_cnt == 4) { ShiftData_list_entry.ScrapAmount = Convert.ToDouble(part_str); }
+                                if (local_cnt == 5) { ShiftData_list_entry.AdditionalJobs = Convert.ToDouble(part_str); }
+                                if (local_cnt == 6) { ShiftData_list_entry.A_Rolls_amount = Convert.ToDouble(part_str); }
+                                if (local_cnt == 7) { ShiftData_list_entry.C_Rolls_amount = Convert.ToDouble(part_str); }
+                                if (local_cnt == 8) { ShiftData_list_entry.PeopleAmount = Convert.ToInt32(part_str); }
+
+                                part_str = "";
+                            }
+                            else
+                            {
+                                part_str += entire_str[i];
+                            }
+                        }
+                        ShiftData_list.Add(ShiftData_list_entry);
+                    }
+                }
+            }
+            catch { }
+
+
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(@"ShiftStatisticData.txt", false))
+                {
+                    for (int i=0;i<ShiftData_list.Count;i++)
+                    {
+                        sw.WriteLine(ShiftData_list[i].ShiftStartDateTime + ";"
+                            + ShiftData_list[i].ShiftName + ";"
+                            + ShiftData_list[i].Prodused + ";"
+                            + ShiftData_list[i].ScrapAmount.ToString() + ";"
+                            + ShiftData_list[i].AdditionalJobs.ToString() + ";"
+                            + ShiftData_list[i].A_Rolls_amount.ToString() + ";"
+                            + ShiftData_list[i].C_Rolls_amount.ToString() + ";"
+                            + ShiftData_list[i].PeopleAmount.ToString()
+                            );
+                    }
+                    
+                    sw.WriteLine(DateTime.Now.ToString() + ";"
+                            + NowStatictic.ShiftName.ToString() + ";"
+                            /*+ NowStatictic.Prodused.ToString()*/ + "0;"
+                            + NowStatictic.ScrapAmount.ToString() + ";"
+                            + NowStatictic.AdditionalJobs.ToString() + ";"
+                            + NowStatictic.A_Rolls_amount.ToString() + ";"
+                            + NowStatictic.C_Rolls_amount.ToString() + ";"
+                            + NowStatictic.PeopleAmount.ToString()
+                            );
+                }
+            }
+            catch { }
         }
     }
 }
