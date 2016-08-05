@@ -10,6 +10,7 @@ namespace CalanderPresentation
         public String ShiftName;
         public DateTime ShiftStartDateTime;
         public double Prodused;
+        public double Efficiency;
         public double ScrapAmount;
         public double AdditionalJobs;
         public double A_Rolls_amount;

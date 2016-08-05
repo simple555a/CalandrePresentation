@@ -770,7 +770,6 @@ namespace CalanderPresentation
         private void PushStatisticData(ShiftStatisticClass a)
         {
             //2190 records - 3 years
-
             List<ShiftStatisticClass> ShiftData_list = new List<ShiftStatisticClass>();
             ShiftStatisticClass ShiftData_list_entry = new ShiftStatisticClass();
 
@@ -795,6 +794,7 @@ namespace CalanderPresentation
                                 if (local_cnt == 1) { ShiftData_list_entry.ShiftStartDateTime = Convert.ToDateTime(part_str); }
                                 if (local_cnt == 2) { ShiftData_list_entry.ShiftName = part_str; }
                                 if (local_cnt == 3) { ShiftData_list_entry.Prodused = 0 /*Convert.ToDouble(part_str)*/; }
+                                if (local_cnt == 3) { ShiftData_list_entry.Efficiency = 0 /*Convert.ToDouble(part_str)*/; }
                                 if (local_cnt == 4) { ShiftData_list_entry.ScrapAmount = Convert.ToDouble(part_str); }
                                 if (local_cnt == 5) { ShiftData_list_entry.AdditionalJobs = Convert.ToDouble(part_str); }
                                 if (local_cnt == 6) { ShiftData_list_entry.A_Rolls_amount = Convert.ToDouble(part_str); }
@@ -817,29 +817,31 @@ namespace CalanderPresentation
 
             try
             {
-                using (StreamWriter sw = new StreamWriter(@"ShiftStatisticData.txt", false))
+                using (StreamWriter sw = new StreamWriter(@"ShiftStatisticData.txt", true))
                 {
                     for (int i=0;i<ShiftData_list.Count;i++)
                     {
                         sw.WriteLine(ShiftData_list[i].ShiftStartDateTime + ";"
                             + ShiftData_list[i].ShiftName + ";"
                             + ShiftData_list[i].Prodused + ";"
+                            + ShiftData_list[i].Efficiency + ";"
                             + ShiftData_list[i].ScrapAmount.ToString() + ";"
                             + ShiftData_list[i].AdditionalJobs.ToString() + ";"
                             + ShiftData_list[i].A_Rolls_amount.ToString() + ";"
                             + ShiftData_list[i].C_Rolls_amount.ToString() + ";"
-                            + ShiftData_list[i].PeopleAmount.ToString()
+                            + ShiftData_list[i].PeopleAmount.ToString() + ";"
                             );
                     }
                     
                     sw.WriteLine(DateTime.Now.ToString() + ";"
                             + NowStatictic.ShiftName.ToString() + ";"
-                            /*+ NowStatictic.Prodused.ToString()*/ + "0;"
+                            + /*NowStatictic.Prodused.ToString()*/ "0;"
+                            + /*NowStatictic.Efficiency.ToString()*/"0;"
                             + NowStatictic.ScrapAmount.ToString() + ";"
                             + NowStatictic.AdditionalJobs.ToString() + ";"
                             + NowStatictic.A_Rolls_amount.ToString() + ";"
                             + NowStatictic.C_Rolls_amount.ToString() + ";"
-                            + NowStatictic.PeopleAmount.ToString()
+                            + NowStatictic.PeopleAmount.ToString() + ";"
                             );
                 }
             }
