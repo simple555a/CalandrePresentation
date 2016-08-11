@@ -137,5 +137,44 @@ EXEC @SQL_String @WCName, '999', NULL, '1'";
 
             }
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                String SQLQuery = @"DECLARE @SFI_DB_Name nvarchar(64);
+DECLARE @SQL_String nvarchar(256);
+DECLARE @WCName nvarchar(64);
+
+SELECT 
+@WCName=[WCName]
+FROM [SFI_local_PC_SQL].[dbo].[tbl_slc_Workcenter]
+
+
+SELECT TOP 1 @SFI_DB_Name = name
+FROM sys.databases 
+WHERE name like 'SFI_logic%'
+
+SET @SQL_String = '[' + @SFI_DB_Name + '].[dbo].[sp_slc_MachineStateChange]'
+
+EXEC @SQL_String @WCName, '999', NULL, '1'";
+
+                using (SqlConnection con = new SqlConnection("Data Source=" + Settings1.SQLConnectionString + ";Initial Catalog=SFI_local_PC_SQL;Integrated Security=True"))
+                {
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        cmd.CommandText = SQLQuery;
+                        cmd.Connection = con;
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

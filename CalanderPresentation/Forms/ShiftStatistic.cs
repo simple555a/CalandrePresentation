@@ -12,7 +12,7 @@ namespace CalanderPresentation
 {
     public partial class ShiftStatistic : Form
     {
-        
+
         static ShiftStatisticClass ref_NowStatistic = new ShiftStatisticClass();
 
         public ShiftStatistic(ShiftStatisticClass a)
@@ -21,7 +21,7 @@ namespace CalanderPresentation
             InitializeComponent();
         }
 
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
             bool all_ok_flag = true;
@@ -40,7 +40,7 @@ namespace CalanderPresentation
             try
             {
                 //ref_NowStatistic.ScrapAmount = Convert.ToDouble(textBox1.Text);
-                textBox1.BackColor = System.Drawing.SystemColors.ControlLight; 
+                textBox1.BackColor = System.Drawing.SystemColors.ControlLight;
             }
             catch
             {
@@ -115,11 +115,11 @@ namespace CalanderPresentation
                 {
                     ref_NowStatistic.ShiftName = 4.ToString();
                 }
-                ref_NowStatistic.ScrapAmount            = Convert.ToDouble(textBox1.Text);
-                ref_NowStatistic.AdditionalJobs         = Convert.ToDouble(textBox2.Text);
-                ref_NowStatistic.A_Rolls_amount         = Convert.ToDouble(textBox3.Text);
-                ref_NowStatistic.C_Rolls_amount         = Convert.ToDouble(textBox4.Text);
-                ref_NowStatistic.PeopleAmount           = Convert.ToInt32(textBox5.Text);
+                ref_NowStatistic.ScrapAmount = Convert.ToDouble(textBox1.Text);
+                ref_NowStatistic.AdditionalJobs = Convert.ToDouble(textBox2.Text);
+                ref_NowStatistic.A_Rolls_amount = Convert.ToDouble(textBox3.Text);
+                ref_NowStatistic.C_Rolls_amount = Convert.ToDouble(textBox4.Text);
+                ref_NowStatistic.PeopleAmount = Convert.ToInt32(textBox5.Text);
             }
         }
 
@@ -132,18 +132,18 @@ namespace CalanderPresentation
             a.PeopleAmount = 0;
             a.Prodused = 0;
             a.ShiftName = "-1";
-            
-            
+
+
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -212,10 +212,15 @@ namespace CalanderPresentation
 
         private void ShiftStatistic_Load(object sender, EventArgs e)
         {
-            ShiftStatisticClass Shiftstatistic_1 = GetLastShiftData("1");
-            ShiftStatisticClass Shiftstatistic_2 = GetLastShiftData("2");
-            ShiftStatisticClass Shiftstatistic_3 = GetLastShiftData("3");
-            ShiftStatisticClass Shiftstatistic_4 = GetLastShiftData("4");
+            ShiftStatisticClass Shiftstatistic_1 = new ShiftStatisticClass();
+            ShiftStatisticClass Shiftstatistic_2 = new ShiftStatisticClass();
+            ShiftStatisticClass Shiftstatistic_3 = new ShiftStatisticClass();
+            ShiftStatisticClass Shiftstatistic_4 = new ShiftStatisticClass();
+
+            Shiftstatistic_1.GetLastShiftData("1");
+            Shiftstatistic_2.GetLastShiftData("2");
+            Shiftstatistic_3.GetLastShiftData("3");
+            Shiftstatistic_4.GetLastShiftData("4");
 
             label28.Text = Shiftstatistic_1.Prodused.ToString();
             label30.Text = Shiftstatistic_1.Efficiency.ToString();
@@ -245,81 +250,51 @@ namespace CalanderPresentation
             label72.Text = Shiftstatistic_4.C_Rolls_amount.ToString();
             label74.Text = Shiftstatistic_4.PeopleAmount.ToString();
 
-            
+            ShiftStatisticClass ShiftstatisticPerMonth_1 = new ShiftStatisticClass();
+            ShiftStatisticClass ShiftstatisticPerMonth_2 = new ShiftStatisticClass();
+            ShiftStatisticClass ShiftstatisticPerMonth_3 = new ShiftStatisticClass();
+            ShiftStatisticClass ShiftstatisticPerMonth_4 = new ShiftStatisticClass();
+
+            ShiftstatisticPerMonth_1.GetLastShiftDataPerMonth("1");
+            ShiftstatisticPerMonth_2.GetLastShiftDataPerMonth("2");
+            ShiftstatisticPerMonth_3.GetLastShiftDataPerMonth("3");
+            ShiftstatisticPerMonth_4.GetLastShiftDataPerMonth("4");
+
+            label29.Text = ShiftstatisticPerMonth_1.Prodused.ToString();
+            label31.Text = ShiftstatisticPerMonth_1.Efficiency.ToString();
+            label33.Text = ShiftstatisticPerMonth_1.ScrapAmount.ToString();
+            label35.Text = ShiftstatisticPerMonth_1.A_Rolls_amount.ToString();
+            label37.Text = ShiftstatisticPerMonth_1.C_Rolls_amount.ToString();
+            label39.Text = ShiftstatisticPerMonth_1.PeopleAmount.ToString();
+
+            //MessageBox.Show()
+            label41.Text = ShiftstatisticPerMonth_2.Prodused.ToString();
+            label43.Text = ShiftstatisticPerMonth_2.Efficiency.ToString();
+            label45.Text = ShiftstatisticPerMonth_2.ScrapAmount.ToString();
+            label47.Text = ShiftstatisticPerMonth_2.A_Rolls_amount.ToString();
+            label49.Text = ShiftstatisticPerMonth_2.C_Rolls_amount.ToString();
+            label51.Text = ShiftstatisticPerMonth_2.PeopleAmount.ToString();
+
+            label53.Text = ShiftstatisticPerMonth_3.Prodused.ToString();
+            label55.Text = ShiftstatisticPerMonth_3.Efficiency.ToString();
+            label57.Text = ShiftstatisticPerMonth_3.ScrapAmount.ToString();
+            label59.Text = ShiftstatisticPerMonth_3.A_Rolls_amount.ToString();
+            label61.Text = ShiftstatisticPerMonth_3.C_Rolls_amount.ToString();
+            label63.Text = ShiftstatisticPerMonth_3.PeopleAmount.ToString();
+
+            label65.Text = ShiftstatisticPerMonth_4.Prodused.ToString();
+            label67.Text = ShiftstatisticPerMonth_4.Efficiency.ToString();
+            label69.Text = ShiftstatisticPerMonth_4.ScrapAmount.ToString();
+            label71.Text = ShiftstatisticPerMonth_4.A_Rolls_amount.ToString();
+            label73.Text = ShiftstatisticPerMonth_4.C_Rolls_amount.ToString();
+            label75.Text = ShiftstatisticPerMonth_4.PeopleAmount.ToString();
+
+
         }
 
-        private ShiftStatisticClass GetLastShiftData(String in_shift_name)
-        {
-            ShiftStatisticClass ret_value = new ShiftStatisticClass();
-
-            List<ShiftStatisticClass> ShiftData_list = new List<ShiftStatisticClass>();
-            ShiftStatisticClass ShiftData_list_entry;
-            //MessageBox.Show("666");
-            //fill ShiftData_list
-            try
-            {
-                using (StreamReader sr = new StreamReader(@"ShiftStatisticData.txt"))
-                {
-                    //MessageBox.Show(in_shift_name);
-                    String entire_str, part_str;
-                    int local_cnt = 0;  //pointer of data in string 
-                    while (!sr.EndOfStream)
-                    {
-                        entire_str = sr.ReadLine();
-                        //sr.
-                        //MessageBox.Show(entire_str);
-                        part_str = "";
-                        local_cnt = 0;
-                        ShiftData_list_entry = new ShiftStatisticClass();
-                        for (int i = 0; i < entire_str.Length; i++)
-                        {
-                            if (entire_str[i] != ';')
-                            {
-                                part_str += entire_str[i];
-                            }
-
-                            if (entire_str[i] == ';')
-                            {
-
-                                if (local_cnt == 0) { ShiftData_list_entry.ShiftStartDateTime = Convert.ToDateTime(part_str); }
-                                if (local_cnt == 1) { ShiftData_list_entry.ShiftName = part_str; }
-                                if (local_cnt == 2) { ShiftData_list_entry.Prodused = Convert.ToDouble(part_str); }
-                                if (local_cnt == 3) { ShiftData_list_entry.Efficiency = Convert.ToDouble(part_str); }
-                                if (local_cnt == 4) { ShiftData_list_entry.ScrapAmount = Convert.ToDouble(part_str); }
-                                if (local_cnt == 5) { ShiftData_list_entry.AdditionalJobs = Convert.ToDouble(part_str); }
-                                if (local_cnt == 6) { ShiftData_list_entry.A_Rolls_amount = Convert.ToDouble(part_str); }
-                                if (local_cnt == 7) { ShiftData_list_entry.C_Rolls_amount = Convert.ToDouble(part_str); }
-                                if (local_cnt == 8) { ShiftData_list_entry.PeopleAmount = Convert.ToInt32(part_str); }
-
-                                local_cnt++;
-
-                                part_str = "";
-                            }
-
-                        }
-
-                        ShiftData_list.Add(ShiftData_list_entry);
-                        //MessageBox.Show(ShiftData_list[ShiftData_list.Count - 1].ShiftName.ToString() + " " + ShiftData_list[0].ShiftName.ToString());
-                    }
-
-                }
-            }
-            catch { }
-            
-            //get requaried shift with earliest data
-            DateTime temp_datetime = DateTime.MinValue;
-            foreach (ShiftStatisticClass a in ShiftData_list)
-            {
-                //MessageBox.Show(a.ShiftName.ToString());
-                if (a.ShiftName==in_shift_name && a.ShiftStartDateTime>Convert.ToDateTime(temp_datetime))
-                {
-                    temp_datetime = a.ShiftStartDateTime;
-                    ret_value = a;
-                }
-            }
+        
 
 
-            return ret_value;
-        }
+        
     }
 }

@@ -35,12 +35,16 @@ namespace CalanderPresentation
 #endif
         static Timer Tick1sec = new Timer();
         static Timer Tick50msec = new Timer();
+        static Timer Tick5sec = new Timer();
         static Timer Tick60sec = new Timer();
         static Timer TickGLDiscontinuity = new Timer();
-        private static Settings Settings1 = new Settings();
+        static Settings Settings1 = new Settings();
         static DateTime previous_time = new DateTime();
         static TimeSpan cal_exeeded_time = new TimeSpan(0, 0, 0);
         static bool RefreshAsNowInterlock = false;
+        static int metersFromOrder = 0;
+        static int prev_metersFromOrder, metersPerShift = 0;
+
 
         //inteface global
         static bool MarketStartMoving = false;
@@ -153,6 +157,10 @@ namespace CalanderPresentation
             Tick1sec.Tick += Tic1sec_Tick;
             Tick1sec.Start();
 
+            Tick5sec.Interval = 5000;
+            Tick5sec.Tick += Tick5sec_Tick;
+            Tick5sec.Start();
+
             Tick60sec.Interval = 60000;
             Tick60sec.Tick += Tick60sec_Tick;
             Tick60sec.Start();
@@ -189,6 +197,7 @@ namespace CalanderPresentation
             previous_time = get_CURR();
             //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
         }
+        
 
         private void Tick50msec_Tick(object sender, EventArgs e)
         {
@@ -200,81 +209,6 @@ namespace CalanderPresentation
             {
                 MarketStartMoving = false;
             }
-        }
-
-        private void TickGLDiscontinuity_Tick(object sender, EventArgs e)
-        {
-
-            DateTime Tic1secCalltime = get_CURR();
-
-#if !bypass_opc_init
-            //push current speed to GLHisory
-            opc_obj.AskAllValues();
-            GLGlobalObject.PushPoint(Tic1secCalltime, opc_obj.CurrentSpeed);
-            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
-#endif
-        }
-
-        private void Tick60sec_Tick(object sender, EventArgs e)
-        {
-
-            graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
-
-            #region  refresh all information
-            if (!RefreshAsNowInterlock)
-            {
-                dateTimePicker1.Value = System.DateTime.Now;
-                if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
-                {
-                    //MessageBox.Show("Day");
-                    radioButton1.Checked = true;
-
-                    //Push statistic
-                    PushStatisticData(NowStatictic);
-
-                }
-                if (get_CURR().Hour >= 20 && get_CURR().Hour < 24 || get_CURR().Hour >= 0 && get_CURR().Hour < 8)
-                {
-                    //MessageBox.Show("Night");
-                    radioButton2.Checked = true;
-
-
-                    //Push statistic
-                    PushStatisticData(NowStatictic);
-                }
-
-                label4.Text = sql_obj.GetProductionCounterFromOrder().ToString();
-                //set average cycle time
-#if !bypass_opc_init
-                //label6.Text = GetAverageCycleTime(opc_obj.CounterOfMaterial).ToString();
-                //reset "rings counter" and "average cycle time" each shift change
-                //if (previous_time.Hour == 7 && get_CURR().Hour == 8 || previous_time.Hour == 19 && get_CURR().Hour == 20)
-                //    opc_obj.CurrentCounterOfMaterial = 0;
-                //previous_time = get_CURR();
-
-
-
-                //set SFI statuses
-                if (Settings1.SQLAllowWriteToSFIDatabases)
-                {
-                    if (opc_obj.CurrentSpeed < graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 0)
-                    {
-                        sql_obj.Set700Status();
-                    }
-                    if (opc_obj.CurrentSpeed >= graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 700)
-                    {
-                        sql_obj.Set0Status();
-                    }
-                    if (opc_obj.CurrentSpeed == 0 && sql_obj.GetCurrentStatusAsInt() == 700)
-                    {
-                        sql_obj.Set999Status();
-                    }
-                }
-#endif
-
-                GlobalPresenter();
-            }
-            #endregion
         }
 
         private void Tic1sec_Tick(object sender, EventArgs e)
@@ -305,6 +239,179 @@ namespace CalanderPresentation
 
             //graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
         }
+
+        private void Tick5sec_Tick(object sender, EventArgs e)
+        {
+            if (!RefreshAsNowInterlock)
+            {
+                #region set SFI statuses
+#if !bypass_opc_init
+                if (Settings1.SQLAllowWriteToSFIDatabases)
+                {
+                    if (opc_obj.CurrentSpeed < graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 0)
+                    {
+                        sql_obj.Set700Status();
+                    }
+                    if (opc_obj.CurrentSpeed >= graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 700)
+                    {
+                        sql_obj.Set0Status();
+                    }
+                    if (opc_obj.CurrentSpeed == 0 && sql_obj.GetCurrentStatusAsInt() == 700)
+                    {
+                        sql_obj.Set999Status();
+                    }
+                }
+#endif
+                #endregion
+            }
+
+            #region Draw Total Score
+            ShiftStatisticClass temp = new ShiftStatisticClass();
+            int total_score_shift1 = 0, 
+                total_score_shift2 = 0, 
+                total_score_shift3 = 0, 
+                total_score_shift4 = 0;
+
+            temp.GetLastShiftDataPerMonth("1");
+            try
+            {
+                total_score_shift1 = temp.GetTotalScore();
+                label16.Text = total_score_shift1.ToString();
+            }
+            catch
+            {
+                label16.Text = "0";
+            }
+
+            temp.GetLastShiftDataPerMonth("2");
+            try
+            {
+                total_score_shift2 = temp.GetTotalScore();
+                label17.Text = total_score_shift2.ToString();
+            }
+            catch
+            {
+                label17.Text = "0";
+            }
+
+
+            temp.GetLastShiftDataPerMonth("3");
+            try
+            {
+                total_score_shift3 = temp.GetTotalScore();
+                label18.Text = total_score_shift3.ToString();
+            }
+            catch
+            {
+                label18.Text = "0";
+            }
+
+            temp.GetLastShiftDataPerMonth("4");
+            try
+            {
+                total_score_shift4 = temp.GetTotalScore();
+                label19.Text = total_score_shift4.ToString();
+            }
+            catch
+            {
+                label19.Text = "0";
+            }
+
+            int max_total_score = 0;
+            max_total_score = (total_score_shift1 > max_total_score) ? total_score_shift1 : max_total_score;
+            max_total_score = (total_score_shift2 > max_total_score) ? total_score_shift2 : max_total_score;
+            max_total_score = (total_score_shift3 > max_total_score) ? total_score_shift3 : max_total_score;
+            max_total_score = (total_score_shift4 > max_total_score) ? total_score_shift4 : max_total_score;
+
+
+            int red_factor = 0;
+            int green_factor = 0;
+            int add = 0;
+
+            //red_factor = ((((double)total_score_shift1 / (double)max_total_score) ) < 50) ? (byte)(255 * (((double)total_score_shift1 / (double)max_total_score) ) * 2) : 0;
+            //green_factor = ((((double)total_score_shift1 / (double)max_total_score) ) < 50) ? 0: (byte)(255 * (((double)total_score_shift1 / (double)max_total_score) ) * 2);
+
+
+            add = (int)((double)total_score_shift1 / (double)max_total_score) * 511;
+            if (add <= 255) { red_factor = add; green_factor = 0; }
+            if (add > 255) { red_factor = 255; green_factor = add; }
+            panel1.BackColor = Color.FromArgb(red_factor, green_factor, 0);
+            panel1.Width = (int)(((double)total_score_shift1 / (double)max_total_score) * 100);
+            if (panel1.Width == 0) panel1.Width = 3;
+
+            add = (int)((double)total_score_shift2 / (double)max_total_score) * 511;
+            if (add <= 255) { red_factor = add; green_factor = 0; }
+            if (add > 255) { red_factor = 255; green_factor = add ; }
+            panel2.BackColor = Color.FromArgb(255 - red_factor, green_factor, 0);
+            panel2.Width = (int)(((double)total_score_shift2 / (double)max_total_score) * 100);
+            if (panel2.Width == 0) panel2.Width = 3;
+
+
+            add = (int)((double)total_score_shift3 / (double)max_total_score) * 511;
+            if (add <= 255) { red_factor = add; green_factor = 0; }
+            if (add > 255) { red_factor = 255; green_factor = add - 256; }
+            panel3.BackColor = Color.FromArgb(255 - red_factor, green_factor, 0);
+            panel3.Width = (int)(((double)total_score_shift3 / (double)max_total_score) * 100);
+            if (panel3.Width == 0) panel3.Width = 3;
+
+            add = (int)((double)total_score_shift4 / (double)max_total_score) * 511;
+            if (add <= 255) { red_factor = add; green_factor = 0; }
+            if (add > 255) { red_factor = 255; green_factor = add - 256; }
+            panel4.BackColor = Color.FromArgb(255 - red_factor, green_factor, 0);
+            panel4.Width = (int)(((double)total_score_shift4 / (double)max_total_score) * 100);
+            if (panel4.Width == 0) panel4.Width = 3;
+
+            #endregion
+
+
+            GlobalPresenter();
+        }
+        
+        private void Tick60sec_Tick(object sender, EventArgs e)
+        {
+
+            graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
+
+            #region  refresh all information
+
+
+            if (!RefreshAsNowInterlock)
+            {
+                dateTimePicker1.Value = System.DateTime.Now;
+                if (get_CURR().Hour >= 8 && get_CURR().Hour < 20)
+                {
+                    //MessageBox.Show("Day");
+                    radioButton1.Checked = true;
+
+                    //Push statistic
+                    //PushStatisticData(NowStatictic);
+                }
+                if (get_CURR().Hour >= 20 && get_CURR().Hour < 24 || get_CURR().Hour >= 0 && get_CURR().Hour < 8)
+                {
+                    //MessageBox.Show("Night");
+                    radioButton2.Checked = true;
+                    
+                    //Push statistic
+                    //PushStatisticData(NowStatictic);
+                }
+            }
+            #endregion
+        }
+
+        private void TickGLDiscontinuity_Tick(object sender, EventArgs e)
+        {
+
+            DateTime Tic1secCalltime = get_CURR();
+
+#if !bypass_opc_init
+            //push current speed to GLHisory
+            opc_obj.AskAllValues();
+            GLGlobalObject.PushPoint(Tic1secCalltime, opc_obj.CurrentSpeed);
+            //MessageBox.Show(GLGlobalObject.GraphicLineDataArr.Length.ToString());
+#endif
+        }
+
+        
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -521,15 +628,36 @@ namespace CalanderPresentation
         private void GlobalPresenter()
         {
             GetGlobalData(dateTimePicker1.Value);
-            //toolStripStatusLabel4.Text = TLGlobalObject[0].StartTime.ToString();
-            //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
+            #region Operator name
             label1.Text = sql_obj.GetOperatorName();
+            #endregion
+            #region production counters
+            //GetProductionCounterFromOrder (fromSFI)
+            metersFromOrder = sql_obj.GetProductionCounterFromOrder();
+            //metersFromOrder = Convert.ToInt32(textBox1.Text);
+            label4.Text = @"Current order: " + metersFromOrder.ToString();
+            //Calculate Counter per shift
+            metersPerShift += (metersFromOrder >= prev_metersFromOrder) ? metersFromOrder - prev_metersFromOrder :  metersFromOrder;
+            prev_metersFromOrder = metersFromOrder;
+            label20.Text = @"Per shift: " + metersPerShift.ToString();
+            //zeroing Counter per shift
+            if ((DateTime.Now.Hour == 8 || DateTime.Now.Hour == 20) && DateTime.Now.Minute == 0)
+            {
+                metersPerShift = 0;
+            }
+            #endregion
+            #region call components presenters
             TimeLinePresenter(timeLine1, dateTimePicker1.Value, TLGlobalObject);
             GraphicLinePresenter(graphicLine1, dateTimePicker1.Value);
             DataGridPresenter(dataGridView1, dateTimePicker1.Value, DGGlobalObject);
+            #endregion
+            #region Eficiency in %
             GetEficiency();
+            #endregion
+            #region Current status
             label5.Text = sql_obj.GetCurrentStatusAsString();
             label5.BackColor = sql_obj.GetCurrentStatusColor();
+            #endregion
             //MessageBox.Show(dateTimePicker1.Value.ToString());
         }
 
@@ -668,6 +796,7 @@ namespace CalanderPresentation
         private void LabelsCenterPositioning(GroupBox in_GroupBox)
         {
             int i = 0;
+            
             foreach (Control ctrlChild in in_GroupBox.Controls)
             {
                 ctrlChild.Location = new Point(in_GroupBox.Size.Width / 2 - ctrlChild.Size.Width / 2, in_GroupBox.Size.Height / 2 - (ctrlChild.Size.Height * in_GroupBox.Controls.Count) / 2 + ctrlChild.Size.Height * i + 7);
@@ -793,13 +922,13 @@ namespace CalanderPresentation
 
                                 if (local_cnt == 1) { ShiftData_list_entry.ShiftStartDateTime = Convert.ToDateTime(part_str); }
                                 if (local_cnt == 2) { ShiftData_list_entry.ShiftName = part_str; }
-                                if (local_cnt == 3) { ShiftData_list_entry.Prodused = 0 /*Convert.ToDouble(part_str)*/; }
-                                if (local_cnt == 3) { ShiftData_list_entry.Efficiency = 0 /*Convert.ToDouble(part_str)*/; }
-                                if (local_cnt == 4) { ShiftData_list_entry.ScrapAmount = Convert.ToDouble(part_str); }
-                                if (local_cnt == 5) { ShiftData_list_entry.AdditionalJobs = Convert.ToDouble(part_str); }
-                                if (local_cnt == 6) { ShiftData_list_entry.A_Rolls_amount = Convert.ToDouble(part_str); }
-                                if (local_cnt == 7) { ShiftData_list_entry.C_Rolls_amount = Convert.ToDouble(part_str); }
-                                if (local_cnt == 8) { ShiftData_list_entry.PeopleAmount = Convert.ToInt32(part_str); }
+                                if (local_cnt == 3) { ShiftData_list_entry.Prodused = /*0*/ Convert.ToDouble(part_str); }
+                                if (local_cnt == 4) { ShiftData_list_entry.Efficiency = /*0*/ Convert.ToDouble(part_str); }
+                                if (local_cnt == 5) { ShiftData_list_entry.ScrapAmount = Convert.ToDouble(part_str); }
+                                if (local_cnt == 6) { ShiftData_list_entry.AdditionalJobs = Convert.ToDouble(part_str); }
+                                if (local_cnt == 7) { ShiftData_list_entry.A_Rolls_amount = Convert.ToDouble(part_str); }
+                                if (local_cnt == 8) { ShiftData_list_entry.C_Rolls_amount = Convert.ToDouble(part_str); }
+                                if (local_cnt == 9) { ShiftData_list_entry.PeopleAmount = Convert.ToInt32(part_str); }
 
                                 part_str = "";
                             }
@@ -832,16 +961,35 @@ namespace CalanderPresentation
                             + ShiftData_list[i].PeopleAmount.ToString() + ";"
                             );
                     }
-                    
+
+
+                    #region Only For Calander
+                    //get summary balasted time for calander
+                    TimeSpan SummaryExeeded0Statustime = new TimeSpan(0, 0, 0);
+                    for (int i = 0; i < DGGlobalObject.Count; i++)
+                    {
+                        if (DGGlobalObject[i].MachineState == "0")
+                        {
+                            SummaryExeeded0Statustime = TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time;
+                        }
+                    }
+                    #endregion
+
                     sw.WriteLine(DateTime.Now.ToString() + ";"
-                            + NowStatictic.ShiftName.ToString() + ";"
-                            + /*NowStatictic.Prodused.ToString()*/ "0;"
-                            + /*NowStatictic.Efficiency.ToString()*/"0;"
-                            + NowStatictic.ScrapAmount.ToString() + ";"
-                            + NowStatictic.AdditionalJobs.ToString() + ";"
-                            + NowStatictic.A_Rolls_amount.ToString() + ";"
-                            + NowStatictic.C_Rolls_amount.ToString() + ";"
-                            + NowStatictic.PeopleAmount.ToString() + ";"
+                            + a.ShiftName.ToString() + ";"
+                            + (metersPerShift+a.AdditionalJobs).ToString() + ";"/*"0;"*/
+                            + Math.Round(
+                                                (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
+                                                                                get_T2(dateTimePicker1.Value),
+                                                                                get_CURR()) + SummaryExeeded0Statustime).TotalSeconds / (get_CURR() - get_T1(dateTimePicker1.Value)).TotalSeconds
+                                                                                )
+                                                ) * 100, 1
+                                            ).ToString() + ";"
+                            + a.ScrapAmount.ToString() + ";"
+                            + a.AdditionalJobs.ToString() + ";"
+                            + a.A_Rolls_amount.ToString() + ";"
+                            + a.C_Rolls_amount.ToString() + ";"
+                            + a.PeopleAmount.ToString() + ";"
                             );
                 }
             }
