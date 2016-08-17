@@ -142,7 +142,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v1.1.5";
+            this.Text += " v1.1.8";
 
             //OPC
 #if !bypass_opc_init
@@ -196,8 +196,12 @@ namespace CalanderPresentation
 
             previous_time = get_CURR();
             //toolStripStatusLabel4.Text = dateTimePicker1.Value.ToString();
+
+            DrawTotalScore();
+
+            metersPerShift = LoadFromDumpData();
         }
-        
+
 
         private void Tick50msec_Tick(object sender, EventArgs e)
         {
@@ -264,106 +268,7 @@ namespace CalanderPresentation
 #endif
                 #endregion
             }
-
-            #region Draw Total Score
-            ShiftStatisticClass temp = new ShiftStatisticClass();
-            int total_score_shift1 = 0, 
-                total_score_shift2 = 0, 
-                total_score_shift3 = 0, 
-                total_score_shift4 = 0;
-
-            temp.GetLastShiftDataPerMonth("1");
-            try
-            {
-                total_score_shift1 = temp.GetTotalScore();
-                label16.Text = total_score_shift1.ToString();
-            }
-            catch
-            {
-                label16.Text = "0";
-            }
-
-            temp.GetLastShiftDataPerMonth("2");
-            try
-            {
-                total_score_shift2 = temp.GetTotalScore();
-                label17.Text = total_score_shift2.ToString();
-            }
-            catch
-            {
-                label17.Text = "0";
-            }
-
-
-            temp.GetLastShiftDataPerMonth("3");
-            try
-            {
-                total_score_shift3 = temp.GetTotalScore();
-                label18.Text = total_score_shift3.ToString();
-            }
-            catch
-            {
-                label18.Text = "0";
-            }
-
-            temp.GetLastShiftDataPerMonth("4");
-            try
-            {
-                total_score_shift4 = temp.GetTotalScore();
-                label19.Text = total_score_shift4.ToString();
-            }
-            catch
-            {
-                label19.Text = "0";
-            }
-
-            int max_total_score = 0;
-            max_total_score = (total_score_shift1 > max_total_score) ? total_score_shift1 : max_total_score;
-            max_total_score = (total_score_shift2 > max_total_score) ? total_score_shift2 : max_total_score;
-            max_total_score = (total_score_shift3 > max_total_score) ? total_score_shift3 : max_total_score;
-            max_total_score = (total_score_shift4 > max_total_score) ? total_score_shift4 : max_total_score;
-
-
-            int red_factor = 0;
-            int green_factor = 0;
-            int add = 0;
-
-            //red_factor = ((((double)total_score_shift1 / (double)max_total_score) ) < 50) ? (byte)(255 * (((double)total_score_shift1 / (double)max_total_score) ) * 2) : 0;
-            //green_factor = ((((double)total_score_shift1 / (double)max_total_score) ) < 50) ? 0: (byte)(255 * (((double)total_score_shift1 / (double)max_total_score) ) * 2);
-
-
-            add = (int)((double)total_score_shift1 / (double)max_total_score) * 511;
-            if (add <= 255) { red_factor = add; green_factor = 0; }
-            if (add > 255) { red_factor = 255; green_factor = add; }
-            panel1.BackColor = Color.FromArgb(red_factor, green_factor, 0);
-            panel1.Width = (int)(((double)total_score_shift1 / (double)max_total_score) * 100);
-            if (panel1.Width == 0) panel1.Width = 3;
-
-            add = (int)((double)total_score_shift2 / (double)max_total_score) * 511;
-            if (add <= 255) { red_factor = add; green_factor = 0; }
-            if (add > 255) { red_factor = 255; green_factor = add ; }
-            panel2.BackColor = Color.FromArgb(255 - red_factor, green_factor, 0);
-            panel2.Width = (int)(((double)total_score_shift2 / (double)max_total_score) * 100);
-            if (panel2.Width == 0) panel2.Width = 3;
-
-
-            add = (int)((double)total_score_shift3 / (double)max_total_score) * 511;
-            if (add <= 255) { red_factor = add; green_factor = 0; }
-            if (add > 255) { red_factor = 255; green_factor = add - 256; }
-            panel3.BackColor = Color.FromArgb(255 - red_factor, green_factor, 0);
-            panel3.Width = (int)(((double)total_score_shift3 / (double)max_total_score) * 100);
-            if (panel3.Width == 0) panel3.Width = 3;
-
-            add = (int)((double)total_score_shift4 / (double)max_total_score) * 511;
-            if (add <= 255) { red_factor = add; green_factor = 0; }
-            if (add > 255) { red_factor = 255; green_factor = add - 256; }
-            panel4.BackColor = Color.FromArgb(255 - red_factor, green_factor, 0);
-            panel4.Width = (int)(((double)total_score_shift4 / (double)max_total_score) * 100);
-            if (panel4.Width == 0) panel4.Width = 3;
-
-            #endregion
-
-
+            
             GlobalPresenter();
         }
         
@@ -373,7 +278,6 @@ namespace CalanderPresentation
             graphicLine1.History.LoadToXML(GLGlobalObject.GraphicLineDataArr);
 
             #region  refresh all information
-
 
             if (!RefreshAsNowInterlock)
             {
@@ -390,12 +294,39 @@ namespace CalanderPresentation
                 {
                     //MessageBox.Show("Night");
                     radioButton2.Checked = true;
-                    
+
                     //Push statistic
                     //PushStatisticData(NowStatictic);
                 }
             }
             #endregion
+
+            //MessageBox.Show(get_CURR().Hour.ToString() + " " + get_CURR().Minute.ToString());
+            #region Push Statistic Data
+            if ((get_CURR().Hour == 7 || get_CURR().Hour == 19) && (get_CURR().Minute == 59))
+            {
+                //MessageBox.Show("Push");
+                PushStatisticData(NowStatictic);
+
+                NowStatictic.AdditionalJobs = 0;
+                NowStatictic.A_Rolls_amount = 0;
+                NowStatictic.C_Rolls_amount = 0;
+                NowStatictic.Efficiency = 0;
+                NowStatictic.PeopleAmount = 0;
+                NowStatictic.Prodused = 0;
+                NowStatictic.ScrapAmount = 0;
+                NowStatictic.ShiftName = "-1";
+            }
+            #endregion
+
+            #region RefreshScore table
+            if ((get_CURR().Hour == 8 || get_CURR().Hour == 20) && (get_CURR().Minute == 00))
+            {
+                DrawTotalScore();
+            }
+            #endregion
+
+            loadToDumpData();
         }
 
         private void TickGLDiscontinuity_Tick(object sender, EventArgs e)
@@ -561,6 +492,8 @@ namespace CalanderPresentation
             DateTime T1 = get_T1(in_StartTime);
             DateTime T2 = get_T2(in_StartTime);
             DateTime CURR = get_CURR();
+
+
 
             in_control.SetEmpty();
             in_control.AddBasePeriod(T1, T2);
@@ -975,9 +908,9 @@ namespace CalanderPresentation
                     }
                     #endregion
 
-                    sw.WriteLine(DateTime.Now.ToString() + ";"
+                    sw.WriteLine(get_CURR().ToString() + ";"
                             + a.ShiftName.ToString() + ";"
-                            + (metersPerShift+a.AdditionalJobs).ToString() + ";"/*"0;"*/
+                            + metersPerShift.ToString() + ";"/*"0;"*/
                             + Math.Round(
                                                 (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
                                                                                 get_T2(dateTimePicker1.Value),
@@ -993,7 +926,140 @@ namespace CalanderPresentation
                             );
                 }
             }
+            catch
+            {
+
+            }
+        }
+
+        public void DrawTotalScore()
+        {
+            #region Draw Total Score
+            ShiftStatisticClass temp = new ShiftStatisticClass();
+            int total_score_shift1 = 0,
+                total_score_shift2 = 0,
+                total_score_shift3 = 0,
+                total_score_shift4 = 0;
+
+            temp = new ShiftStatisticClass();
+            try
+            {
+                total_score_shift1 = temp.GetScoreShiftPerMonth("1");
+                label16.Text = total_score_shift1.ToString();
+            }
+            catch
+            {
+                label16.Text = "0";
+            }
+
+            temp = new ShiftStatisticClass();
+            try
+            {
+                total_score_shift2 = temp.GetScoreShiftPerMonth("2");
+                label17.Text = total_score_shift2.ToString();
+            }
+            catch
+            {
+                label17.Text = "0";
+            }
+
+            temp = new ShiftStatisticClass();
+            try
+            {
+                total_score_shift3 = temp.GetScoreShiftPerMonth("3");
+                label18.Text = total_score_shift3.ToString();
+            }
+            catch
+            {
+                label18.Text = "0";
+            }
+
+            temp = new ShiftStatisticClass();
+            try
+            {
+                total_score_shift4 = temp.GetScoreShiftPerMonth("4");
+                label19.Text = total_score_shift4.ToString();
+            }
+            catch
+            {
+                label19.Text = "0";
+            }
+
+            int max_total_score = 0;
+            max_total_score = (total_score_shift1 > max_total_score) ? total_score_shift1 : max_total_score;
+            max_total_score = (total_score_shift2 > max_total_score) ? total_score_shift2 : max_total_score;
+            max_total_score = (total_score_shift3 > max_total_score) ? total_score_shift3 : max_total_score;
+            max_total_score = (total_score_shift4 > max_total_score) ? total_score_shift4 : max_total_score;
+
+            int red_factor = 0;
+            int green_factor = 0;
+            int add = 0;
+
+            add = (max_total_score != 0) ? (int)(((double)total_score_shift1 / (double)max_total_score) * 511) : 0;
+            red_factor = 0;
+            green_factor = 0;
+            if (add>=0 && add <= 255) { red_factor = 255; green_factor = add; }
+            if (add > 255 && add<=511) { red_factor = 255 - (add - 256); green_factor = 255; }
+            panel1.BackColor = Color.FromArgb(red_factor, green_factor, 0);
+            panel1.Width = (int)(((double)total_score_shift1 / (double)max_total_score) * 100);
+            if (panel1.Width == 0) panel1.Width = 3;
+
+            add = (max_total_score != 0) ? (int)(((double)total_score_shift2 / (double)max_total_score) * 511) : 0;
+            red_factor = 0;
+            green_factor = 0;
+            if (add >= 0 && add <= 255) { red_factor = 255; green_factor = add; }
+            if (add > 255 && add <= 511) { red_factor = 255 - (add - 256); green_factor = 255; }
+            panel2.BackColor = Color.FromArgb(red_factor, green_factor, 0);
+            panel2.Width = (int)(((double)total_score_shift2 / (double)max_total_score) * 100);
+            if (panel2.Width == 0) panel2.Width = 3;
+
+
+            add = (max_total_score != 0) ? (int)(((double)total_score_shift3 / (double)max_total_score) * 511) : 0;
+            red_factor = 0;
+            green_factor = 0;
+            if (add >= 0 && add <= 255) { red_factor = 255; green_factor = add; }
+            if (add > 255 && add <= 511) { red_factor = 255 - (add - 256); green_factor = 255; }
+            panel3.BackColor = Color.FromArgb(red_factor, green_factor, 0);
+            panel3.Width = (int)(((double)total_score_shift3 / (double)max_total_score) * 100);
+            if (panel3.Width == 0) panel3.Width = 3;
+
+            add = (max_total_score != 0) ? (int)(((double)total_score_shift4 / (double)max_total_score) * 511) : 0;
+            red_factor = 0;
+            green_factor = 0;
+            if (add >= 0 && add <= 255) { red_factor = 255; green_factor = add; }
+            if (add > 255 && add <= 511) { red_factor = 255 - (add - 256); green_factor = 255; }
+            panel4.BackColor = Color.FromArgb(red_factor, green_factor, 0);
+            panel4.Width = (int)(((double)total_score_shift4 / (double)max_total_score) * 100);
+            if (panel4.Width == 0) panel4.Width = 3;
+
+            #endregion
+        }
+
+
+        public void loadToDumpData()
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(@"Dump.txt", false))
+                {
+                    sw.WriteLine(metersPerShift.ToString());
+                }
+            }
+            catch {  }
+        }
+
+        public int LoadFromDumpData()
+        {
+            try
+            {
+                using (StreamReader sr = new StreamReader(@"Dump.txt"))
+                {
+                    return  Convert.ToInt32(sr.ReadLine());
+                }
+            }
             catch { }
+
+            return 0;
         }
     }
 }

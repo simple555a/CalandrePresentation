@@ -212,6 +212,13 @@ namespace CalanderPresentation
 
         private void ShiftStatistic_Load(object sender, EventArgs e)
         {
+            textBox1.Text = ref_NowStatistic.ScrapAmount.ToString();
+            textBox2.Text = ref_NowStatistic.AdditionalJobs.ToString();
+            textBox3.Text = ref_NowStatistic.A_Rolls_amount.ToString();
+            textBox4.Text = ref_NowStatistic.C_Rolls_amount.ToString();
+            textBox5.Text = ref_NowStatistic.PeopleAmount.ToString();
+
+
             ShiftStatisticClass Shiftstatistic_1 = new ShiftStatisticClass();
             ShiftStatisticClass Shiftstatistic_2 = new ShiftStatisticClass();
             ShiftStatisticClass Shiftstatistic_3 = new ShiftStatisticClass();
