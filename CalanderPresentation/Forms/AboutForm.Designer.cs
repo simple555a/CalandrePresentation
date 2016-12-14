@@ -79,9 +79,9 @@
             this.label5.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label5.Location = new System.Drawing.Point(111, 60);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(140, 13);
+            this.label5.Size = new System.Drawing.Size(82, 13);
             this.label5.TabIndex = 19;
-            this.label5.Text = "Control && Drives Department";
+            this.label5.Text = "Control && Drives";
             // 
             // label4
             // 

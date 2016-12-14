@@ -142,7 +142,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v1.1.8";
+            this.Text += " v1.1.9";
 
             //OPC
 #if !bypass_opc_init
@@ -610,6 +610,7 @@ namespace CalanderPresentation
             #endregion
 
             #region DataGridPresenter
+            /*
             #region  ONLY FOR CALANDER!!!
             //if speed of line low than setpoint - add exedeed time to final resultcalculate calander 0 status
             cal_green_time = new TimeSpan(0, 0, 0);
@@ -624,7 +625,7 @@ namespace CalanderPresentation
                 {
                     //MessageBox.Show(1.ToString());
                     cal_green_time += GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed);
-                    temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString() + " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString() + "\n";
+                    //temp += (TLGlobalObject[i].EndTime - TLGlobalObject[i].StartTime).ToString() + " " + GLGlobalObject.GetGreenTimeAboveSpeed(TLGlobalObject[i].StartTime, TLGlobalObject[i].EndTime, graphicLine1.SetpointSpeed).ToString() + "\n";
                 }
                 //MessageBox.Show(TLGlobalObject[i].MachineState.ToString());
                 if (TLGlobalObject[i].MachineState == 0
@@ -645,16 +646,17 @@ namespace CalanderPresentation
             //MessageBox.Show(temp);
 
             #endregion
+            */
             DGGlobalObject = sql_obj.GetTableStatistic(T1, T2, CURR);
             #region  ONLY FOR CALANDER!!!
             //calulating final exeeded time for calander
-            for (int i = 0; i < DGGlobalObject.Count; i++)
-            {
-                if (DGGlobalObject[i].MachineState == "0")
-                {
-                    DGGlobalObject[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
-                }
-            }
+            //for (int i = 0; i < DGGlobalObject.Count; i++)
+            //{
+            //    if (DGGlobalObject[i].MachineState == "0")
+            //    {
+            //        DGGlobalObject[i].ExceededTime = (TimeSpan.FromSeconds(Convert.ToDouble(DGGlobalObject[i].SummaryTime)) - cal_green_time).TotalSeconds.ToString();
+            //    }
+            //}
             #endregion
             #endregion
         }
