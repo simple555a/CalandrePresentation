@@ -681,7 +681,7 @@ namespace CalanderPresentation
                                 Math.Round(
                                                 (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value),
                                                                                 get_T2(dateTimePicker1.Value),
-                                                                                get_CURR()) + SummaryExeeded0Statustime).TotalSeconds / (get_CURR() - get_T1(dateTimePicker1.Value)).TotalSeconds
+                                                                                get_CURR())/* + SummaryExeeded0Statustime*/).TotalSeconds / (get_CURR() - get_T1(dateTimePicker1.Value)).TotalSeconds
                                                                                 )
                                                 ) * 100, 1
                                             );
@@ -703,7 +703,7 @@ namespace CalanderPresentation
             if (get_T2(dateTimePicker1.Value) <= get_CURR())
                 label8.Text = (
                                 Math.Round(
-                                            (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR()) + SummaryExeeded0Statustime).TotalSeconds / 43200)) * 100, 2
+                                            (1 - ((sql_obj.GetBalastedTimes(get_T1(dateTimePicker1.Value), get_T2(dateTimePicker1.Value), get_CURR())/* + SummaryExeeded0Statustime*/).TotalSeconds / 43200)) * 100, 2
                                         )
                             ).ToString() + "%";
         }
