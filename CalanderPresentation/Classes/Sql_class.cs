@@ -79,12 +79,7 @@ namespace CalanderPresentation
 INSERT INTO 
 @rules_limited_times
 VALUES      
-(210,40);
-
-INSERT INTO 
-@rules_limited_times
-VALUES      
-(213,20);
+(200,60);
 
 INSERT INTO 
 @rules_limited_times
