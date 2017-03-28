@@ -44,6 +44,7 @@ namespace CalanderPresentation
         static bool RefreshAsNowInterlock = false;
         static int metersFromOrder = 0;
         static int prev_metersFromOrder, metersPerShift = 0;
+        static int tick5sec_counter;
 
 
         //inteface global
@@ -142,7 +143,7 @@ namespace CalanderPresentation
             LabelsCenterPositioning(groupBox2);
             LabelsCenterPositioning(groupBox3);
 
-            this.Text += " v1.1.10";
+            this.Text += " v1.1.14";
 
             //OPC
 #if !bypass_opc_init
@@ -227,14 +228,28 @@ namespace CalanderPresentation
 
             //opc
 #if !bypass_opc_init
-            opc_obj.AskAllValues();
-            label6.Text = opc_obj.CurrentSpeed.ToString();
+            try
+            {
+                opc_obj.AskAllValues();
+                label6.Text = opc_obj.CurrentSpeed.ToString();
+            }
+            catch
+            {
+
+            }
             //label4.Text = opc_obj.CurrentCounterOfMaterial.ToString();
 #endif
 
             //opc
 #if !bypass_opc_init
-            opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
+            try
+            {
+                opc_obj.lockCount = (sql_obj.GetCurrentStatusAsInt() == 0) ? false : true;
+            }
+            catch
+            {
+
+            }
             //push current speed to GLHisory
             //opc_obj.AskAllValues();
             //GLGlobalObject.PushPoint(Tic1secCalltime, opc_obj.CurrentSpeed);
@@ -252,17 +267,41 @@ namespace CalanderPresentation
 #if !bypass_opc_init
                 if (Settings1.SQLAllowWriteToSFIDatabases)
                 {
-                    if (opc_obj.CurrentSpeed < graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 0)
+
+                    //700
+                    if (opc_obj.CurrentSpeed < graphicLine1.SetpointSpeed && opc_obj.CurrentSpeed != 0 && sql_obj.GetCurrentStatusAsInt() == 0)
                     {
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"ChangeStatusLog.txt", true))
+                        {
+                            file.WriteLine("From " + sql_obj.GetCurrentStatusAsInt().ToString() + " to 700 " + DateTime.Now.ToString());
+                        }
                         sql_obj.Set700Status();
                     }
+
+                    //0
                     if (opc_obj.CurrentSpeed >= graphicLine1.SetpointSpeed && sql_obj.GetCurrentStatusAsInt() == 700)
                     {
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"ChangeStatusLog.txt", true))
+                        {
+                            file.WriteLine("From " + sql_obj.GetCurrentStatusAsInt().ToString() + " to 0 " + DateTime.Now.ToString());
+                        }
                         sql_obj.Set0Status();
                     }
+
+                    //999
                     if (opc_obj.CurrentSpeed == 0 && sql_obj.GetCurrentStatusAsInt() == 700)
                     {
-                        sql_obj.Set999Status();
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"ChangeStatusLog.txt", true))
+                        {
+                            file.WriteLine("From " + sql_obj.GetCurrentStatusAsInt().ToString() + " to 999 " + DateTime.Now.ToString());
+                        }
+
+                        tick5sec_counter+=5;
+                        if (tick5sec_counter >= 60)   //60sec
+                        {
+                            sql_obj.Set999Status();
+                            tick5sec_counter = 0;
+                        }
                     }
                 }
 #endif

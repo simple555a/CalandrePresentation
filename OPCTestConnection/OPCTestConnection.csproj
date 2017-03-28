@@ -15,7 +15,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'VM|x86' ">
-    <OutputPath>..\..\..\..\VirtualBox VMs\mutualSSD\OPCTestConnection\</OutputPath>
+    <OutputPath>bin\x86\</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <Optimize>false</Optimize>
@@ -27,20 +27,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpcNetApi">
-      <HintPath>lib\OpcNetApi.dll</HintPath>
+      <HintPath>..\CalanderPresentation\lib\OpcNetApi.dll</HintPath>
     </Reference>
     <Reference Include="OpcNetApi.Com">
-      <HintPath>lib\OpcNetApi.Com.dll</HintPath>
+      <HintPath>..\CalanderPresentation\lib\OpcNetApi.Com.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>

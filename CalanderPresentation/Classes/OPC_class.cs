@@ -165,7 +165,7 @@ namespace CalanderPresentation
                 }
                 else
                 {
-                    MessageBox.Show("OPC settings is empty. See Settings - > Connection...");
+                    //MessageBox.Show("OPC settings is empty. See Settings - > Connection...");
                 }
             }
             catch
