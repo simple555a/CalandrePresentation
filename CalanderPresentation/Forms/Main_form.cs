@@ -283,7 +283,7 @@ namespace CalanderPresentation
                     {
                         using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"ChangeStatusLog.txt", true))
                         {
-                            file.WriteLine("From " + sql_obj.GetCurrentStatusAsInt().ToString() + " to 0 " + DateTime.Now.ToString());
+                            file.WriteLine("From " + sql_obj.GetCurrentStatusAsInt().ToString() + "   to 0 " + DateTime.Now.ToString());
                         }
                         sql_obj.Set0Status();
                     }
@@ -291,14 +291,13 @@ namespace CalanderPresentation
                     //999
                     if (opc_obj.CurrentSpeed == 0 && sql_obj.GetCurrentStatusAsInt() == 700)
                     {
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"ChangeStatusLog.txt", true))
-                        {
-                            file.WriteLine("From " + sql_obj.GetCurrentStatusAsInt().ToString() + " to 999 " + DateTime.Now.ToString());
-                        }
-
                         tick5sec_counter+=5;
                         if (tick5sec_counter >= 60)   //60sec
                         {
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"ChangeStatusLog.txt", true))
+                            {
+                                file.WriteLine("From " + sql_obj.GetCurrentStatusAsInt().ToString() + " to 999 " + DateTime.Now.ToString() + " " + tick5sec_counter);
+                            }
                             sql_obj.Set999Status();
                             tick5sec_counter = 0;
                         }
